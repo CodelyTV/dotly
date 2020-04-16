@@ -1,0 +1,32 @@
+#compdef dot
+
+_command_for() {
+  ls -p "$DOTFILES_PATH/scripts/$1" | grep -v / | xargs echo
+}
+
+_dot() {
+  local curcontext="$curcontext" state line
+  typeset -A opt_args
+
+  _arguments \
+    '1: :->context' \
+    '2: :->command' \
+    '*: :->args'
+
+  existing_contexts=$(ls "$DOTFILES_PATH/scripts" | grep -v core | xargs echo)
+
+  case $state in
+  context)
+    _arguments "1:Context:($existing_contexts)"
+    ;;
+  command)
+    existing_commands=$(_command_for $words[2])
+    _arguments "2:Command:($existing_commands)"
+    ;;
+  *)
+    _files
+    ;;
+  esac
+}
+
+_dot "$@"

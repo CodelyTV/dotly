@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Useful when you c&p commands from the internet :P
+
+"$@"

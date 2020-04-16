@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? Reset the status to the last commit
+#?? 1.0.0
+##?
+##? Usage:
+##?    git-discard
+
+docs::eval "$@"
+
+git add -A
+git reset --hard >/dev/null 2>&1
+echo 'All changes has been discarded!'

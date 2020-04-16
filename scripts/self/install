@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/self/utils/install.sh"
+
+##? Install dotly and setup dotfiles
+#?? 1.0.0
+##?
+##? Usage:
+##?    install
+
+if ! platform::command_exists zsh; then
+  log::note "Zsh not installed, installing"
+
+  "$DOTLY_PATH/bin/dot" package add zsh
+else
+  log::note "Zsh already installed!"
+fi
