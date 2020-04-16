@@ -14,7 +14,7 @@ source "$DOTLY_PATH/scripts/self/utils/install.sh"
 if ! platform::command_exists zsh; then
   log::note "Zsh not installed, installing"
 
-  "$DOTLY_PATH/bin/dot" package add zsh
 else
   log::note "Zsh already installed!"
+  "$DOTLY_PATH/bin/dot" package install zsh
 fi

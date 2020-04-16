@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+echoerr() {
+  echo "$@" 1>&2
+}
+
 log::ansi() {
   local bg=false
   case "$@" in

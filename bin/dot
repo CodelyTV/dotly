@@ -2,6 +2,10 @@
 
 set -euo pipefail
 
+# @todo for debuging
+export DOTLY_PATH="$HOME/Code/codely/public/dotly"
+export DOTFILES_PATH="$HOME/.dotfiles2"
+
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Usage:
@@ -41,5 +45,6 @@ else
   shift 2
   export DOT_TRACE=${TRACE:-false}
 
-  "${DOTFILES_PATH}/scripts/${context}/${command}" "$@"
+  # @todo HERE we have to merge custom and dotly scripts
+  "${DOTLY_PATH}/scripts/${context}/${command}" "$@"
 fi
