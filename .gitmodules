@@ -1,10 +1,12 @@
 [submodule "modules/zimfw"]
 	path = modules/zimfw
-	url = git@github.com:zimfw/zimfw.git
+	url = https://github.com/zimfw/zimfw.git
+	ignore = dirty
 [submodule "modules/dotbot"]
 	path = modules/dotbot
-	url = git@github.com:anishathalye/dotbot.git
+	url = https://github.com/anishathalye/dotbot.git
 	ignore = dirty
 [submodule "modules/z"]
 	path = modules/z
-	url = git@github.com:rupa/z.git
+	url = https://github.com/rupa/z.git
+	ignore = dirty
