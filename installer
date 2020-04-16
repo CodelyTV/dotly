@@ -46,8 +46,9 @@ _q "Where do you want your dotfiles to be located? (default ~/.dotfiles2)" "DOTF
 DOTFILES_PATH="${DOTFILES_PATH:-$HOME/.dotfiles2}"
 DOTFILES_PATH="$(eval echo "$DOTFILES_PATH")"
 
+dotly_inner_path="modules/dotly"
 export DOTFILES_PATH="$DOTFILES_PATH"
-export DOTLY_PATH="$DOTFILES_PATH/modules/dotly"
+export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 
 create_dotfiles_dir "$DOTFILES_PATH"
 cd "$DOTFILES_PATH"
@@ -56,14 +57,13 @@ _a "Initializing your dotfiles git repository"
 git init >/dev/null
 
 _a "Cloning dotly"
-git submodule add "https://github.com/CodelyTV/dotly.git" "$DOTLY_PATH" >/dev/null 2>&1
+# While debugging
+git submodule add --branch first-version "https://github.com/CodelyTV/dotly.git" "$dotly_inner_path" >/dev/null 2>&1
+#git submodule add "https://github.com/CodelyTV/dotly.git" "$dotly_inner_path" >/dev/null 2>&1
 
 _a "Installing dotly dependencies"
-git submodule update --init --recursive >/dev/null 2>&1
+git submodule update --init --recursive
 
 cd "$DOTLY_PATH"
-
-# While debugging
-git switch first-version >/dev/null 2>&1
 
 "$PWD/bin/dot" self install
