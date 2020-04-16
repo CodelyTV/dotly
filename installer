@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+##? Setups the environment
+##?
+##? Usage:
+##?    install
+
+red='\033[0;31m'
+green='\033[0;32m'
+purple='\033[0;35m'
+normal='\033[0m'
+
+_w() {
+  local -r text="${1:-}"
+  echo -e "$text"
+}
+_a() { _w " > $1"; }
+_e() { _a "${red}$1${normal}"; }
+_s() { _a "${green}$1${normal}"; }
+_q() { read -rp "🤔 $1: " "$2"; }
+
+current_timestamp() { date +%s; }
+
+create_dotfiles_dir() {
+  if [ -d "$1" ]; then
+    local -r backup_path="$1.$(current_timestamp).back"
+
+    _e "The path '$1' already exist"
+    _s "Creating a backup in '$backup_path'"
+
+    mv "$1" "$backup_path"
+  else
+    _a "Ok! dotfiles wll be located in: ${purple}$DOTFILES_PATH${normal}"
+  fi
+
+  mkdir -p "$1"
+}
+
+_w "  ┌────────────────────────────────────┐"
+_w "~ │ 🚀 Welcome to the ${green}dotly${normal} installer! │ ~"
+_w "  └────────────────────────────────────┘"
+_w
+_q "Where do you want your dotfiles to be located? (default ~/.dotfiles2)" "DOTFILES_PATH"
+DOTFILES_PATH="${DOTFILES_PATH:-$HOME/.dotfiles2}"
+DOTFILES_PATH="$(eval echo "$DOTFILES_PATH")"
+
+export DOTFILES_PATH="$DOTFILES_PATH"
+export DOTLY_PATH="$DOTFILES_PATH/modules/dotly"
+
+create_dotfiles_dir "$DOTFILES_PATH"
+cd "$DOTFILES_PATH"
+
+_a "Initializing your dotfiles git repository"
+git init >/dev/null
+
+_a "Cloning dotly"
+git submodule add "https://github.com/CodelyTV/dotly.git" "$DOTLY_PATH" >/dev/null 2>&1
+
+_a "Installing dotly dependencies"
+git submodule update --init --recursive >/dev/null 2>&1
+
+cd "$DOTLY_PATH"
+
+# While debugging
+git switch first-version >/dev/null 2>&1
+
+"$PWD/bin/dot" self install
