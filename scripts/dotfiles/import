@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Import existing dot files to your dotfiles
+##?
+##? Usage:
+##?    import [dotfiles_path]
+##?
+
+## .zshrc
+## .bash
+## .gitconfig
+## .gitignore_global

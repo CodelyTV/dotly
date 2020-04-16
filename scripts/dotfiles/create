@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Create the dotfiles structure
+##?
+##? Usage:
+##?    create [dotfiles_path]
+##?
