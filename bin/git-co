@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTFILES_PATH/scripts/core/_main.sh"
+
+##? Checkout alias
+#?? 1.0.0
+##?
+##? Usage:
+##?    git-co <thing>
+
+docs::eval "$@"
+
+git checkout $thing
