@@ -6,6 +6,7 @@ if ! ${DOT_MAIN_SOURCED:-false}; then
   source "$DOTLY_PATH/scripts/core/log.sh"
   source "$DOTLY_PATH/scripts/core/platform.sh"
   source "$DOTLY_PATH/scripts/core/output.sh"
+  source "$DOTLY_PATH/scripts/core/str.sh"
 
   readonly DOT_MAIN_SOURCED=true
 fi

@@ -5,6 +5,19 @@ set -euo pipefail
 source "$DOTLY_PATH/scripts/core/_main.sh"
 source "$DOTLY_PATH/scripts/self/utils/install.sh"
 
+export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
+
+installer::install_zsh() {
+  output::error "Zsh not installed, installing"
+
+  if dot package install zsh 2>&1; then
+    output::solution "Zsh installed!"
+  else
+    output::error "Could not install Zsh!"
+    exit 5
+  fi
+}
+
 ##? Install dotly and setup dotfiles
 #?? 1.0.0
 ##?
@@ -16,15 +29,16 @@ if ! platform::command_exists dot; then
 fi
 
 if ! platform::command_exists zsh; then
-  output::error "Zsh not installed, installing"
-
-  if dot package install zsh 2>&1; then
-    output::solution "Zsh installed!"
-  else
-    output::error "Could not install Zsh!"
-    exit 5
-  fi
+  installer::install_zsh
 else
   output::answer "Zsh already installed!"
 fi
 
+if ! str::contains zsh "$SHELL"; then
+  output::answer "Setting Zsh as the default shell (you'll have to logout and login to see the changes)"
+  chsh -s "$(command -v zsh)"
+fi
+
+output::answer "Installing Zim"
+
+zsh "$ZIM_HOME/zimfw.zsh" install

@@ -10,13 +10,7 @@ setopt HIST_FCNTL_LOCK
 # setopt autopushd
 
 # Start zim
-source ${ZIM_HOME}/init.zsh
-
-# Removing the waiting dots from completion (...). Original: ~/.zim/modules/input/init.zsh
-# expand-or-complete-with-redisplay() {
-#   zle expand-or-complete
-#   zle redisplay
-# }
+source "$ZIM_HOME/init.zsh"
 
 # Async mode for autocompletion
 ZSH_AUTOSUGGEST_USE_ASYNC=true
