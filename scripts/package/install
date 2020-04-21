@@ -4,18 +4,36 @@ set -euo pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
+package::install() {
+  local -r package_manager="$1"
+  local -r package_to_install="$2"
+
+  platform::command_exists "$package_manager" || exit 3
+
+  local -r file="$DOTLY_PATH/scripts/package/package_managers/$package_manager.sh"
+
+  # unsupported package manager
+  [ ! -f "$file" ] && exit 4
+
+  source "$file"
+
+  local -r install_command="${package_manager}::install"
+
+  "$install_command" "$package_to_install"
+}
+
 ##? Install a package
 ##?
 ##? Usage:
-##?    add [package_name]
+##?    install [package_name]
 ##?
 
 package_name="$1"
 
 platform::command_exists "$package_name" && log::success "$package_name is already installed" && exit 0
 
-_installing
-for pkg_mgr in apt pkg yum dnf port emerge pacman brew npm; do
-  dot pkg proxy $pkg_mgr add "$package" && exit 0 || true
+for package_manager in apt dnf brew yum; do
+  package::install $package_manager "$package_name" && exit 0 || true
 done
-exit 234
+
+exit 2
