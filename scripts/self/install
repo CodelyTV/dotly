@@ -11,10 +11,20 @@ source "$DOTLY_PATH/scripts/self/utils/install.sh"
 ##? Usage:
 ##?    install
 
-if ! platform::command_exists zsh; then
-  log::note "Zsh not installed, installing"
-
-else
-  log::note "Zsh already installed!"
-  "$DOTLY_PATH/bin/dot" package install zsh
+if ! platform::command_exists dot; then
+  dot() { "$DOTLY_PATH/bin/dot" "$@"; }
 fi
+
+if ! platform::command_exists zsh; then
+  output::error "Zsh not installed, installing"
+
+  if dot package install zsh 2>&1; then
+    output::solution "Zsh installed!"
+  else
+    output::error "Could not install Zsh!"
+    exit 5
+  fi
+else
+  output::answer "Zsh already installed!"
+fi
+
