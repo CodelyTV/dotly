@@ -4,6 +4,10 @@ set -euo pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
+dotfiles::apply_templating() {
+  sed -i "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/zsh/.zshenv"
+}
+
 ##? Create the dotfiles structure
 ##?
 ##? Usage:
@@ -11,6 +15,8 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?
 
 # @todo Ensure it's not already created
-cp -r "$DOTLY_PATH/scripts/dotfiles/utils/structure/"* "$DOTFILES_PATH"
+cp -r "$DOTLY_PATH/dotfiles_template/"* "$DOTFILES_PATH"
+
+dotfiles::apply_templating
 
 log::success "Done!"
