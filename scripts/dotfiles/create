@@ -9,3 +9,8 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##? Usage:
 ##?    create [dotfiles_path]
 ##?
+
+# @todo Ensure it's not already created
+cp -r "$DOTLY_PATH/scripts/dotfiles/utils/structure/"* "$DOTFILES_PATH"
+
+log::success "Done!"

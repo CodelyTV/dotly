@@ -28,6 +28,9 @@ if ! platform::command_exists dot; then
   dot() { "$DOTLY_PATH/bin/dot" "$@"; }
 fi
 
+output::answer "Creating dotfiles structure"
+dot dotfiles create
+
 if ! platform::command_exists zsh; then
   installer::install_zsh
 else
