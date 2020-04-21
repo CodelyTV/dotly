@@ -38,6 +38,10 @@ create_dotfiles_dir() {
   mkdir -p "$1"
 }
 
+command_exists() {
+  type "$1" >/dev/null 2>&1
+}
+
 # @todo for debuging change dotfiles2 -> dotfiles
 _w "  ┌────────────────────────────────────┐"
 _w "~ │ 🚀 Welcome to the ${green}dotly${normal} installer! │ ~"
@@ -53,6 +57,27 @@ export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 
 create_dotfiles_dir "$DOTFILES_PATH"
 cd "$DOTFILES_PATH"
+
+if ! command_exists git; then
+  _e "git not installed, trying to install"
+
+  if command_exists apt; then
+    _a "Installing using apt"
+    sudo apt -y install git >/dev/null 2>&1
+  elif command_exists dnf; then
+    _a "Installing using dnf"
+    sudo dnf -y install git >/dev/null 2>&1
+  elif command_exists yum; then
+    _a "Installing using yum"
+    yes | sudo yum install git >/dev/null 2>&1
+  elif command_exists brew; then
+    _a "Installing using brew"
+    yes | brew install git >/dev/null 2>&1
+  else
+    _e "Could not install git, no package provider found"
+    exit 1
+  fi
+fi
 
 _a "Initializing your dotfiles git repository"
 git init >/dev/null
