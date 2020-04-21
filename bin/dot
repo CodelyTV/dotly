@@ -2,10 +2,6 @@
 
 set -euo pipefail
 
-# @todo for debuging
-export DOTLY_PATH="$HOME/Code/codely/public/dotly"
-export DOTFILES_PATH="$HOME/.dotfiles2"
-
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Usage:
