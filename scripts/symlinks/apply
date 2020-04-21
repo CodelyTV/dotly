@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+symlinks::apply() {
+  local -r CONFIG="$DOTFILES_PATH/symlinks/$1"
+  shift
+
+  echo
+  "$DOTLY_PATH/modules/dotbot/bin/dotbot" -d "$DOTFILES_PATH" -c "$CONFIG" "$@"
+  echo
+}
+
+##? Apply all symlinks
+##?
+##? Usage:
+##?    apply
+##?
+
+symlinks::apply "conf.yaml"
+
+if platform::is_macos; then
+  symlinks::apply "conf.macos.yaml"
+else
+  symlinks::apply "conf.linux.yaml"
+fi
+
+log::success "Done!"
