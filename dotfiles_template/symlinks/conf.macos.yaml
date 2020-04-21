@@ -1,0 +1,12 @@
+- clean: ['~']
+
+- defaults:
+    link:
+      create: true
+      force: true
+
+- create:
+      - ~/.hushlogin
+
+- link:
+    ~/.dotly: os/mac/.dotly

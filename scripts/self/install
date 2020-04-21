@@ -29,7 +29,11 @@ if ! platform::command_exists dot; then
 fi
 
 output::answer "Creating dotfiles structure"
-dot dotfiles create
+dot dotfiles create 2>&1
+
+# @todo Backup if exists before
+output::answer "Setting up symlinks"
+dot symlinks apply 2>&1
 
 if ! platform::command_exists zsh; then
   installer::install_zsh
