@@ -83,9 +83,7 @@ _a "Initializing your dotfiles git repository"
 git init >/dev/null
 
 _a "Cloning dotly"
-# @todo for debuging
-git submodule add --branch first-version "https://github.com/CodelyTV/dotly.git" "$dotly_inner_path" >/dev/null 2>&1
-#git submodule add "https://github.com/CodelyTV/dotly.git" "$dotly_inner_path" >/dev/null 2>&1
+git submodule add "https://github.com/CodelyTV/dotly.git" "$dotly_inner_path" >/dev/null 2>&1
 
 _a "Installing dotly dependencies"
 git submodule update --init --recursive >/dev/null 2>&1
