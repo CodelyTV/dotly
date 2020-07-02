@@ -10,7 +10,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?    dot <context> <cmd> [<args>...]
 
 list_command_paths() {
-  find "$DOTFILES_PATH/scripts" -maxdepth 2 -perm +111 -type f |
+  find "$DOTFILES_PATH/scripts" -maxdepth 2 -perm /ugo=x -type f |
     grep -v core |
     sort
 }
