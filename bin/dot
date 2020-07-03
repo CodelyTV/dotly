@@ -41,6 +41,11 @@ else
   shift 2
   export DOT_TRACE=${TRACE:-false}
 
-  # @todo HERE we have to merge custom and dotly scripts
-  "${DOTLY_PATH}/scripts/${context}/${command}" "$@"
+  if [ -f "${DOTFILES_PATH}/scripts/${context}/${command}" ]; then
+    path_command="${DOTFILES_PATH}/scripts/${context}/${command}"
+  else 
+    path_command="${DOTLY_PATH}/scripts/${context}/${command}"
+  fi
+
+  "${path_command}" "$@"
 fi
