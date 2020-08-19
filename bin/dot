@@ -8,20 +8,20 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?    dot
 ##?    dot <context>
 ##?    dot <context> <cmd> [<args>...]
+##?    dot -h <context> <cmd>
 
-list_command_paths() {
-  find "$DOTFILES_PATH/scripts" -maxdepth 2 -perm +111 -type f |
-    grep -v core |
-    sort
+exit_if_empty() {
+  [ "${1}" == "" ] && die "No executable scripts" || true
 }
 
 fzf_prompt() {
   local paths="$1"
+  exit_if_empty "$paths"
 
   match="$(echo "$paths" |
     xargs -I % sh -c 'echo "$(basename $(dirname %)) $(basename %)"' |
-    fzf --height 100% --preview 'dot $(echo {} | cut -d" " -f 1) $(echo {} | cut -d" " -f 2) -h | bat --style=numbers')"
-  printf "$match "
+    fzf --height 100% --preview 'dot -h $(echo {} | cut -d" " -f 1) $(echo {} | cut -d" " -f 2)')"
+  printf "$match"
   read args
   if coll::is_empty "$args"; then
     dot $match
@@ -30,10 +30,35 @@ fzf_prompt() {
   fi
 }
 
+is_executable() {
+  [[ -x "${1}/scripts/${2}/${3}" ]]
+}
+
+ask_for_help() {
+  [ "${1}" == "true" ]
+}
+
+generate_help () {
+  bat --color always --style=numbers "${1}/scripts/${2}/${3}"
+}
+
+help="false"
+while getopts ":h" opt; do
+  shift 1
+  case $opt in
+    h) help="true"
+    ;;
+    [?])
+      echo "Invalid option -$opt" >&2
+      exit 1
+    ;;
+  esac
+done
+
 if args::has_no_args "$@"; then
-  fzf_prompt "$(list_command_paths)"
+  fzf_prompt "$(paths::list_scripts_sorted)"
 elif args::total_is 1 "$@"; then
-  fzf_prompt "$(list_command_paths | grep "/$1/")"
+  fzf_prompt "$(paths::list_scripts_sorted | grep "/$1/")"
 else
   context="$1"
   command="$2"
@@ -41,13 +66,14 @@ else
   shift 2
   export DOT_TRACE=${TRACE:-false}
 
-  if [[ -x "${DOTLY_PATH}/scripts/${context}/${command}" ]]
-  then
-    "${DOTLY_PATH}/scripts/${context}/${command}" "$@"
-  fi
-  if [[ -x "${DOTFILES_PATH}/scripts/${context}/${command}" ]]
-  then
-    "${DOTFILES_PATH}/scripts/${context}/${command}" "$@"
-  fi
+  script_path=""
+  is_executable "$DOTLY_PATH" "$context" "$command" && script_path="$DOTLY_PATH"
+  is_executable "$DOTFILES_PATH" "$context" "$command" && script_path="$DOTFILES_PATH"
+  exit_if_empty "$script_path"
 
+  if ask_for_help $help; then
+    generate_help "${script_path}" "${context}" "${command}"
+  else
+    "${script_path}/scripts/${context}/${command}" "$@"
+  fi
 fi
