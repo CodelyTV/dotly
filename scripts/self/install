@@ -18,6 +18,17 @@ installer::install_zsh() {
   fi
 }
 
+installer::install_fzf() {
+  output::error "Fzf not installed, installing"
+
+  if dot package install fzf 2>&1; then
+    output::solution "fzf installed!"
+  else
+    output::error "Could not install Fzf!"
+    exit 5
+  fi
+}
+
 ##? Install dotly and setup dotfiles
 #?? 1.0.0
 ##?
@@ -44,6 +55,12 @@ fi
 if ! str::contains zsh "$SHELL"; then
   output::answer "Setting Zsh as the default shell (you'll have to logout and login to see the changes)"
   chsh -s "$(command -v zsh)"
+fi
+
+if ! platform::command_exists fzf; then
+  installer::install_fzf
+else
+  output::answer "Fzf already installed!"
 fi
 
 output::answer "Installing Zim"
