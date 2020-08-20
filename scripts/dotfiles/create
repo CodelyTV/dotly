@@ -5,7 +5,7 @@ set -euo pipefail
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 dotfiles::apply_templating() {
-  perl -i -pe"s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/zsh/.zshenv"
+  sed -i '' -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/zsh/.zshenv"
 }
 
 ##? Create the dotfiles structure
