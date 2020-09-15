@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 paths::list_dotly_scripts() {
-  find "$DOTLY_PATH/scripts" -maxdepth 2 -perm +111 -type f |
+  find "$DOTLY_PATH/scripts" -maxdepth 2 -perm /+111 -type f |
     grep -v core
 }
 
 paths::list_dotfiles_scripts() {
-  find "$DOTFILES_PATH/scripts" -maxdepth 2 -perm +111 -type f |
+  find "$DOTFILES_PATH/scripts" -maxdepth 2 -perm /+111 -type f |
     grep -v core
 }
 
