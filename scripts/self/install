@@ -35,7 +35,7 @@ installer::install_fzf() {
 ##? Usage:
 ##?    install
 
-if ! platform::command_exists dot; then
+if platform::command_exists dot; then
   dot() { "$DOTLY_PATH/bin/dot" "$@"; }
 fi
 
