@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - macos-10.15
+          - macos-11.0
+          - ubuntu-18.04
+          - ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set current repository and branch
+        run: |
+          echo '::set-env name=DOTLY_REPOSITORY::CodelyTV/dotly'
+          echo '::set-env name=DOTLY_BRANCH::${{ github.head_ref }}'
+
+      - name: Install
+        run: echo "$HOME/.dotfiles" | bash installer

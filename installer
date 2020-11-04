@@ -7,6 +7,9 @@ set -euo pipefail
 ##? Usage:
 ##?    install
 
+DOTLY_REPOSITORY=${DOTLY_REPOSITORY:-CodelyTV/dotly}
+DOTLY_BRANCH=${DOTLY_BRANCH:-master}
+
 red='\033[0;31m'
 green='\033[0;32m'
 purple='\033[0;35m'
@@ -42,17 +45,16 @@ command_exists() {
   type "$1" >/dev/null 2>&1
 }
 
-# @todo for debuging change dotfiles2 -> dotfiles
 _w "  ┌────────────────────────────────────┐"
 _w "~ │ 🚀 Welcome to the ${green}dotly${normal} installer! │ ~"
 _w "  └────────────────────────────────────┘"
 _w
-_q "Where do you want your dotfiles to be located? (default ~/.dotfiles2)" "DOTFILES_PATH"
-DOTFILES_PATH="${DOTFILES_PATH:-$HOME/.dotfiles2}"
+_q "Where do you want your dotfiles to be located? (default ~/.dotfiles)" "DOTFILES_PATH"
+DOTFILES_PATH="${DOTFILES_PATH:-$HOME/.dotfiles}"
 DOTFILES_PATH="$(eval echo "$DOTFILES_PATH")"
+export DOTFILES_PATH="$DOTFILES_PATH"
 
 dotly_inner_path="modules/dotly"
-export DOTFILES_PATH="$DOTFILES_PATH"
 export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 
 create_dotfiles_dir "$DOTFILES_PATH"
@@ -83,7 +85,7 @@ _a "Initializing your dotfiles git repository"
 git init >/dev/null
 
 _a "Cloning dotly"
-git submodule add "https://github.com/CodelyTV/dotly.git" "$dotly_inner_path" >/dev/null 2>&1
+git submodule add -b "$DOTLY_BRANCH" "https://github.com/$DOTLY_REPOSITORY.git" "$dotly_inner_path" >/dev/null 2>&1
 
 _a "Installing dotly dependencies"
 git submodule update --init --recursive >/dev/null 2>&1
