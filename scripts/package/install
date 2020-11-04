@@ -37,7 +37,7 @@ if platform::is_macos; then
     package::install $package_manager "$package_name" && exit 0 || true
   done
 else
-  for package_manager in apt dnf yum; do
+  for package_manager in apt dnf yum brew; do
     package::install $package_manager "$package_name" && exit 0 || true
   done
 fi
