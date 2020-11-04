@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -uo pipefail
+set -euo pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
