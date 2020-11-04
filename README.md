@@ -24,5 +24,5 @@ bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/master/installer
 
 Using wget
 ```bash
-wget -O - https://raw.githubusercontent.com/CodelyTV/dotly/master/installer | bash
+bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/master/installer)
 ```
