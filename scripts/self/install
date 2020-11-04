@@ -35,9 +35,7 @@ installer::install_fzf() {
 ##? Usage:
 ##?    install
 
-if ! platform::command_exists dot; then
-  dot() { "$DOTLY_PATH/bin/dot" "$@"; }
-fi
+dot() { "$DOTLY_PATH/bin/dot" "$@"; }
 
 output::answer "Creating dotfiles structure"
 dot dotfiles create 2>&1
