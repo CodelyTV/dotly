@@ -34,11 +34,11 @@ platform::command_exists "$package_name" && log::success "$package_name is alrea
 
 if platform::is_macos; then
   for package_manager in brew mas ports; do
-    package::install $package_manager "$package_name" && exit 0 || true
+    package::install $package_manager "$package_name" && exit 0 || :
   done
 else
   for package_manager in apt dnf yum brew; do
-    package::install $package_manager "$package_name" && exit 0 || true
+    package::install $package_manager "$package_name" && exit 0 || :
   done
 fi
 
