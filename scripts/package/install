@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 package::install() {
