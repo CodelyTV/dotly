@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 package::install() {
@@ -32,8 +30,24 @@ package_name="$1"
 
 platform::command_exists "$package_name" && log::success "$package_name is already installed" && exit 0
 
-for package_manager in brew apt dnf yum; do
-  package::install $package_manager "$package_name" && exit 0 || true
-done
+if platform::is_macos; then
+  for package_manager in brew mas ports; do
+    install_command_output=$(package::install $package_manager "$package_name")
+    install_command_exit_code=$?
+
+    if [ $install_command_exit_code -eq 0 ]; then
+        exit 0
+    fi
+  done
+else
+  for package_manager in apt dnf yum brew; do
+    install_command_output=$(package::install $package_manager "$package_name")
+    install_command_exit_code=$?
+
+    if [ $install_command_exit_code -eq 0 ]; then
+        exit 0
+    fi
+  done
+fi
 
 exit 2
