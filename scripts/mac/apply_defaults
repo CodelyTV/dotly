@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Apply opinionated mac defaults
+#?? 1.0.0
+##?
+##? Usage:
+##?   apply_defaults
+docs::eval "$@"
+
+sh "$DOTLY_PATH/scripts/mac/utils/defaults.sh"
