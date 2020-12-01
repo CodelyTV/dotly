@@ -5,7 +5,7 @@
 </p>
 
 <h1 align="center">
-  🌚 Simple, fast, productivity-increaser dotfiles framework
+  🌚<br>Simple, fast, productivity-increaser dotfiles framework
 </h1>
 
 <p align="center">
@@ -24,3 +24,6 @@ Using wget
 ```bash
 bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/master/installer)
 ```
+
+## Considerations using Apple M1
+* You should run your terminal/iTerm using Rosetta emulation
