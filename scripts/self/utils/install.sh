@@ -14,6 +14,7 @@ install_macos_custom() {
     brew install gnu-sed
     brew install findutils
     brew install bat
+    brew install hyperfine
   fi
 }
 

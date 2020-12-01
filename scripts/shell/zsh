@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? ZSH helpers
+#?? 1.0.0
+##?
+##? Usage:
+##?   zsh optimize
+##?   zsh test_performance
+##?   zsh reload_completions
+##?   zsh clean_cache
+docs::eval "$@"
+
+case $1 in
+"optimize")
+  asl_conf=$(sed 's/notice] store/critical] store/g' /etc/asl.conf)
+  sudo sh -c "echo '$asl_conf' > /etc/asl.conf"
+  echo "ASL only storing critical files!"
+
+  find "$DOTFILES_PATH/shell/zsh" -name '*.zwc' -exec rm -rf {} \;
+  find "$DOTFILES_PATH/shell/zsh" -name '*.old' -exec rm -rf {} \;
+  find "$DOTLY_PATH/modules/zimfw" -name '*.zwc' -exec rm -rf {} \;
+  find "$DOTLY_PATH/modules/zimfw" -name '*.old' -exec rm -rf {} \;
+
+  /bin/zsh -c "source ${ZDOTDIR:-${HOME}}/.zlogin"
+
+  dot shell zsh reload_completions
+  ;;
+"test_performance")
+  hyperfine '/bin/zsh -i -c exit' '/usr/local/bin/zsh -i -c exit' --warmup 1
+
+  echo ""
+  echo "ZSH INFO:"
+  echo "  🍎 macOS ZSH 📂 /bin/zsh           - $(/bin/zsh --version)"
+  echo "  🍺 Brew ZSH  📂 /usr/local/bin/zsh - $(/usr/local/bin/zsh --version)"
+
+  echo ""
+  echo "✨ Currently using $(command -v zsh) ✨"
+  ;;
+"clean_cache")
+  find "$HOME" -name '*.zwc' -delete
+  ;;
+"reload_completions")
+  echo "Now execute (copied to your clipboard):"
+  echo "autoload -U compaudit && autoload -Uz compinit && compinit"
+  echo -n "autoload -U compaudit && autoload -Uz compinit && compinit" | pbcopy
+  ;;
+*)
+  exit 1
+  ;;
+esac
