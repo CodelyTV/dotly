@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Show all changed files to master
+#?? 1.0.0
+##?
+##? Usage:
+##?   changed-filed
+docs::eval "$@"
+
+git diff --name-only master

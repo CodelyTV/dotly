@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? List contributors with number of commits
+#?? 1.0.0
+##?
+##? Usage:
+##?   contributors
+docs::eval "$@"
+
+git shortlog --summary --numbered
