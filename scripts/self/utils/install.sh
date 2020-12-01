@@ -3,7 +3,9 @@
 install_macos_custom() {
   # Install brew if not installed
   if ! [ -x "$(command -v brew)" ]; then
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+    export PATH="$PATH:/usr/local/bin"
   fi
 }
 
