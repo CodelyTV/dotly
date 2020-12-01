@@ -55,6 +55,11 @@ if ! str::contains zsh "$SHELL"; then
   sudo chsh -s "$(command -v zsh)"
 fi
 
+if platform::is_macos; then
+  output::answer "🍎 Setting up macOS platform"
+  install_macos_custom
+fi
+
 if ! platform::command_exists fzf; then
   installer::install_fzf
 else
