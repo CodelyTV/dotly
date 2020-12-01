@@ -10,8 +10,6 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##? Usage:
 ##?    git-discard
 
-docs::eval "$@"
-
 git add -A
 git reset --hard >/dev/null 2>&1
 echo 'All changes has been discarded!'

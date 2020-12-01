@@ -7,6 +7,5 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?
 ##? Usage:
 ##?   apply_defaults
-docs::eval "$@"
 
 sh "$DOTLY_PATH/scripts/mac/utils/defaults.sh"

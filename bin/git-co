@@ -10,6 +10,4 @@ source "$DOTFILES_PATH/scripts/core/_main.sh"
 ##? Usage:
 ##?    git-co <thing>
 
-docs::eval "$@"
-
 git checkout $thing
