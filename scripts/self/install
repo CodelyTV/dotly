@@ -40,6 +40,11 @@ dot() { "$DOTLY_PATH/bin/dot" "$@"; }
 output::answer "Creating dotfiles structure"
 dot dotfiles create 2>&1
 
+if platform::is_macos; then
+  output::answer "🍎 Setting up macOS platform"
+  install_macos_custom
+fi
+
 # @todo Backup if exists before
 output::answer "Setting up symlinks"
 dot symlinks apply 2>&1
@@ -53,11 +58,6 @@ fi
 if ! str::contains zsh "$SHELL"; then
   output::answer "Setting Zsh as the default shell (you'll have to logout and login to see the changes)"
   sudo chsh -s "$(command -v zsh)"
-fi
-
-if platform::is_macos; then
-  output::answer "🍎 Setting up macOS platform"
-  install_macos_custom
 fi
 
 if ! platform::command_exists fzf; then
