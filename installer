@@ -93,3 +93,6 @@ git submodule update --init --recursive >/dev/null 2>&1
 cd "$DOTLY_PATH"
 
 "$PWD/bin/dot" self install
+
+_a "🎉 dotly installed correctly! 🎉"
+git init >/dev/null
