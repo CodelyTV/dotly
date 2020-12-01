@@ -7,6 +7,4 @@ zmodule zsh-users/zsh-autosuggestions
 zmodule zsh-users/zsh-syntax-highlighting
 zmodule zimfw/completion
 
-ztermtitle='%~'
-
 zhighlighters=(main brackets)

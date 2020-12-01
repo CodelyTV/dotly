@@ -10,7 +10,6 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?   zsh test_performance
 ##?   zsh reload_completions
 ##?   zsh clean_cache
-docs::eval "$@"
 
 case $1 in
 "optimize")
