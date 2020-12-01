@@ -6,6 +6,14 @@ install_macos_custom() {
     CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
     export PATH="$PATH:/usr/local/bin"
+    mkdir -p "$HOME/bin"
+
+    brew install bash
+    brew install coreutils
+    brew install make
+    brew install gnu-sed
+    brew install findutils
+    brew install bat
   fi
 }
 
