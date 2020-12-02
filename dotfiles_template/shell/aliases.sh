@@ -9,7 +9,7 @@ alias ~="cd ~"
 
 # Git
 alias gaa="git add -A"
-alias gc=" git commit"
+alias gc="$DOTLY_PATH/bin/dot git commit"
 alias gca="git add --all && git commit --amend --no-edit"
 alias gco="git checkout"
 alias gd="$DOTLY_PATH/bin/dot git pretty-diff"
