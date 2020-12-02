@@ -20,13 +20,13 @@ fzf_prompt() {
 
   match="$(echo "$paths" |
     xargs -I % sh -c 'echo "$(basename $(dirname %)) $(basename %)"' |
-    fzf --height 100% --preview 'dot -h $(echo {} | cut -d" " -f 1) $(echo {} | cut -d" " -f 2)')"
+    fzf --height 100% --preview '$DOTLY_PATH/bin/dot -h $(echo {} | cut -d" " -f 1) $(echo {} | cut -d" " -f 2)')"
   printf "$match"
   read args
   if coll::is_empty "$args"; then
-    dot $match
+    $DOTLY_PATH/bin/dot $match
   else
-    dot $match "$args"
+    $DOTLY_PATH/bin/dot $match "$args"
   fi
 }
 
