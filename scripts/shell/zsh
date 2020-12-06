@@ -24,7 +24,7 @@ case $1 in
 
   /bin/zsh -c "source ${ZDOTDIR:-${HOME}}/.zlogin"
 
-  $DOTLY_PATH/bin/dot shell zsh reload_completions
+  "$DOTLY_PATH/bin/dot" shell zsh reload_completions
   ;;
 "test_performance")
   hyperfine '/bin/zsh -i -c exit' '/usr/local/bin/zsh -i -c exit' --warmup 1
