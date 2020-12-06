@@ -12,7 +12,8 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 docs::parse "$@"
 
 dotfiles::apply_templating() {
-  sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/zsh/.zshenv"
+  sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/bin/sdot"
+  sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/bash/.bashrc"
   sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/bash/.bashrc"
 }
 
