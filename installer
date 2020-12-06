@@ -96,6 +96,4 @@ cd "$DOTLY_PATH"
 
 "$PWD/bin/dot" self install
 
-git init >/dev/null
-
 _a "🎉 dotly installed correctly! 🎉"
