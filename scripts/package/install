@@ -37,7 +37,7 @@ if platform::is_macos; then
     install_command_exit_code=$?
 
     if [ $install_command_exit_code -eq 0 ]; then
-        exit 0
+      exit 0
     fi
   done
 else
@@ -46,7 +46,7 @@ else
     install_command_exit_code=$?
 
     if [ $install_command_exit_code -eq 0 ]; then
-        exit 0
+      exit 0
     fi
   done
 fi
