@@ -10,7 +10,7 @@ export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 installer::install_zsh() {
   output::error "zsh not installed, installing"
 
-  if ! "$DOTLY_PATH/bin/dot" package install zsh >/dev/null 2>&1; then
+  if ! "$DOTLY_PATH/bin/dot" package install zsh >/dev/null; then
     output::error "Could not install zsh!"
     exit 5
   fi
@@ -19,7 +19,7 @@ installer::install_zsh() {
 installer::install_fzf() {
   output::error "fzf not installed, installing"
 
-  if ! $DOTLY_PATH/bin/dot package install fzf >/dev/null 2>&1; then
+  if ! $DOTLY_PATH/bin/dot package install fzf >/dev/null; then
     output::error "Could not install fzf!"
     exit 5
   fi
@@ -27,12 +27,12 @@ installer::install_fzf() {
 
 if ! platform::command_exists cargo; then
   output::error "rust not installed, installing"
-  curl https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null 2>&1
+  curl https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null
   source "$HOME/.cargo/env"
 fi
 
-! platform::command_exists docpars && output::error "docpars not installed, installing" && cargo install docpars >/dev/null 2>&1
-! platform::command_exists delta && output::error "delta not installed, installing" && cargo install git-delta >/dev/null 2>&1
+! platform::command_exists docpars && output::error "docpars not installed, installing" && cargo install -q docpars >/dev/null
+! platform::command_exists delta && output::error "delta not installed, installing" && cargo install -q git-delta >/dev/null
 
 ##? Install dotly and setup dotfiles
 ##?
@@ -41,7 +41,7 @@ fi
 docs::parse "$@"
 
 output::answer "Creating dotfiles structure"
-"$DOTLY_PATH/bin/dot" dotfiles create >/dev/null 2>&1
+"$DOTLY_PATH/bin/dot" dotfiles create >/dev/null
 
 if platform::is_macos; then
   output::answer "🍎 Setting up macOS platform"
@@ -50,7 +50,7 @@ fi
 
 # @todo Backup if exists before
 output::answer "Setting up symlinks"
-"$DOTLY_PATH/bin/dot" symlinks apply >/dev/null 2>&1
+"$DOTLY_PATH/bin/dot" symlinks apply >/dev/null
 touch "$HOME/.z"
 
 ! platform::command_exists fzf && installer::install_fzf
@@ -58,11 +58,11 @@ touch "$HOME/.z"
 
 if ! str::contains zsh "$SHELL"; then
   output::answer "Setting zsh as the default shell"
-  sudo chsh -s "$(command -v zsh)" >/dev/null 2>&1
+  sudo chsh -s "$(command -v zsh)" >/dev/null
 fi
 
 output::answer "Installing zim"
-zsh "$ZIM_HOME/zimfw.zsh" install >/dev/null 2>&1
+zsh "$ZIM_HOME/zimfw.zsh" install >/dev/null
 
 output::answer "Installing completions"
 "$DOTLY_PATH/bin/dot" shell zsh reload_completions
