@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/package/utils/dump.sh"
+
+##? Import previously dumped packages from:
+##?  * Brew
+##?  * Python
+##?  * NPM
+##?
+##? Usage:
+##?   import
+docs::parse "$@"
+
+output::write "🎩 Let's import your packages (this could take a while)"
+
+platform::is_macos && output::header "Importing Brew apps from $HOMEBREW_DUMP_FILE_PATH" && package::brew_import
+
+platform::command_exists pip3 && output::header "Importing Python apps from $PYTHON_DUMP_FILE_PATH" && package::python_import
+platform::command_exists npm && output::header "Importing NPM apps from $NPM_DUMP_FILE_PATH" && package::npm_import
+
+output::solution 'All packages imported'
