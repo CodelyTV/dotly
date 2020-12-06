@@ -30,10 +30,10 @@ installer::install_fzf() {
 }
 
 ##? Install dotly and setup dotfiles
-#?? 1.0.0
 ##?
 ##? Usage:
 ##?    install
+docs::parse "$@"
 
 dot() { "$DOTLY_PATH/bin/dot" "$@"; }
 

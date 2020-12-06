@@ -5,10 +5,9 @@ set -euo pipefail
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Remove tracked files from control version (not the file) that are in the gitignore
-#?? 1.0.0
 ##?
 ##? Usage:
 ##?   apply-gitignore
-docs::eval "$@"
+docs::parse "$@"
 
 git ls-files --ignored --exclude-standard | xargs git rm --cached

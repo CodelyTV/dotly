@@ -2,6 +2,13 @@
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
+##? Install a package
+##?
+##? Usage:
+##?    install [package_name]
+##?
+docs::parse "$@"
+
 package::install() {
   local -r package_manager="$1"
   local -r package_to_install="$2"
@@ -19,12 +26,6 @@ package::install() {
 
   "$install_command" "$package_to_install"
 }
-
-##? Install a package
-##?
-##? Usage:
-##?    install [package_name]
-##?
 
 package_name="$1"
 
