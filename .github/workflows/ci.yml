@@ -21,10 +21,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Set current repository for pull requests
+        run: |
+          echo "DOTLY_PR_REPOSITORY=${{ github.event.pull_request.head.repo.full_name }}" >> $GITHUB_ENV
+
       - name: Set current repository and branch
         run: |
-          echo "DOTLY_REPOSITORY=CodelyTV/dotly" >> $GITHUB_ENV
+          echo "DOTLY_REPOSITORY=${DOTLY_PR_REPOSITORY:-CodelyTV/dotly}" >> $GITHUB_ENV
           echo "DOTLY_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
 
       - name: Install
-        run: echo "$HOME/.dotfiles" | bash installer
+        run: |
+          echo "DOTLY_REPOSITORY: $DOTLY_REPOSITORY"
+          echo "DOTLY_BRANCH: $DOTLY_BRANCH"
+          echo "$HOME/.dotfiles" | bash installer
