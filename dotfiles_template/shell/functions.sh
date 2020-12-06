@@ -5,7 +5,7 @@ function cdd() {
 function j() {
   fname=$(declare -f -F _z)
 
-  [ -n "$fname" ] || source "$DOTFILES_PATH/modules/z/z.sh"
+  [ -n "$fname" ] || source "$DOTLY_PATH/modules/z/z.sh"
 
   _z "$1"
 }
