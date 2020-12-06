@@ -17,9 +17,12 @@ dotfiles::apply_templating() {
   sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/bash/.bashrc"
 }
 
-# @todo Ensure it's not already created
-cp -r "$DOTLY_PATH/dotfiles_template/"* "$DOTFILES_PATH/"
+if [ ! -d "$DOTFILES_PATH/shell" ]; then
+  cp -r "$DOTLY_PATH/dotfiles_template/"* "$DOTFILES_PATH/"
 
-dotfiles::apply_templating
+  dotfiles::apply_templating
 
-log::success "Done!"
+  log::success "Done!"
+else
+  log::note "dotfiles already created, ignoring"
+fi
