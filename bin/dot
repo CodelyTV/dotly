@@ -1,79 +1,53 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -o pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Usage:
 ##?    dot
 ##?    dot <context>
-##?    dot <context> <cmd> [<args>...]
-##?    dot -h <context> <cmd>
-
-exit_if_empty() {
-  [ "${1}" == "" ] && die "No executable scripts" || true
-}
+##?    dot <context> <script> [<args>...]
+##?    dot -h | --help
+if [ "$1" == "-h" ] || [ "$1" = "--help" ]; then
+  docs::parse "$@"
+fi
 
 fzf_prompt() {
   local paths="$1"
-  exit_if_empty "$paths"
 
-  match="$(echo "$paths" |
+  script="$(echo "$paths" |
     xargs -I % sh -c 'echo "$(basename $(dirname %)) $(basename %)"' |
-    fzf --height 100% --preview '$DOTLY_PATH/bin/dot -h $(echo {} | cut -d" " -f 1) $(echo {} | cut -d" " -f 2)')"
-  printf "$match"
-  read args
-  if coll::is_empty "$args"; then
-    $DOTLY_PATH/bin/dot $match
-  else
-    $DOTLY_PATH/bin/dot $match "$args"
-  fi
+    fzf --height 100% --preview '$DOTLY_PATH/bin/dot $(echo {} | cut -d" " -f 1) $(echo {} | cut -d" " -f 2) -h')"
+
+  printf "%s" "$script"
+  read -r args
+
+  "$DOTLY_PATH/bin/dot" $script $args
 }
 
-is_executable() {
+script_exist() {
   [[ -x "${1}/scripts/${2}/${3}" ]]
 }
 
-ask_for_help() {
-  [ "${1}" == "true" ]
-}
-
-generate_help () {
-  bat --color always --style=numbers "${1}/scripts/${2}/${3}"
-}
-
-help="false"
-while getopts ":h" opt; do
-  shift 1
-  case $opt in
-    h) help="true"
-    ;;
-    [?])
-      echo "Invalid option -$opt" >&2
-      exit 1
-    ;;
-  esac
-done
-
 if args::has_no_args "$@"; then
-  fzf_prompt "$(paths::list_scripts_sorted)"
+  fzf_prompt "$(dot::list_scripts_path)"
 elif args::total_is 1 "$@"; then
-  fzf_prompt "$(paths::list_scripts_sorted | grep "/$1/")"
+  fzf_prompt "$(dot::list_scripts_path | grep "/$1/")"
 else
   context="$1"
-  command="$2"
+  script="$2"
 
   shift 2
-  export DOT_TRACE=${TRACE:-false}
 
   script_path=""
-  is_executable "$DOTLY_PATH" "$context" "$command" && script_path="$DOTLY_PATH"
-  is_executable "$DOTFILES_PATH" "$context" "$command" && script_path="$DOTFILES_PATH"
-  exit_if_empty "$script_path"
+  script_exist "$DOTFILES_PATH" "$context" "$script" && script_path="$DOTFILES_PATH"
+  script_exist "$DOTLY_PATH" "$context" "$script" && script_path="$DOTLY_PATH"
 
-  if ask_for_help $help; then
-    generate_help "${script_path}" "${context}" "${command}"
-  else
-    "${script_path}/scripts/${context}/${command}" "$@"
+  if [ -z "$script_path" ]; then
+    output::error "The script <$context / $script> doesn't exist"
+    exit 1
   fi
+
+  "${script_path}/scripts/${context}/${script}" "$@"
 fi

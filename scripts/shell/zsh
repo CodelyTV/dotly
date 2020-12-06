@@ -3,13 +3,13 @@
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? ZSH helpers
-#?? 1.0.0
 ##?
 ##? Usage:
 ##?   zsh optimize
 ##?   zsh test_performance
 ##?   zsh reload_completions
 ##?   zsh clean_cache
+docs::parse "$@"
 
 case $1 in
 "optimize")

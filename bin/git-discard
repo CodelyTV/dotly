@@ -2,13 +2,12 @@
 
 set -euo pipefail
 
-source "$DOTFILES_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Reset the status to the last commit
-#?? 1.0.0
 ##?
 ##? Usage:
-##?    git-discard
+##?    git discard
 
 git add -A
 git reset --hard >/dev/null 2>&1

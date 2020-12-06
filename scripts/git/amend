@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Add all files and then executes an amend
+##?
+##? Usage:
+##?   amend
+docs::parse "$@"
+
+git add -A
+git commit --amend
