@@ -5,7 +5,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##? Install a package
 ##?
 ##? Usage:
-##?    install [package_name]
+##?    install <package_name>
 ##?
 docs::parse "$@"
 
