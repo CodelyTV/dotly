@@ -97,3 +97,4 @@ cd "$DOTLY_PATH"
 "$PWD/bin/dot" self install
 
 _a "🎉 dotly installed correctly! 🎉"
+_a "Please, restart your terminal to see the changes"
