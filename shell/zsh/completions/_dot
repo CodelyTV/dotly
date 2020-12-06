@@ -1,8 +1,6 @@
 #compdef dot
 
-_command_for() {
-  ls -p "$DOTFILES_PATH/scripts/$1" | grep -v / | xargs echo
-}
+source "$DOTLY_PATH/scripts/core/_main.sh"
 
 _dot() {
   local curcontext="$curcontext" state line
@@ -10,18 +8,17 @@ _dot() {
 
   _arguments \
     '1: :->context' \
-    '2: :->command' \
+    '2: :->script' \
     '*: :->args'
-
-  existing_contexts=$(ls "$DOTFILES_PATH/scripts" | grep -v core | xargs echo)
 
   case $state in
   context)
+    existing_contexts=$(dot::list_contexts)
     _arguments "1:Context:($existing_contexts)"
     ;;
-  command)
-    existing_commands=$(_command_for $words[2])
-    _arguments "2:Command:($existing_commands)"
+  script)
+    existing_scripts=$(dot::list_context_scripts $words[2])
+    _arguments "2:Command:($existing_scripts)"
     ;;
   *)
     _files
