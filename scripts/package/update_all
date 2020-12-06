@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Update all packages
+##?
+##? Usage:
+##?   update_all
+docs::parse "$@"
+
+output::write "🎩 Let's update all your packages"
+
+if platform::is_macos; then
+  output::header '🍎 Updating App Store apps'
+  mas upgrade
+
+  output::header '🍺 Updating Brew and Brew apps (this could take a while)'
+  brew update >/dev/null 2>&1
+  brew outdated | xargs -n1 brew upgrade
+
+  output::header '🍻 Updating Brew Cask apps (this could take a while)'
+  OUTDATED_CASKS=$(brew outdated --cask)
+
+  if [ -n "$OUTDATED_CASKS" ]; then
+    echo "$OUTDATED_CASKS" | grep -v real-vnc | xargs -n1 brew cask install --force
+  fi
+fi
+
+platform::command_exists tldr && output::header '📜 Updating tldr database' && tldr --update
+platform::command_exists composer && output::header '🐘 Updating Composer' && composer self-update && composer global update
+platform::command_exists pip3 && output::header '🐍 Updating pip' && pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 install -U
+platform::command_exists gem && output::header '♦️ Updating gem' && gem update
+platform::command_exists npm && output::header '🌈 Updating npm' && npm install -g npm && npm update -g
+
+output::empty_line
+output::solution '👌 All packages has been updated'
