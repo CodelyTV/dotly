@@ -46,6 +46,7 @@ fi
 # @todo Backup if exists before
 output::answer "Setting up symlinks"
 "$DOTLY_PATH/bin/dot" symlinks apply >/dev/null 2>&1
+touch "$HOME/.z"
 
 ! platform::command_exists fzf && installer::install_fzf
 ! platform::command_exists zsh && installer::install_zsh
