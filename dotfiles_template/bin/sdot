@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "XXX_DOTFILES_PATH_XXX/shell/zsh/.zshenv"
+source "XXX_DOTFILES_PATH_XXX/shell/bash/.bashrc"
 
 ##? dot, but without environment variables
 ##?
