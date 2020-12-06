@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -o pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+#dot::list_contexts
+#dot::list_context_scripts "$1"
+dot::list_scripts_path
