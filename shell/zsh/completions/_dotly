@@ -1,0 +1,22 @@
+ #compdef dotly
+
+ _dotly() {
+   local curcontext="$curcontext" state line
+   typeset -A opt_args
+
+   _arguments \
+     '1: :->command' \
+     '*: :->args'
+
+   case $state in
+   command)
+     existing_commands=$(printf "%s" "self-update")
+     _arguments "1:Context:($existing_commands)"
+     ;;
+   *)
+     _files
+     ;;
+   esac
+ }
+
+ _dotly "$@"
