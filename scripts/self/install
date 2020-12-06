@@ -34,8 +34,6 @@ installer::install_fzf() {
 ##?    install
 docs::parse "$@"
 
-dot() { "$DOTLY_PATH/bin/dot" "$@"; }
-
 output::answer "Creating dotfiles structure"
 "$DOTLY_PATH/bin/dot" dotfiles create >/dev/null 2>&1
 
