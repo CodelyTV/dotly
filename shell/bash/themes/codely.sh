@@ -6,7 +6,7 @@ RED_COLOR="31"
 
 codely_theme() {
   LAST_CODE="$?"
-  current_dir=$(dot filesystem short_pwd)
+  current_dir=$(dot core short_pwd)
   STATUS_COLOR=$GREEN_COLOR
 
   if [ $LAST_CODE -ne 0 ]; then
