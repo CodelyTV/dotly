@@ -16,9 +16,13 @@ fi
 fzf_prompt() {
   local paths="$1"
 
-  script="$(echo "$paths" |
-    xargs -I % sh -c 'echo "$(basename $(dirname %)) $(basename %)"' |
-    fzf --height 100% --preview '"$DOTLY_PATH/bin/dot" $(echo {} | cut -d" " -f 1) $(echo {} | cut -d" " -f 2) -h')"
+  script="$(
+    echo "$paths" |
+      xargs -I % sh -c 'echo "$(basename $(dirname %)) $(basename %)"' |
+      fzf \
+        --height 100% \
+        --preview '"$DOTLY_PATH/bin/dot" $(echo {} | cut -d" " -f 1) $(echo {} | cut -d" " -f 2) -h'
+  )"
 
   printf "%s" "$script"
   read -r args
