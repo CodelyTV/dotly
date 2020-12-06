@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/package/utils/dump.sh"
+
+##? Dump all installed packages from:
+##?  * Brew
+##?  * Python
+##?  * NPM
+##?
+##? Usage:
+##?   dump
+docs::parse "$@"
+
+platform::is_macos && package::dump_brew && output::answer "Brew apps dumped on $HOMEBREW_DUMP_FILE_PATH"
+
+platform::command_exists pip && package::dump_python && output::answer "Python apps dumped on $PYTHON_DUMP_FILE_PATH"
+platform::command_exists npm && package::dump_npm && output::answer "NPM apps dumped on $NPM_DUMP_FILE_PATH"
+
+output::solution 'All packages dumped'
