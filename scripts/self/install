@@ -10,7 +10,7 @@ export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 installer::install_zsh() {
   output::error "Zsh not installed, installing"
 
-  if $DOTLY_PATH/bin/dot package install zsh 2>&1; then
+  if "$DOTLY_PATH/bin/dot" package install zsh 2>&1; then
     output::solution "Zsh installed!"
   else
     output::error "Could not install Zsh!"

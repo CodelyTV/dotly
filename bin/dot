@@ -9,6 +9,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?    dot <context>
 ##?    dot <context> <cmd> [<args>...]
 ##?    dot -h <context> <cmd>
+docs::parse
 
 exit_if_empty() {
   [ "${1}" == "" ] && die "No executable scripts" || true
@@ -39,7 +40,7 @@ ask_for_help() {
 }
 
 generate_help () {
-  bat --color always --style=numbers "${1}/scripts/${2}/${3}"
+  "${1}/scripts/${2}/${3}" -h
 }
 
 help="false"
