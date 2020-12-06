@@ -6,7 +6,7 @@ DIRTY="✗"
 NONE="✓"
 
 prompt_codelytv_pwd() {
-  prompt_short_dir=$(dot filesystem short_pwd)
+  prompt_short_dir=$("$DOTLY_PATH/bin/dot" filesystem short_pwd)
   print -n "%F{yellow}${prompt_short_dir}"
 }
 

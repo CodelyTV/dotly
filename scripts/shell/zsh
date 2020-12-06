@@ -3,13 +3,13 @@
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? ZSH helpers
-#?? 1.0.0
 ##?
 ##? Usage:
 ##?   zsh optimize
 ##?   zsh test_performance
 ##?   zsh reload_completions
 ##?   zsh clean_cache
+docs::parse "$@"
 
 case $1 in
 "optimize")
@@ -24,7 +24,7 @@ case $1 in
 
   /bin/zsh -c "source ${ZDOTDIR:-${HOME}}/.zlogin"
 
-  dot shell zsh reload_completions
+  "$DOTLY_PATH/bin/dot" shell zsh reload_completions
   ;;
 "test_performance")
   hyperfine '/bin/zsh -i -c exit' '/usr/local/bin/zsh -i -c exit' --warmup 1
