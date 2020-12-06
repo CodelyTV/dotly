@@ -41,9 +41,10 @@ case $1 in
   find "$HOME" -name '*.zwc' -delete
   ;;
 "reload_completions")
-  echo "Now execute (copied to your clipboard):"
-  echo "autoload -U compaudit && autoload -Uz compinit && compinit"
-  echo -n "autoload -U compaudit && autoload -Uz compinit && compinit" | pbcopy
+  zsh -i -c "autoload -U compaudit && autoload -Uz compinit && compinit"
+
+  output::empty_line
+  output::answer 'Now restart your terminal'
   ;;
 *)
   exit 1
