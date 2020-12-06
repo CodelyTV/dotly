@@ -89,10 +89,13 @@ git submodule add -b "$DOTLY_BRANCH" "https://github.com/$DOTLY_REPOSITORY.git" 
 
 _a "Installing dotly dependencies"
 git submodule update --init --recursive >/dev/null 2>&1
+curl https://sh.rustup.rs -sSf | sh
+cargo install docpars
 
 cd "$DOTLY_PATH"
 
 "$PWD/bin/dot" self install
 
-_a "🎉 dotly installed correctly! 🎉"
 git init >/dev/null
+
+_a "🎉 dotly installed correctly! 🎉"
