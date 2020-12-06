@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -o pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Usage:
+##?    dotly self-update
+docs::parse "$@"
+
+case $1 in
+"self-update")
+  dot self update
+  ;;
+*)
+  exit 1
+  ;;
+esac
