@@ -5,11 +5,10 @@ set -euo pipefail
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Show a pretty git diff using fzf (and copy selected path to the clipboard)
-#?? 1.0.0
 ##?
 ##? Usage:
 ##?   pretty-diff
-docs::eval "$@"
+docs::parse "$@"
 
 if (! git::is_in_repo); then
   echo "Not in a git repo!"
