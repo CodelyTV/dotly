@@ -56,3 +56,6 @@ fi
 
 output::answer "Installing zim"
 zsh "$ZIM_HOME/zimfw.zsh" install >/dev/null 2>&1
+
+output::answer "Installing completions"
+"$DOTLY_PATH/bin/dot" shell zsh reload_completions
