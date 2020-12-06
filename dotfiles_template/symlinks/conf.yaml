@@ -5,9 +5,6 @@
       create: true
       force: true
 
-- create:
-      - ~/.z
-
 - link:
     ~/.bash_profile: shell/bash/.bash_profile
     ~/.bashrc: shell/bash/.bashrc
