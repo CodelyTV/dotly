@@ -35,4 +35,4 @@ platform::command_exists gem && output::header '♦️ Updating gem' && gem upda
 platform::command_exists npm && output::header '🌈 Updating npm' && npm install -g npm && npm update -g
 
 output::empty_line
-output::solution '👌 All packages has been updated'
+output::solution '👌 All your packages have been successfully updated'
