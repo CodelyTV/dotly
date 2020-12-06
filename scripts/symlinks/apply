@@ -18,6 +18,7 @@ symlinks::apply() {
 ##? Usage:
 ##?    apply
 ##?
+docs::parse "$@"
 
 symlinks::apply "conf.yaml"
 

@@ -35,7 +35,7 @@ create_dotfiles_dir() {
 
     mv "$1" "$backup_path"
   else
-    _a "Ok! dotfiles wll be located in: ${purple}$DOTFILES_PATH${normal}"
+    _a "Ok! dotfiles will be located in: ${purple}$DOTFILES_PATH${normal}"
   fi
 
   mkdir -p "$1"
@@ -89,10 +89,12 @@ git submodule add -b "$DOTLY_BRANCH" "https://github.com/$DOTLY_REPOSITORY.git" 
 
 _a "Installing dotly dependencies"
 git submodule update --init --recursive >/dev/null 2>&1
+! command_exists cargo && _e "rust not installed, installing" && curl https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null 2>&1
+! command_exists docpars && _e "docpars not installed, installing" && cargo install docpars >/dev/null 2>&1
 
 cd "$DOTLY_PATH"
 
 "$PWD/bin/dot" self install
 
 _a "🎉 dotly installed correctly! 🎉"
-git init >/dev/null
+_a "Please, restart your terminal to see the changes"
