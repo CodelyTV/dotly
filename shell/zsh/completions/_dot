@@ -18,7 +18,7 @@ _dot() {
     ;;
   script)
     existing_scripts=$(dot::list_context_scripts $words[2])
-    _arguments "2:Command:($existing_scripts)"
+    _arguments "2:Script:($existing_scripts)"
     ;;
   *)
     _files
