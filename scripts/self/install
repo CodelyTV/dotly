@@ -34,7 +34,7 @@ docs::parse "$@"
 dot() { "$DOTLY_PATH/bin/dot" "$@"; }
 
 output::answer "Creating dotfiles structure"
-"$DOTLY_PATH/bin/dot" dotfiles create 2>&1
+"$DOTLY_PATH/bin/dot" dotfiles create >/dev/null 2>&1
 
 if platform::is_macos; then
   output::answer "🍎 Setting up macOS platform"
@@ -45,14 +45,13 @@ fi
 output::answer "Setting up symlinks"
 "$DOTLY_PATH/bin/dot" symlinks apply >/dev/null 2>&1
 
+! platform::command_exists fzf && installer::install_fzf
 ! platform::command_exists zsh && installer::install_zsh
 
 if ! str::contains zsh "$SHELL"; then
   output::answer "Setting zsh as the default shell"
   sudo chsh -s "$(command -v zsh)" >/dev/null 2>&1
 fi
-
-! platform::command_exists fzf && installer::install_fzf
 
 output::answer "Installing zim"
 zsh "$ZIM_HOME/zimfw.zsh" install >/dev/null 2>&1
