@@ -75,6 +75,9 @@ if ! command_exists git; then
   elif command_exists brew; then
     _a "Installing using brew"
     yes | brew install git >/dev/null 2>&1
+  elif command_exists pacman; then
+    _a "Installing using pacman"
+    sudo pacman -S --noconfirm git >/dev/null 2>&1
   else
     _e "Could not install git, no package provider found"
     exit 1

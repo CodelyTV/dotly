@@ -41,7 +41,7 @@ if platform::is_macos; then
     fi
   done
 else
-  for package_manager in apt dnf yum brew; do
+  for package_manager in apt dnf yum brew pacman; do
     install_command_output=$(package::install $package_manager "$package_name")
     install_command_exit_code=$?
 
