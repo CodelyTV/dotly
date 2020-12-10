@@ -8,6 +8,7 @@ package::brew_dump() {
   mkdir -p "$DOTFILES_PATH/os/mac/brew"
 
   brew bundle dump --file="$HOMEBREW_DUMP_FILE_PATH" --force
+  brew bundle --file="$HOMEBREW_DUMP_FILE_PATH" --force cleanup
 }
 
 package::brew_import() {
