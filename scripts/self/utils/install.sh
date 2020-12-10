@@ -11,16 +11,16 @@ install_macos_custom() {
   mkdir -p "$HOME/bin"
 
   output::answer "Installing needed gnu packages"
-  brew install bash >/dev/null 2>&1
-  brew install coreutils >/dev/null 2>&1
-  brew install make >/dev/null 2>&1
-  brew install gnu-sed >/dev/null 2>&1
-  brew install findutils >/dev/null 2>&1
-  brew install bat >/dev/null 2>&1
-  brew install hyperfine >/dev/null 2>&1
+  brew install bash >/dev/null
+  brew install coreutils >/dev/null
+  brew install make >/dev/null
+  brew install gnu-sed >/dev/null
+  brew install findutils >/dev/null
+  brew install bat >/dev/null
+  brew install hyperfine >/dev/null
 
   output::answer "Installing mas"
-  brew install mas >/dev/null 2>&1
+  brew install mas >/dev/null
 }
 
 install_linux_custom() {
