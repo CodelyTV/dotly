@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+{
+
 set -euo pipefail
 
 ##? Setups the environment
@@ -99,3 +101,5 @@ cd "$DOTLY_PATH"
 
 _a "🎉 dotly installed correctly! 🎉"
 _a "Please, restart your terminal to see the changes"
+
+}
