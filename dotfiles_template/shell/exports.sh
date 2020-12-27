@@ -24,3 +24,7 @@ export path=(
   "/usr/sbin"
   "/sbin"
 )
+
+if ${SHELL##*/} -eq "bash"; then
+  PROMPT_COMMAND="__right_prompt"
+fi
