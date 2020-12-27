@@ -10,3 +10,7 @@ PATH=$(
 export PATH
 
 source "$DOTLY_PATH/shell/bash/themes/codely.sh"
+
+for bash_file in "$DOTLY_PATH"/shell/bash/completions/*.sh; do
+  source $bash_file
+done
