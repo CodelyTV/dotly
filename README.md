@@ -27,3 +27,13 @@ bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/master/install
 
 ## Considerations using Apple M1
 * You should run your terminal/iTerm using Rosetta emulation
+
+Using curl
+```bash
+arch -x86_64 bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/master/installer)
+```
+
+Using wget
+```bash
+arch -x86_64 bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/master/installer)
+```
