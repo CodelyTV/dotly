@@ -2,10 +2,12 @@
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
-##? Some defaults utils
+##? Some defaults utils to view your changes, import and export.
 ##?
 ##? Usage:
 ##?   defaults view_changed
+##?   defaults export /path/to/folder
+##?   defaults import /path/to/folder
 docs::parse "$@"
 
 case $1 in
