@@ -62,6 +62,30 @@ export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 create_dotfiles_dir "$DOTFILES_PATH"
 cd "$DOTFILES_PATH"
 
+case "$OSTYPE" in
+  darwin*)
+    _a "Updating macOS 🌍"
+    sudo softwareupdate -i -a
+    
+    _a "Checking if Command Line Tools are installed 🕵️‍♂️"
+    clt=$(xcode-select --install 2>&1 | grep installed)
+
+    if [[ -z $clt ]]; then
+      _a "Installing Command Line Tools 📺"
+      xcode-select --install
+    fi
+
+    # Homebrew install
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew update
+    brew upgrade
+    ;;
+
+  *)
+    echo
+    ;;
+esac 
+
 if ! command_exists git; then
   _e "git not installed, trying to install"
 
