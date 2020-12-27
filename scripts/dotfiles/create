@@ -19,6 +19,8 @@ dotfiles::apply_templating() {
 
 if [ ! -d "$DOTFILES_PATH/shell" ]; then
   cp -r "$DOTLY_PATH/dotfiles_template/"* "$DOTFILES_PATH/"
+  mkdir -p "$HOME/.ssh/{control,config.d}" && chmod -R 0700 "$HOME/.ssh"
+
 
   dotfiles::apply_templating
 
