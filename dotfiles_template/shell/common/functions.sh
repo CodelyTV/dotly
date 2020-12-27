@@ -35,14 +35,3 @@ reverse-search() {
   typeset -f zle-line-init >/dev/null && zle zle-line-init
   return $ret
 }
-
-if ${SHELL##*/} -eq "bash"; then
-  __right_prompt() {
-    RIGHT_PROMPT=""
-    [[ ! -z $RPS1 ]] && RIGHT_PROMPT=$RPS1 || RIGHT_PROMPT=$RPROMPT
-    if [[ ! -z $RIGHT_PROMPT ]]; then
-      n=$(($COLUMNS-${#RIGHT_PROMPT}))
-      printf "%${n}s$RIGHT_PROMPT\\r"
-    fi
-  }
-fi

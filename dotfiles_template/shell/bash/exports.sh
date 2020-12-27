@@ -1,0 +1,1 @@
+export PROMPT_COMMAND="__right_prompt"
