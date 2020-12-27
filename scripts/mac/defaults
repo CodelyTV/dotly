@@ -15,6 +15,17 @@ case $1 in
 
   git diff -w --no-index "$DOTLY_PATH/scripts/mac/utils/macos-11.0-defaults" "$current_defaults_path" | delta --side-by-side
   ;;
+"export")
+  local export_plist_path="${2:-/tmp/defaults-plist}"
+  [[ -d "$export_path" ]] || mkdir -p "$export_plist_path"
+  defaults domains | tr ", " "\n" | sed -r '/^\s*$/d' | xargs -I_ defaults export _ "$export_plist_path/_.plist"
+  ;;
+"import")
+  local import_plist_path="${2:-/tmp/defaults-plist}"
+  if [[ -d "$import_plist_path" ]]; then
+    find $import_plist_path -name "*.plist" | xargs -I{} sh -c 'defaults import  "$(basename ${1%.*})" {}' -- {}
+  fi
+  ;;
 *)
   exit 1
   ;;
