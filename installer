@@ -68,9 +68,9 @@ case "$OSTYPE" in
     sudo softwareupdate -i -a
     
     _a "Checking if Command Line Tools are installed 🕵️‍♂️"
-    clt=$(xcode-select --install 2>&1 | grep installed)
-
-    if [[ -z $clt ]]; then
+    
+    xcode-select --install 2>&1 | grep installed > /dev/null
+    if [[ $? ]]; then
       _a "Installing Command Line Tools 📺"
       xcode-select --install
     fi
