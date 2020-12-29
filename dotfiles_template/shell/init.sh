@@ -20,20 +20,20 @@ case "$OSTYPE" in
 esac
 
 source_files=(
-    "$DOTFILES_PATH/shell/common/aliases.sh"
+    "$DOTFILES_PATH/shell/aliases.sh"
     "$DOTFILES_PATH/shell/$MYSHELL/aliases.sh"
     "$DOTFILES_PATH/shell/$MYSHELL/$OSNAME/aliases.sh"
     "$DOTFILES_PATH/shell/machines/$(hostname)/aliases.sh"
 
-    "$DOTFILES_PATH/shell/common/exports.sh"
+    "$DOTFILES_PATH/shell/exports.sh"
     "$DOTFILES_PATH/shell/$MYSHELL/exports.sh"
     "$DOTFILES_PATH/shell/$MYSHELL/$OSNAME/exports.sh"
     "$DOTFILES_PATH/shell/machines/$(hostname)/exports.sh"
 
-    "$DOTFILES_PATH/shell/common/exports.sh"
-    "$DOTFILES_PATH/shell/$MYSHELL/exports.sh"
-    "$DOTFILES_PATH/shell/$MYSHELL/$OSNAME/exports.sh"
-    "$DOTFILES_PATH/dotfiles_template/shell/machines/$(hostname)/exports.sh"
+    "$DOTFILES_PATH/shell/functions.sh"
+    "$DOTFILES_PATH/shell/$MYSHELL/functions.sh"
+    "$DOTFILES_PATH/shell/$MYSHELL/$OSNAME/functions.sh"
+    "$DOTFILES_PATH/shell/machines/$(hostname)/functions.sh"
 )
 
 
