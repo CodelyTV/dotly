@@ -2,6 +2,8 @@
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
+DOTLY_SETTINGS_PATH="${DOTLY_PATH}/os/mac/settings"
+
 ##? Some defaults utils to view your changes, import and export.
 ##?
 ##? Usage:
@@ -18,12 +20,12 @@ case $1 in
   git diff -w --no-index "$DOTLY_PATH/scripts/mac/utils/macos-11.0-defaults" "$current_defaults_path" | delta --side-by-side
   ;;
 "export")
-  export_plist_path="${2:-/tmp/defaults-plist}"
+  export_plist_path="${2:-$DOTLY_SETTINGS_PATH}"
   [[ -d "$export_plist_path" ]] || mkdir -p "$export_plist_path"
   defaults domains | tr ", " "\n" | sed -r '/^\s*$/d' | xargs -I_ defaults export _ "$export_plist_path/_.plist"
   ;;
 "import")
-  import_plist_path="${2:-/tmp/defaults-plist}"
+  import_plist_path="${2:-$DOTLY_SETTINGS_PATH}"
   if [[ -d "$import_plist_path" ]]; then
     find $import_plist_path -name "*.plist" | xargs -I{} sh -c 'defaults import  "$(basename ${1%.*})" {}' -- {}
   fi
