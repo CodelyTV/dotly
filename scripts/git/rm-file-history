@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##?   Remove completely a file from the repo with its history
+##? so it won't be available through commits. Useful to remove
+##? files with passwords or similar. 
+##?
+##? Usage:
+##?   rm-file-history "file"
+docs::parse "$@"
+
+git filter-branch --index-filter 'git rm --cached --ignore-unmatch $2' HEAD
