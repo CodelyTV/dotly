@@ -10,20 +10,21 @@ PATH=$(
 export PATH
 
 themes_paths=(
-    "$DOTFILES_PATH/shell/$MYSHELL/themes"
-    "$DOTFILES_PATH/shell/themes"
-    "$DOTLY_PATH/shell/$MYSHELL/themes"
+    "$DOTFILES_PATH/shell/bash/themes"
+    "$DOTLY_PATH/shell/bash/themes"
 )
 
 SHELL_THEME=${SHELL_THEME:-codelytv}
 
-for theme_path in ${themes_paths[@]}; do
-  theme_path="${theme_path}/$SHELL_THEME.sh"
-  [ -f "$theme_path" ] && source "$theme_path" && break
+for THEME_PATH in ${themes_paths[@]}; do
+  THEME_PATH="${THEME_PATH}/$SHELL_THEME.sh"
+  [ -f "$THEME_PATH" ] && source "$THEME_PATH" && break
 done
 
-[ -f "$DOTLY_PATH/shell/bash/themes/${SHELL_THEME:-codelytv}.sh" ] && source "$DOTLY_PATH/shell/bash/themes/${$SHELL_THEME:-codelytv}.sh"
-
 for bash_file in "$DOTLY_PATH"/shell/bash/completions/*.sh; do
-  source $bash_file
+  source "$bash_file"
+done
+
+for bash_file in "$DOTFILES_PATH"/shell/bash/completions/*.sh; do
+  source "$bash_file"
 done
