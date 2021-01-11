@@ -21,6 +21,10 @@ for THEME_PATH in ${themes_paths[@]}; do
   [ -f "$THEME_PATH" ] && source "$THEME_PATH" && break
 done
 
+for bash_file in "$DOTLY_PATH"/shell/bash/completions/*.sh; do
+  source "$bash_file"
+done
+
 for bash_file in "$DOTFILES_PATH"/shell/bash/completions/*.sh; do
   source "$bash_file"
 done
