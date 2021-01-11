@@ -1,0 +1,10 @@
+Host *
+	Protocol 2
+	Compression yes
+	LogLevel INFO
+	TCPKeepAlive yes
+	ServerAliveInterval 20
+	ServerAliveCountMax 10
+	PreferredAuthentication publickey
+	IdentityFile ~/.ssh/id_rsa
+	RemoteForward 3333 localhost:22
