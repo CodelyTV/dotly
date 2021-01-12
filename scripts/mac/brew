@@ -22,6 +22,7 @@ case $1 in
     output::write "This will execute the command... "
     output::write "    $cleanup_cmd"
     if [[ -f $HOMEBREW_DUMP_FILE_PATH ]]; then
+      output::question "Still want to perform the action?" confirm_action
       $(which brew) bundle --file="${HOMEBREW_DUMP_FILE_PATH}" --force cleanup
       output::question "Do you want to execute additional 'brew cleanup'" brew_cleanup
       [[ ! -z $brew_cleanup ]] && $(which brew) cleanup
