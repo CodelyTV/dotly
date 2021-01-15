@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+{
+
 set -euo pipefail
 
 ##? Setups the environment
@@ -79,8 +81,25 @@ if ! command_exists git; then
     _a "Installing using pacman"
     sudo pacman -S --noconfirm git >/dev/null 2>&1
   else
-    _e "Could not install git, no package provider found"
-    exit 1
+      case "$OSTYPE" in
+        darwin*)
+          #_a "Updating macOS 🌍"
+          #sudo softwareupdate -i -a
+          
+          _a "Checking if Command Line Tools are installed 🕵️‍♂️"
+          
+          xcode-select --install 2>&1 | grep installed > /dev/null
+          if [[ $? ]]; then
+            _a "Installing Command Line Tools 📺"
+            xcode-select --install
+            _q "Press a key after command line tools has finished to continue...👇" "CLT_INSTALLED"
+          fi
+          ;;
+        *)
+          _e "Could not install git, no package provider found"
+          exit 1
+          ;;
+      esac
   fi
 fi
 
@@ -99,3 +118,5 @@ cd "$DOTLY_PATH"
 
 _a "🎉 dotly installed correctly! 🎉"
 _a "Please, restart your terminal to see the changes"
+
+}
