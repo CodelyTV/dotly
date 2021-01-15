@@ -50,11 +50,13 @@ _w "github account in:"
 _w "  - Github > Settings > SSH and GPG Keys > Add new SSH key"
 _w
 
+GITHUB_USER=""
 while [ -z "$GITHUB_USER" ]; do
     _q "👤 Which is your github user?" "GITHUB_USER"
 done
 
-while [ -z "$GITHUB_USER" ]; do
+GITHUB_REPOSITORY=""
+while [ -z "$GITHUB_REPOSITORY" ]; do
     _q "📦 Which is your github repository?" "GITHUB_USER"
 done
 
@@ -104,7 +106,7 @@ if ! command_exists git; then
   fi
 fi
 
-git clone git@github.com:$GITHUB_USER/$DOTFILES_REPOSITORY.git "$DOTFILES_PATH"
+git clone git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY.git "$DOTFILES_PATH"
 cd "$DOTFILES_PATH"
 git submodule update --init --recursive
 "$DOTLY_PATH/bin/dot" self install
