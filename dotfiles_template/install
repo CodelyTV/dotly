@@ -57,7 +57,7 @@ done
 
 GITHUB_REPOSITORY=""
 while [ -z "$GITHUB_REPOSITORY" ]; do
-    _q "📦 Which is your github repository?" "GITHUB_USER"
+    _q "📦 Which is your github repository?" "GITHUB_REPOSITORY"
 done
 
 _q "Where do you want your dotfiles to be located? (default ~/.dotfiles)" "DOTFILES_PATH"
