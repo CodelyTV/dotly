@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+
+{
+
+set -euo pipefail
+
+##? Setups the environment
+##?
+##? Usage:
+##?    install
+
+
+
+
+red='\033[0;31m'
+green='\033[0;32m'
+purple='\033[0;35m'
+normal='\033[0m'
+
+_w() {
+  local -r text="${1:-}"
+  echo -e "$text"
+}
+_a() { _w " > $1"; }
+_e() { _a "${red}$1${normal}"; }
+_s() { _a "${green}$1${normal}"; }
+#_q() { read -rp "🤔 $1: " "$2"; }
+_q() { echo -e "🤔 $1: "; read -r "$2"; }
+
+current_timestamp() { date +%s; }
+
+
+
+command_exists() {
+  type "$1" >/dev/null 2>&1
+}
+
+_w "  ┌────────────────────────────────────┐"
+_w "~ │ 🚀 Welcome to the ${green}dotly${normal} restorer! │ ~"
+_w "  └────────────────────────────────────┘"
+_w
+
+_e "¡¡IMPORTANT!!"
+_w " This installer only works if your dotfiles are in Github"
+_w
+
+_w "  Remember that if your dotfiles repository is private you"
+_w "need to generate or restore the ssh key and added to your"
+_w "github account in:"
+_w "  - Github > Settings > SSH and GPG Keys > Add new SSH key"
+_w
+
+while [ -z "$GITHUB_USER" ]; do
+    _q "👤 Which is your github user?" "GITHUB_USER"
+done
+
+while [ -z "$GITHUB_USER" ]; do
+    _q "📦 Which is your github repository?" "GITHUB_USER"
+done
+
+_q "Where do you want your dotfiles to be located? (default ~/.dotfiles)" "DOTFILES_PATH"
+DOTFILES_PATH="${DOTFILES_PATH:-$HOME/.dotfiles}"
+DOTFILES_PATH="$(eval echo "$DOTFILES_PATH")"
+export DOTFILES_PATH="$DOTFILES_PATH"
+
+if ! command_exists git; then
+  _e "git not installed, trying to install"
+
+  if command_exists apt; then
+    _a "Installing using apt"
+    sudo apt -y install git >/dev/null 2>&1
+  elif command_exists dnf; then
+    _a "Installing using dnf"
+    sudo dnf -y install git >/dev/null 2>&1
+  elif command_exists yum; then
+    _a "Installing using yum"
+    yes | sudo yum install git >/dev/null 2>&1
+  elif command_exists brew; then
+    _a "Installing using brew"
+    yes | brew install git >/dev/null 2>&1
+  elif command_exists pacman; then
+    _a "Installing using pacman"
+    sudo pacman -S --noconfirm git >/dev/null 2>&1
+  else
+      case "$OSTYPE" in
+        darwin*)
+          #_a "Updating macOS 🌍"
+          #sudo softwareupdate -i -a
+          
+          _a "Checking if Command Line Tools are installed 🕵️‍♂️"
+          
+          xcode-select --install 2>&1 | grep installed > /dev/null
+          if [[ $? ]]; then
+            _a "Installing Command Line Tools 📺"
+            xcode-select --install
+            _q "Press a key after command line tools has finished to continue...👇" "CLT_INSTALLED"
+          fi
+          ;;
+        *)
+          _e "Could not install git, no package provider found"
+          exit 1
+          ;;
+      esac
+  fi
+fi
+
+git clone git@github.com:$GITHUB_USER/$DOTFILES_REPOSITORY.git "$DOTFILES_PATH"
+cd "$DOTFILES_PATH"
+git submodule update --init --recursive
+"$DOTLY_PATH/bin/dot" self install
+_a "🎉 dotfiles restored! 🎉"
+
+_q "📦 Do you want to import previous installed packages? [Y/n]" "USER_IMPORT_PACKAGES"
+USER_IMPORT_PACKAGES=${USER_IMPORT_PACKAGES:-'Y'}
+[[ "$USER_IMPORT_PACKAGES" =~ ^[Yy] ]] && "$DOTLY_PATH/bin/dot" package import
+
+if [[ "$OSTYPE" =~ ^[darwin] ]]; then
+  _w
+  _w "If you want to import your previous macOS settings, if would be done from the"
+  _w "default directory $DOTFILES_PATH/os/mac/settings, if you want to restore it"
+  _w "from another path, do it manually executing 'dot mac defaults import /path/to'"
+  _q "⚙️ Do you want to import stored macOS configuration? [y/N]" "USER_OSX_SETTINGS"
+  [[ "$USER_OSX_SETTINGS" =~ ^[Yy] ]] && "$DOTLY_PATH/bin/dot" mac defaults import
+fi
+_a "🎉 dotfiles restored! 🎉"
+_a "Please, restart your terminal to see the changes."
+echo "Press a key to exit the terminal..."
+_q "" "REPLY"
+exit
+}
