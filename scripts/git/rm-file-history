@@ -9,7 +9,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##? files with passwords or similar. 
 ##?
 ##? Usage:
-##?   rm-file-history "file"
+##?   rm-file-history <file>
 docs::parse "$@"
 
-git filter-branch --index-filter 'git rm --cached --ignore-unmatch $2' HEAD
+git filter-branch --index-filter 'git rm --cached --ignore-unmatch $1' HEAD
