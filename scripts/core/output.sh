@@ -12,6 +12,13 @@ output::write() {
 output::answer() { output::write " > $1"; }
 output::error() { output::answer "${red}$1${normal}"; }
 output::solution() { output::answer "${green}$1${normal}"; }
-output::question() { read -rp "🤔 $1: " "$2"; }
+output::question() {
+  if [ platform::is_macos ]; then
+    output::answer "🤔 $1: ";
+    read -r "$2";
+  else
+    read -rp " $1: " "$2"
+  fi
+}
 output::empty_line() { echo ''; }
 output::header() { output::empty_line; output::write "${bold_blue}---- $1 ----${normal}"; }
