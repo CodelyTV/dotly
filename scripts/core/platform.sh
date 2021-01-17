@@ -16,6 +16,6 @@ platform::is_wsl() {
   grep -qEi "(Microsoft|WSL|microsoft)" /proc/version &> /dev/null
 }
 
-platform:wsl_home_path(){
+platform::wsl_home_path(){
   wslpath "$(wslvar USERPROFILE 2> /dev/null)"
 }
