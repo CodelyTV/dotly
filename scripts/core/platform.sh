@@ -12,7 +12,7 @@ platform::is_linux() {
   [[ $(uname -s) == "Linux" ]]
 }
 
-platform:is_wsl() {
+platform::is_wsl() {
   grep -qEi "(Microsoft|WSL|microsoft)" /proc/version &> /dev/null
 }
 
