@@ -5,7 +5,7 @@
 ## Restore your Dotfiles
 
 ```bash
-export GITHUB_USER=""
+export GITHUB_USER="" #Write your GITHUB USER in this variable
 export DOTFILES_REPOSITORY="dotfiles"
 export DOTFILES_PATH="${HOME}/.dotfiles"
 export DOTLY_PATH="$DOTFILES_PATH/modules/dotly"
@@ -13,7 +13,7 @@ export DOTLY_PATH="$DOTFILES_PATH/modules/dotly"
 #cat ~/.ssh/id_rsa.pub | pbcopy # Uncoment if you have generated a new key
 #      In Linux use 'xclip -selection clipboard'
 # Add to Github > Settings > SSH and GPG Keys > Add new SSH key
-xcode-select --install
+[[ "$OSTYPE" =~ ^[darwin] ]] && xcode-select --install
 #rm -rf "$DOTFILES_PATH" "~/.dotly" # Optional step
 git clone git@github.com:$GITHUB_USER/$DOTFILES_REPOSITORY.git "$DOTFILES_PATH"
 cd "$DOTFILES_PATH"
