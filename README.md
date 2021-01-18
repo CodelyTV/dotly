@@ -62,24 +62,4 @@ This will save your packages in `$DOTFILES_PATH/os/<os_name>/<package_manager>`,
 
 ## Restoring your dotfiles
 
-After you have done the git push you will have a README.md file where you have the steps to do, which are (pay attention at lines 6, 7 maybe you want to change something):
-
-```bash
-export GITHUB_USER="CodelyTV"
-export DOTFILES_REPOSITORY="dotfiles"
-export DOTFILES_PATH="${HOME}/.dotfiles"
-export DOTLY_PATH="$DOTFILES_PATH/modules/dotly"
-#ssh-keygen # Uncoment to generate your ssh key
-#cat ~/.ssh/id_rsa.pub | pbcopy # Uncoment if you have generated a new key
-#      In Linux use 'xclip -selection clipboard'
-# Add to Github > Settings > SSH and GPG Keys > Add new SSH key
-xcode-select --install
-#rm -rf "$DOTFILES_PATH" "~/.dotly" # Optional step
-git clone git@github.com:$GITHUB_USER/$DOTFILES_REPOSITORY.git "$DOTFILES_PATH"
-cd "$DOTFILES_PATH"
-git submodule update --init --recursive
-"$DOTLY_PATH/bin/dot" self install
-"$DOTLY_PATH/bin/dot" package import
-echo "Press a key to exit the terminal and later reopen it..."
-exit
-```
+After you have done the git push you will have a README.md file where you have the steps to do.
