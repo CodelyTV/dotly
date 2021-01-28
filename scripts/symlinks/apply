@@ -20,6 +20,16 @@ symlinks::apply() {
 ##?
 docs::parse "$@"
 
+output::write "This will replace your:"
+output::write "    ~/.bashrc"
+output::write "    ~/.bash_profile"
+output::write "    ~/.zshrc"
+output::write "    ~/.zshenv"
+output::write "  Answer \"n\" if you prefer to do a backup first"
+echo
+output::question "Do you still want to continue? [Y/n]" "REPLY"
+[[ "$REPLY" =~ ^[Nn] ]] && output::write "After you did the backup exec 'dot symlinks apply' and restart your terminal." && exit 1
+
 symlinks::apply "conf.yaml"
 
 if platform::is_macos; then
