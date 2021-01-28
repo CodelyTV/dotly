@@ -5,6 +5,9 @@
       create: true
       force: true
 
+- create:
+    - ~/.ssh/control
+
 - link:
     ~/.bash_profile: shell/bash/.bash_profile
     ~/.bashrc: shell/bash/.bashrc
@@ -13,3 +16,8 @@
     ~/.zshenv: shell/zsh/.zshenv
     ~/.zshrc: shell/zsh/.zshrc
     ~/.inputrc: shell/.inputrc
+    ~/.ssh/config.d: ssh/config.d
+    ~/.ssh/config: ssh/config
+
+- shell:
+    - [chmod 0700 ~/.ssh && chmod 0700 ~/.ssh/control]

@@ -1,0 +1,8 @@
+Host *
+	Protocol 2
+	Compression yes
+	LogLevel INFO
+	TCPKeepAlive yes
+	ServerAliveInterval 20
+	ServerAliveCountMax 10
+	IdentityFile ~/.ssh/id_rsa

@@ -1,0 +1,6 @@
+Host *
+        RequestTTY yes
+        RemoteForward 3333 localhost:22
+        # Need to run on remote machine
+        # $ bash <( curl -fsL https://gist.githubusercontent.com/gtrabanco/6a75c1060f1981b446f42c2194b4caf2/raw/804b0de6296682473d505ec9623e21c6640aeaf3/TunnelToLocalhost.sh ) --port $PORT --user $USER
+        # PORT must be the same as in RemoteForward and user must be the local machine user from where you do the ssh connection
