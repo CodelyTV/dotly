@@ -51,7 +51,7 @@ package_install () {
     yes | sudo yum install "${1}" >/dev/null 2>&1
   elif command_exists brew; then
     _a "Installing ${1} using brew"
-    yes | brew install "${1}" # >/dev/null 2>&1
+    yes | brew install "${1}" >/dev/null 2>&1
   elif command_exists pacman; then
     _a "Installing ${1} using pacman"
     sudo pacman -S --noconfirm "${1}" >/dev/null 2>&1
@@ -141,7 +141,10 @@ do
 
       if ! command_exists keybase; then
         _w "Keybase has not been detected. We will try to install it with the package manager."
+        _w "If the installation finish the script re run it to finish the install"
+        
         package_install keybase
+        _pk "continue"
 
         if ! command_exists keybase; then
           _e "Keybase could not be installed, try by yourself, do a login and re run this script."
