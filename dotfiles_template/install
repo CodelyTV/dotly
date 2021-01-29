@@ -33,7 +33,13 @@ command_exists() {
   type "$1" >/dev/null 2>&1
 }
 
+install_brew_osx() {
+  [[ "$OSTYPE" =~ ^[darwin] ]] && ! command_exists brew && /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+}
+
 package_install () {
+  install_brew_osx #Without this it will try to use apt
+  # Because apt that is not package manager exists on macOS
   if command_exists dnf; then
     _a "Installing ${1} using dnf"
     sudo dnf -y install "${1}" >/dev/null 2>&1
