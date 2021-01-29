@@ -109,6 +109,9 @@ DOTFILES_PATH="${DOTFILES_PATH:-"$HOME/.dotfiles"}"
 DOTFILES_PATH="$(eval echo "$DOTFILES_PATH")"
 export DOTFILES_PATH="$DOTFILES_PATH"
 
+dotly_inner_path="modules/dotly"
+export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
+
 # Menu to select from where you want to restore your files
 PS3="From where you want to install your dotfiles: "
 options=("GitHub" "Keybase" "Other Git alternative" "Quit")
