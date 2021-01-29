@@ -164,7 +164,7 @@ do
 
       GIT_URL="keybase://private/${KEYBASE_USER}/${KEYBASE_REPOSITORY_NAME}"
       _w "  Remember that you need to start Keybase for the first time and login."
-      _w "  If you don't do this first the install will fail"
+      _w "  If you don't do this firstly, the installation will fail"
       _w
       _pk "continue when ready"
       
