@@ -25,13 +25,41 @@ _a() { _w " > $1"; }
 _e() { _a "${red}$1${normal}"; }
 _s() { _a "${green}$1${normal}"; }
 _q() { read -rp "🤔 $1: " "$2"; }
+_pk() { read -rp "Press a key to ${1}... 👇" "REPLY"; }
 
 current_timestamp() { date +%s; }
 
-
-
 command_exists() {
   type "$1" >/dev/null 2>&1
+}
+
+package_install () {
+  if command_exists dnf; then
+    _a "Installing ${1} using dnf"
+    sudo dnf -y install "${1}" >/dev/null 2>&1
+  elif command_exists yum; then
+    _a "Installing ${1} using yum"
+    yes | sudo yum install "${1}" >/dev/null 2>&1
+  elif command_exists brew; then
+    _a "Installing ${1} using brew"
+    yes | brew install "${1}" >/dev/null 2>&1
+  elif command_exists pacman; then
+    _a "Installing ${1} using pacman"
+    sudo pacman -S --noconfirm "${1}" >/dev/null 2>&1
+  elif command_exists apt; then
+    _a "Installing ${1} using apt"
+    sudo apt -y install "${1}" >/dev/null 2>&1
+  else
+    _e "Could not install '${1}', no package provider found"
+  fi
+}
+
+git_install_dotfiles() {
+    local GIT_URL="$1"
+    local DOTFILES_PATH="$2"
+    git clone "${GIT_URL}" "${DOTFILES_PATH}"
+    cd "${DOTFILES_PATH}"
+    git submodule update --init --recursive
 }
 
 _w "  ┌────────────────────────────────────┐"
@@ -39,93 +67,137 @@ _w "~ │ 🚀 Welcome to the ${green}dotly${normal} restorer!  │ ~"
 _w "  └────────────────────────────────────┘"
 _w
 
-_e "¡¡IMPORTANT!!"
-_w " This installer only works if your dotfiles are in Github"
-_w
+# Git Install
+_w "Checking if Git is installed"
+if ! command_exists git; then
+  _e "Git is not installed, trying to install"
 
-_w "  Remember that if your dotfiles repository is private you"
-_w "need to generate or restore the ssh key and added to your"
-_w "github account in:"
-_w "  - Github > Settings > SSH and GPG Keys > Add new SSH key"
-_w
+  if [[ "$OSTYPE" =~ ^[darwin] ]]; then
+    #_a "Updating macOS 🌍"
+    #sudo softwareupdate -i -a
+    
+    _a "Checking if Command Line Tools are installed 🕵️‍♂️"
+    
+    xcode-select --install 2>&1 | grep installed > /dev/null
+    if [[ $? ]]; then
+      _a "Installing Command Line Tools 📺"
+      xcode-select --install
+      _pk "to continue the installation after Command Line Tools installation has finished"
+    fi
+  else
+    package_install git
+  fi
+  
+  if [[ $? ]]; then
+      exit 1
+  fi
+fi
+_s "Git is installed on this system"
 
-GITHUB_USER=""
-while [ -z "$GITHUB_USER" ]; do
-    _q "👤 Which is your github user?" "GITHUB_USER"
-done
-
-GITHUB_REPOSITORY=""
-while [ -z "$GITHUB_REPOSITORY" ]; do
-    _q "📦 Which is your github repository?" "GITHUB_REPOSITORY"
-done
-
+# Files locations
 _q "Where do you want your dotfiles to be located? (default ~/.dotfiles)" "DOTFILES_PATH"
-DOTFILES_PATH="${DOTFILES_PATH:-$HOME/.dotfiles}"
+DOTFILES_PATH="${DOTFILES_PATH:-"$HOME/.dotfiles"}"
 DOTFILES_PATH="$(eval echo "$DOTFILES_PATH")"
 export DOTFILES_PATH="$DOTFILES_PATH"
 
-if ! command_exists git; then
-  _e "git not installed, trying to install"
+# Menu to select from where you want to restore your files
+PS3="From where you want to install your dotfiles: "
+options=("GitHub" "Keybase" "Other Git alternative" "Quit")
+GIT_URL=""
+select opt in "${options[@]}"
+do
+  case $opt in
+    "GitHub")
+      GITHUB_USER=""
+      while [ -z "$GITHUB_USER" ]; do
+          _q "👤 Which is your github user?" "GITHUB_USER"
+      done
 
-  if command_exists apt; then
-    _a "Installing using apt"
-    sudo apt -y install git >/dev/null 2>&1
-  elif command_exists dnf; then
-    _a "Installing using dnf"
-    sudo dnf -y install git >/dev/null 2>&1
-  elif command_exists yum; then
-    _a "Installing using yum"
-    yes | sudo yum install git >/dev/null 2>&1
-  elif command_exists brew; then
-    _a "Installing using brew"
-    yes | brew install git >/dev/null 2>&1
-  elif command_exists pacman; then
-    _a "Installing using pacman"
-    sudo pacman -S --noconfirm git >/dev/null 2>&1
-  else
-      case "$OSTYPE" in
-        darwin*)
-          #_a "Updating macOS 🌍"
-          #sudo softwareupdate -i -a
-          
-          _a "Checking if Command Line Tools are installed 🕵️‍♂️"
-          
-          xcode-select --install 2>&1 | grep installed > /dev/null
-          if [[ $? ]]; then
-            _a "Installing Command Line Tools 📺"
-            xcode-select --install
-            _q "Press a key after command line tools has finished to continue...👇" "CLT_INSTALLED"
-          fi
-          ;;
-        *)
-          _e "Could not install git, no package provider found"
+      GITHUB_REPOSITORY_NAME=""
+      while [ -z "$GITHUB_REPOSITORY_NAME" ]; do
+          _q "📦 Which is your github repository?" "GITHUB_REPOSITORY_NAME"
+      done
+      
+      GIT_URL="git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
+      _w "  Remember that if your dotfiles repository is private you"
+      _w "need to generate or restore the ssh key and added to your"
+      _w "github account in:"
+      _w "  - Github > Settings > SSH and GPG Keys > Add new SSH key"
+      _w
+      _pk "continue when ready"
+      break
+      ;;
+    "Keybase")
+      _w "Checking if keybase is installed"
+
+      if ! command_exists keybase; then
+        _w "Keybase has not been detected. We will try to install it with the package manager."
+        package_install keybase
+
+        if ! command_exists keybase; then
+          _e "Keybase could not be installed, try by yourself, do a login and re run this script."
           exit 1
-          ;;
-      esac
-  fi
-fi
+        fi
+      fi
+      _s "Keybase is installed"
+      
+      KEYBASE_USER=""
+      while [ -z "$KEYBASE_USER" ]; do
+          _q "👤 Which is your Keybase user?" "KEYBASE_USER"
+      done
 
-git clone git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY.git "$DOTFILES_PATH"
-cd "$DOTFILES_PATH"
-git submodule update --init --recursive
+      KEYBASE_REPOSITORY_NAME=""
+      _q "📦 Which is your Keybase repository name? [dotfiles]" "KEYBASE_REPOSITORY_NAME"
+      KEYBASE_REPOSITORY_NAME="${KEYBASE_REPOSITORY_NAME:-"dotfiles"}"
+
+      GIT_URL="keybase://private/${KEYBASE_USER}/${KEYBASE_REPOSITORY_NAME}"
+      _w "  Remember that you need to start Keybase for the first time and login."
+      _w "  If you don't do this first the install will fail"
+      _w
+      _pk "continue when ready"
+      
+      break
+      ;;
+    "Other Git alternative")
+      while [ -z "$GIT_URL" ]; do
+          _q "👤 Which is your git repo url?" "GIT_URL"
+      done
+      break
+      ;;
+    "Quit")
+      _w "Bye!"
+      exit 0
+      ;;
+    *)
+      echo "invalid option $REPLY"
+      ;;
+  esac
+done
+
+# Recovering your files
+git_install_dotfiles "${GIT_URL}" "${DOTFILES_PATH}"
 "$DOTLY_PATH/bin/dot" self install
 _a "🎉 dotfiles restored! 🎉"
 
+# Installing packages
 _q "📦 Do you want to import previous installed packages? [Y/n]" "USER_IMPORT_PACKAGES"
 USER_IMPORT_PACKAGES=${USER_IMPORT_PACKAGES:-'Y'}
 [[ "$USER_IMPORT_PACKAGES" =~ ^[Yy] ]] && "$DOTLY_PATH/bin/dot" package import
 
+# Importing defaults on macOS
 if [[ "$OSTYPE" =~ ^[darwin] ]]; then
   _w
   _w "If you want to import your previous macOS settings, if would be done from the"
   _w "default directory $DOTFILES_PATH/os/mac/settings, if you want to restore it"
   _w "from another path, do it manually executing 'dot mac defaults import /path/to'"
+  _w
+  _w "IMPORTANT! This overwrite all your current configuration if you answer with 'y'"
+  _w
   _q "⚙️ Do you want to import stored macOS configuration? [y/N]" "USER_OSX_SETTINGS"
   [[ "$USER_OSX_SETTINGS" =~ ^[Yy] ]] && "$DOTLY_PATH/bin/dot" mac defaults import
 fi
 _a "🎉 dotfiles restored! 🎉"
 _a "Please, restart your terminal to see the changes."
-echo "Press a key to exit the terminal..."
-_q "" "REPLY"
+_pk "exit terminal"
 exit
 }
