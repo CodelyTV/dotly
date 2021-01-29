@@ -35,7 +35,7 @@ command_exists() {
 
 install_brew_osx() {
   if [[ "$OSTYPE" =~ ^[darwin] ]] && ! command_exists brew; then
-    _w "Installing brew package manager for macOS"
+    _w "Installing brew package manager for macOS 💾"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
 }
