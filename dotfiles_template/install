@@ -34,7 +34,10 @@ command_exists() {
 }
 
 install_brew_osx() {
-  [[ "$OSTYPE" =~ ^[darwin] ]] && ! command_exists brew && /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  if [[ "$OSTYPE" =~ ^[darwin] ]] && ! command_exists brew; then
+    _w "Installing brew package manager for macOS"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
 }
 
 package_install () {
