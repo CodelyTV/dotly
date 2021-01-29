@@ -194,6 +194,8 @@ git_install_dotfiles "${GIT_URL}" "${DOTFILES_PATH}"
 "$DOTLY_PATH/bin/dot" self install
 _a "🎉 dotfiles restored! 🎉"
 
+PATH="${PATH}:$HOME/.cargo/bin"
+
 # Installing packages
 _q "📦 Do you want to import previous installed packages? [Y/n]" "USER_IMPORT_PACKAGES"
 USER_IMPORT_PACKAGES=${USER_IMPORT_PACKAGES:-'Y'}
