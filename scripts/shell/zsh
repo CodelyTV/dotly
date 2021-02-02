@@ -27,12 +27,12 @@ case $1 in
   "$DOTLY_PATH/bin/dot" shell zsh reload_completions
   ;;
 "test_performance")
-  hyperfine '/bin/zsh -i -c exit' '/usr/local/bin/zsh -i -c exit' --warmup 1
+  hyperfine '/bin/zsh -i -c exit' '/opt/homebrew/bin/zsh -i -c exit' --warmup 1
 
   echo ""
   echo "ZSH INFO:"
-  echo "  🍎 macOS ZSH 📂 /bin/zsh           - $(/bin/zsh --version)"
-  echo "  🍺 Brew ZSH  📂 /usr/local/bin/zsh - $(/usr/local/bin/zsh --version)"
+  echo "  🍎 macOS ZSH 📂 /bin/zsh              - $(/bin/zsh --version)"
+  echo "  🍺 Brew ZSH  📂 /opt/homebrew/bin/zsh - $(/opt/homebrew/bin/zsh --version)"
 
   echo ""
   echo "✨ Currently using $(command -v zsh) ✨"
