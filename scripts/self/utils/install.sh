@@ -3,7 +3,7 @@
 install_macos_custom() {
   if ! platform::command_exists brew; then
     output::error "brew not installed, installing"
-    CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" >/dev/null 2>&1
+    CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" 2>&1 | log::file "Installing brew"
   fi
 
   # Install needed packages
@@ -11,16 +11,16 @@ install_macos_custom() {
   mkdir -p "$HOME/bin"
 
   output::answer "Installing needed gnu packages"
-  brew list bash || brew install bash >/dev/null
-  brew list coreutils || brew install coreutils >/dev/null
-  brew list make || brew install make >/dev/null
-  brew list gnu-sed || brew install gnu-sed >/dev/null
-  brew list findutils || brew install findutils >/dev/null
-  brew list bat || brew install bat >/dev/null
-  brew list hyperfine || brew install hyperfine >/dev/null
+  brew list bash || brew install bash | log::file "Installing brew bash"
+  brew list coreutils || brew install coreutils | log::file "Installing brew coreutils"
+  brew list make || brew install make | log::file "Installing brew make"
+  brew list gnu-sed || brew install gnu-sed | log::file "Installing brew gnu-sed"
+  brew list findutils || brew install findutils | log::file "Installing brew findutils"
+  brew list bat || brew install bat | log::file "Installing brew bat"
+  brew list hyperfine || brew install hyperfine | log::file "Installing brew hyperfine"
 
   output::answer "Installing mas"
-  brew list mas || brew install mas >/dev/null
+  brew list mas || brew install mas | log::file "Installing mas"
 }
 
 install_linux_custom() {

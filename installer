@@ -80,19 +80,19 @@ if ! command_exists git; then
 
   if command_exists apt; then
     _a "Installing using apt"
-    sudo apt -y install git >/dev/null 2>&1 | _log "Installing git"
+    sudo apt -y install git 2>&1 | _log "Installing git"
   elif command_exists dnf; then
     _a "Installing using dnf"
-    sudo dnf -y install git >/dev/null 2>&1 | _log "Installing git"
+    sudo dnf -y install git 2>&1 | _log "Installing git"
   elif command_exists yum; then
     _a "Installing using yum"
-    yes | sudo yum install git >/dev/null 2>&1 | _log "Installing git"
+    yes | sudo yum install git 2>&1 | _log "Installing git"
   elif command_exists brew; then
     _a "Installing using brew"
-    yes | brew install git >/dev/null 2>&1 | _log "Installing git"
+    yes | brew install git 2>&1 | _log "Installing git"
   elif command_exists pacman; then
     _a "Installing using pacman"
-    sudo pacman -S --noconfirm git >/dev/null 2>&1 | _log "Installing git"
+    sudo pacman -S --noconfirm git 2>&1 | _log "Installing git"
   else
     _e "Could not install git, no package provider found"
     exit 1
@@ -100,10 +100,10 @@ if ! command_exists git; then
 fi
 
 _a "Initializing your dotfiles git repository"
-git init >/dev/null
+git init 2>&1 | _log "Initializing repository"
 
 _a "Cloning dotly"
-git submodule add -b "$DOTLY_BRANCH" "https://github.com/$DOTLY_REPOSITORY.git" "$dotly_inner_path" >/dev/null 2>&1
+git submodule add -b "$DOTLY_BRANCH" "https://github.com/$DOTLY_REPOSITORY.git" "$dotly_inner_path" 2>&1 | _log "Adding dotly submodule"
 
 _a "Installing dotly dependencies"
 git submodule update --init --recursive 2>&1 | _log "Installing dotly dependencies"
