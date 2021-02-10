@@ -9,6 +9,8 @@ set -euo pipefail
 
 DOTLY_REPOSITORY=${DOTLY_REPOSITORY:-CodelyTV/dotly}
 DOTLY_BRANCH=${DOTLY_BRANCH:-master}
+DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
+export DOTLY_INSTALLER=true
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -23,6 +25,20 @@ _a() { _w " > $1"; }
 _e() { _a "${red}$1${normal}"; }
 _s() { _a "${green}$1${normal}"; }
 _q() { read -rp "🤔 $1: " "$2"; }
+
+_log() {
+  log_name="$1"
+  current_date=$(date "+%Y-%m-%d %H:%M:%S")
+
+  touch "$DOTLY_LOG_FILE"
+  echo "----- $current_date - $log_name -----" >>"$DOTLY_LOG_FILE"
+
+  while IFS= read -r log_message; do
+    echo "$log_message" >>"$DOTLY_LOG_FILE"
+  done
+
+  echo "" >>"$DOTLY_LOG_FILE"
+}
 
 current_timestamp() { date +%s; }
 
@@ -65,33 +81,47 @@ if ! command_exists git; then
 
   if command_exists apt; then
     _a "Installing using apt"
-    sudo apt -y install git >/dev/null 2>&1
+    sudo apt -y install git 2>&1 | _log "Installing git"
   elif command_exists dnf; then
     _a "Installing using dnf"
-    sudo dnf -y install git >/dev/null 2>&1
+    sudo dnf -y install git 2>&1 | _log "Installing git"
   elif command_exists yum; then
     _a "Installing using yum"
-    yes | sudo yum install git >/dev/null 2>&1
+    yes | sudo yum install git 2>&1 | _log "Installing git"
   elif command_exists brew; then
     _a "Installing using brew"
-    yes | brew install git >/dev/null 2>&1
+    yes | brew install git 2>&1 | _log "Installing git"
   elif command_exists pacman; then
     _a "Installing using pacman"
-    sudo pacman -S --noconfirm git >/dev/null 2>&1
+    sudo pacman -S --noconfirm git 2>&1 | _log "Installing git"
   else
-    _e "Could not install git, no package provider found"
-    exit 1
+      case "$OSTYPE" in
+        darwin*)
+          _a "Checking if Command Line Tools are installed 🕵️‍♂️"
+          
+          xcode-select --install 2>&1 | grep installed > /dev/null
+          if [[ $? ]]; then
+            _a "Installing Command Line Tools 📺"
+            xcode-select --install
+            _q "Press a key after command line tools has finished to continue...👇" "CLT_INSTALLED"
+          fi
+          ;;
+        *)
+          _e "Could not install git, no package provider found"
+          exit 1
+          ;;
+      esac
   fi
 fi
 
 _a "Initializing your dotfiles git repository"
-git init >/dev/null
+git init 2>&1 | _log "Initializing repository"
 
 _a "Cloning dotly"
-git submodule add -b "$DOTLY_BRANCH" "https://github.com/$DOTLY_REPOSITORY.git" "$dotly_inner_path" >/dev/null 2>&1
+git submodule add -b "$DOTLY_BRANCH" "https://github.com/$DOTLY_REPOSITORY.git" "$dotly_inner_path" 2>&1 | _log "Adding dotly submodule"
 
 _a "Installing dotly dependencies"
-git submodule update --init --recursive >/dev/null 2>&1
+git submodule update --init --recursive 2>&1 | _log "Installing dotly dependencies"
 
 cd "$DOTLY_PATH"
 

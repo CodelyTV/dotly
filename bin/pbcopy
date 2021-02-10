@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+os=$(uname)
+if [[ "$os" == "Linux" ]]; then
+  xclip -selection clipboard
+elif [[ "$os" == "Darwin" ]]; then
+  /usr/bin/pbcopy
+fi
