@@ -1,0 +1,18 @@
+- clean: ['~']
+
+- defaults:
+    link:
+      create: true
+      force: true
+
+- create:
+      - ~/.hushlogin
+
+- link:
+    ~/.dotly: os/mac/.dotly
+    ~/bin/bash: /usr/local/bin/bash
+    ~/bin/date: /usr/local/bin/gdate
+    ~/bin/find: /usr/local/opt/findutils/bin/gfind
+    ~/bin/make: /usr/local/opt/make/libexec/gnubin/make
+    ~/bin/sed: /usr/local/opt/gnu-sed/libexec/gnubin/sed
+    ~/bin/touch: /usr/local/bin/gtouch
