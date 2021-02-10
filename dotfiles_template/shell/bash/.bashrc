@@ -1,12 +1,13 @@
 export DOTFILES_PATH="XXX_DOTFILES_PATH_XXX"
 export DOTLY_PATH="$DOTFILES_PATH/modules/dotly"
+export DOTLY_THEME="codely"
 
-if [[ "$SHELL" =~ (bash$) ]]; then
+if [[ "$(ps -p $$ -ocomm=)" =~ (bash$) ]]; then
   __right_prompt() {
     RIGHT_PROMPT=""
     [[ -n $RPS1 ]] && RIGHT_PROMPT=$RPS1 || RIGHT_PROMPT=$RPROMPT
     if [[ -n $RIGHT_PROMPT ]]; then
-      n=$(($COLUMNS-${#RIGHT_PROMPT}))
+      n=$(($COLUMNS - ${#RIGHT_PROMPT}))
       printf "%${n}s$RIGHT_PROMPT\\r"
     fi
   }
@@ -22,22 +23,21 @@ PATH=$(
 export PATH
 
 themes_paths=(
-    "$DOTFILES_PATH/shell/bash/themes"
-    "$DOTLY_PATH/shell/bash/themes"
+  "$DOTFILES_PATH/shell/bash/themes"
+  "$DOTLY_PATH/shell/bash/themes"
 )
-
-SHELL_THEME=${SHELL_THEME:-codelytv}
-THEME_PATH=""
 
 for THEME_PATH in ${themes_paths[@]}; do
   THEME_PATH="${THEME_PATH}/$SHELL_THEME.sh"
   [ -f "$THEME_PATH" ] && source "$THEME_PATH" && break
 done
 
-for bash_file in "$DOTLY_PATH"/shell/bash/completions/*.sh; do
+for bash_file in "$DOTLY_PATH"/shell/bash/completions/*; do
   source "$bash_file"
 done
 
-for bash_file in "$DOTFILES_PATH"/shell/bash/completions/*.sh; do
-  source "$bash_file"
-done
+if [ -n "$(ls -A "$DOTFILES_PATH/shell/bash/completions/")" ]; then
+  for bash_file in "$DOTFILES_PATH"/shell/bash/completions/*; do
+    source "$bash_file"
+  done
+fi
