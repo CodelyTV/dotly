@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-{
 
 set -euo pipefail
 
@@ -83,9 +82,6 @@ if ! command_exists git; then
   else
       case "$OSTYPE" in
         darwin*)
-          #_a "Updating macOS 🌍"
-          #sudo softwareupdate -i -a
-          
           _a "Checking if Command Line Tools are installed 🕵️‍♂️"
           
           xcode-select --install 2>&1 | grep installed > /dev/null
@@ -118,5 +114,3 @@ cd "$DOTLY_PATH"
 
 _a "🎉 dotly installed correctly! 🎉"
 _a "Please, restart your terminal to see the changes"
-
-}
