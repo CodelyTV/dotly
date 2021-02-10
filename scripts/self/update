@@ -10,12 +10,12 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?    update
 docs::parse "$@"
 
-cd $DOTFILES_PATH
+cd "$DOTFILES_PATH"
 branch=$(git config -f .gitmodules submodule.modules/dotly.branch)
 
 cd "$DOTLY_PATH"
 git discard >/dev/null 2>&1
-git checkout $branch >/dev/null 2>&1
+git checkout "$branch" >/dev/null 2>&1
 git pull >/dev/null 2>&1
 git submodule update --init --recursive > /dev/null 2>&1
 
