@@ -17,7 +17,7 @@ if platform::is_macos; then
   platform::command_exists mas && mas upgrade
 
   output::header '🍺 Updating Brew and Brew apps (this could take a while)'
-  brew update >/dev/null 2>&1
+  brew update 2>&1 | log::file "Updating brew"
   brew outdated | xargs -n1 brew upgrade
 
   output::header '🍻 Updating Brew Cask apps (this could take a while)'

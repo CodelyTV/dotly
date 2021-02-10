@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
+
 echoerr() {
   echo "$@" 1>&2
 }
@@ -67,6 +69,19 @@ log::success() { _log "$(log::ansi green)✔ %s$(log::ansi reset)\n" "$@"; }
 log::error() { _log "$(log::ansi red)✖ %s$(log::ansi reset)\n" "$@"; }
 log::warning() { _log "$(log::ansi yellow)➜ %s$(log::ansi reset)\n" "$@"; }
 log::note() { _log "$(log::ansi blue)%s$(log::ansi reset)\n" "$@"; }
+log::file() {
+  local -r log_name="$1"
+  local -r current_date=$(date "+%Y-%m-%d %H:%M:%S")
+
+  touch "$DOTLY_LOG_FILE"
+  echo "----- $current_date - $log_name -----" >>"$DOTLY_LOG_FILE"
+
+  while IFS= read -r log_message; do
+    echo "$log_message" >>"$DOTLY_LOG_FILE"
+  done
+
+  echo "" >>"$DOTLY_LOG_FILE"
+}
 
 die() {
   log::error "$@"
