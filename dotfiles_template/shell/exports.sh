@@ -7,8 +7,6 @@ export FZF_DEFAULT_OPTS='
   --reverse
 '
 
-export SHELL_THEME='codelytv'
-
 export path=(
   "$HOME/bin"
   "$DOTLY_PATH/bin"
