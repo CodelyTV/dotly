@@ -36,6 +36,6 @@ jobs:
           echo "DOTLY_BRANCH: $DOTLY_BRANCH"
           echo "$HOME/.dotfiles" | bash installer
 
-      - name: Debug
-        run: |
-          cat "$HOME/dotly.log"
+      - name: Debug on error
+        if: ${{ failure() }}
+        run: cat "$HOME/dotly.log"

@@ -25,14 +25,21 @@ installer::install_fzf() {
   fi
 }
 
+if platform::is_macos; then
+  output::answer "🍎 Setting up macOS platform"
+  install_macos_custom
+fi
+
+! platform::command_exists cargo && output::error "rust not installed, installing" && "$DOTLY_PATH/bin/dot" package install rust | log::file "Installing rust"
+
 if ! platform::command_exists cargo; then
   output::error "rust not installed, installing"
-  curl https://sh.rustup.rs -sSf | sh -s -- -y | log::file "Installing rust"
+  curl https://sh.rustup.rs -sSf | sh -s -- -y | log::file "Installing rust from sources"
   source "$HOME/.cargo/env"
 fi
 
-! platform::command_exists docpars && output::error "docpars not installed, installing" && cargo install -q docpars | log::file "Installing docpars"
-! platform::command_exists delta && output::error "delta not installed, installing" && cargo install -q git-delta | log::file "Installing git delta"
+! platform::command_exists docpars && output::error "docpars not installed, installing" && "$DOTLY_PATH/bin/dot" package install docpars | log::file "Installing docpars"
+! platform::command_exists delta && output::error "delta not installed, installing" && "$DOTLY_PATH/bin/dot" package install git-delta | log::file "Installing git delta"
 
 ##? Install dotly and setup dotfiles
 ##?
@@ -42,11 +49,6 @@ docs::parse "$@"
 
 output::answer "Creating dotfiles structure"
 "$DOTLY_PATH/bin/dot" dotfiles create | log::file "Creating dotfiles structure"
-
-if platform::is_macos; then
-  output::answer "🍎 Setting up macOS platform"
-  install_macos_custom
-fi
 
 # @todo Backup if exists before
 output::answer "Setting up symlinks"
