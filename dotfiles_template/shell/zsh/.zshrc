@@ -4,6 +4,7 @@
 # ZSH Ops
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_FCNTL_LOCK
+setopt +o nomatch
 # setopt autopushd
 
 # Start zim
