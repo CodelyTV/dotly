@@ -1,0 +1,6 @@
+$if Bash
+    "\C-l": redraw-current-line
+    "\e\C-j": accept-line
+    "\C-j": "\C-l\e\C-j"
+    "\C-m": "\C-l\e\C-j"
+$endif
