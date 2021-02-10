@@ -14,7 +14,7 @@ output::write "🎩 Let's update all your packages"
 
 if platform::is_macos; then
   output::header '🍎 Updating App Store apps'
-  mas upgrade
+  platform::command_exists mas && mas upgrade
 
   output::header '🍺 Updating Brew and Brew apps (this could take a while)'
   brew update >/dev/null 2>&1
