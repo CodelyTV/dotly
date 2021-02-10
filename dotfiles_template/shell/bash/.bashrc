@@ -28,7 +28,7 @@ themes_paths=(
 )
 
 for THEME_PATH in ${themes_paths[@]}; do
-  THEME_PATH="${THEME_PATH}/$SHELL_THEME.sh"
+  THEME_PATH="${THEME_PATH}/$DOTLY_THEME.sh"
   [ -f "$THEME_PATH" ] && source "$THEME_PATH" && break
 done
 
