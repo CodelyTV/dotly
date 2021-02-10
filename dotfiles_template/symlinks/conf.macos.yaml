@@ -10,9 +10,11 @@
 
 - link:
     ~/.dotly: os/mac/.dotly
-    ~/bin/bash: /usr/local/bin/bash
-    ~/bin/date: /usr/local/bin/gdate
-    ~/bin/make: /usr/local/opt/make/libexec/gnubin/make
-    ~/bin/sed: /usr/local/opt/gnu-sed/libexec/gnubin/sed
-    ~/bin/touch: /usr/local/bin/gtouch
-    ~/bin/find: /usr/local/opt/findutils/bin/gfind
+    ~/bin/bash: /opt/homebrew/bin/bash
+    ~/bin/date: /opt/homebrew/bin/gdate
+    ~/bin/find: /opt/homebrew/bin/gfind
+    ~/bin/make: /opt/homebrew/bin/gmake
+    ~/bin/sed: /opt/homebrew/bin/gsed
+    ~/bin/touch: /opt/homebrew/bin/gtouch
+    ~/bin/zsh: /opt/homebrew/bin/zsh
+

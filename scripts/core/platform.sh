@@ -8,7 +8,7 @@ platform::is_macos() {
   [[ $(uname -s) == "Darwin" ]]
 }
 
-platform::is_macos_m1() {
+platform::is_macos_arm() {
   [[ $(uname -p) == "arm" ]]
 }
 
