@@ -35,3 +35,7 @@ jobs:
           echo "DOTLY_REPOSITORY: $DOTLY_REPOSITORY"
           echo "DOTLY_BRANCH: $DOTLY_BRANCH"
           echo "$HOME/.dotfiles" | bash installer
+
+      - name: Debug
+        run: |
+          cat "$HOME/dotly.log"
