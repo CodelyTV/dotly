@@ -6,9 +6,12 @@ install_macos_custom() {
     CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" 2>&1 | log::file "Installing brew"
   fi
 
-  # Install needed packages
-  # @todo Check if it's inslled on an m1 machine and use the `/opt/homebrew/opt` path
-  export PATH="$PATH:/usr/local/bin"
+  if platform::is_macos_m1; then
+    export PATH="$PATH:/opt/homebrew/opt:/usr/local/bin"
+  else
+    export PATH="$PATH:/usr/local/bin"
+  fi
+
   mkdir -p "$HOME/bin"
 
   output::answer "Installing needed gnu packages"
