@@ -7,6 +7,7 @@ install_macos_custom() {
   fi
 
   # Install needed packages
+  # @todo Check if it's inslled on an m1 machine and use the `/opt/homebrew/opt` path
   export PATH="$PATH:/usr/local/bin"
   mkdir -p "$HOME/bin"
 
