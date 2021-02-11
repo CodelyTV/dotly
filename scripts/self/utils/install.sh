@@ -12,7 +12,7 @@ install_macos_custom() {
   fi
 
   if platform::is_macos_arm; then
-    export PATH="$PATH:/opt/homebrew/opt:/usr/local/bin"
+    export PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
   else
     export PATH="$PATH:/usr/local/bin"
   fi
