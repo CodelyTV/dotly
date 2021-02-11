@@ -17,6 +17,7 @@ export path=(
   "$HOME/.cargo/bin"
   "/usr/local/opt/ruby/bin"
   "/usr/local/opt/python/libexec/bin"
+  "/opt/homebrew/bin"
   "/usr/local/bin"
   "/usr/local/sbin"
   "/bin"
