@@ -3,7 +3,12 @@
 install_macos_custom() {
   if ! platform::command_exists brew; then
     output::error "brew not installed, installing"
-    CI=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" 2>&1 | log::file "Installing brew"
+
+    if [ "$DOTLY_ENV" == "CI" ]; then
+      export CI=1
+    fi
+
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" 2>&1 | log::file "Installing brew"
   fi
 
   if platform::is_macos_arm; then
