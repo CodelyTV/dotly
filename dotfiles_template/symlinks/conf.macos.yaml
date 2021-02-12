@@ -7,8 +7,6 @@
 
 - create:
     - ~/.hushlogin
-    - $DOTFILES_PATH/shell/bash/completions
-    - $DOTFILES_PATH/shell/bash/themes
 
 - link:
     ~/.dotly: os/mac/.dotly
