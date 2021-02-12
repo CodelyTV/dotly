@@ -29,6 +29,8 @@ install_macos_custom() {
   brew list bat || brew install bat | log::file "Installing brew bat"
   brew list hyperfine || brew install hyperfine | log::file "Installing brew hyperfine"
 
+  # More information: https://github.com/CodelyTV/dotly/issues/89
+  # Feel free to remove this if sentence once mas fixes the compatibility issue with Apple Silicon
   if ! platform::is_macos_arm; then
     output::answer "Installing mas"
     brew list mas || brew install mas | log::file "Installing mas"
