@@ -35,6 +35,7 @@ jobs:
         run: |
           echo "DOTLY_REPOSITORY: $DOTLY_REPOSITORY"
           echo "DOTLY_BRANCH: $DOTLY_BRANCH"
+          echo "DOTLY_ENV: $DOTLY_ENV"
           echo "$HOME/.dotfiles" | bash installer
 
       - name: Debug on error
