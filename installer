@@ -10,6 +10,7 @@ set -euo pipefail
 DOTLY_REPOSITORY=${DOTLY_REPOSITORY:-CodelyTV/dotly}
 DOTLY_BRANCH=${DOTLY_BRANCH:-master}
 DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
+DOTLY_ENV=${DOTLY_ENV:-PROD}
 export DOTLY_INSTALLER=true
 
 red='\033[0;31m'
