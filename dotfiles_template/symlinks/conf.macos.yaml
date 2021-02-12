@@ -6,7 +6,9 @@
       force: true
 
 - create:
-      - ~/.hushlogin
+    - ~/.hushlogin
+    - $DOTFILES_PATH/shell/bash/completions
+    - $DOTFILES_PATH/shell/bash/themes
 
 - link:
     ~/.dotly: os/mac/.dotly
@@ -17,4 +19,3 @@
     ~/bin/sed: /opt/homebrew/bin/gsed
     ~/bin/touch: /opt/homebrew/bin/gtouch
     ~/bin/zsh: /opt/homebrew/bin/zsh
-
