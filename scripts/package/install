@@ -7,7 +7,9 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##? Usage:
 ##?    install <package_name>
 ##?
-docs::parse "$@"
+if ! ${DOTLY_INSTALLER:-false}; then
+  docs::parse "$@"
+fi
 
 package::install() {
   local -r package_manager="$1"
@@ -32,7 +34,7 @@ package_name="$1"
 platform::command_exists "$package_name" && log::success "$package_name is already installed" && exit 0
 
 if platform::is_macos; then
-  for package_manager in brew mas ports; do
+  for package_manager in brew mas ports cargo; do
     install_command_output=$(package::install $package_manager "$package_name")
     install_command_exit_code=$?
 
@@ -41,7 +43,7 @@ if platform::is_macos; then
     fi
   done
 else
-  for package_manager in apt dnf yum brew pacman; do
+  for package_manager in apt dnf yum brew pacman cargo; do
     install_command_output=$(package::install $package_manager "$package_name")
     install_command_exit_code=$?
 

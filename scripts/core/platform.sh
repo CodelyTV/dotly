@@ -8,6 +8,10 @@ platform::is_macos() {
   [[ $(uname -s) == "Darwin" ]]
 }
 
+platform::is_macos_arm() {
+  [[ $(uname -p) == "arm" ]]
+}
+
 platform::is_linux() {
   [[ $(uname -s) == "Linux" ]]
 }

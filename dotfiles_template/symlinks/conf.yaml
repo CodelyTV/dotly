@@ -7,6 +7,8 @@
 
 - create:
     - ~/.ssh/control
+    - $DOTFILES_PATH/shell/bash/completions
+    - $DOTFILES_PATH/shell/bash/themes
 
 - link:
     ~/.bash_profile: shell/bash/.bash_profile

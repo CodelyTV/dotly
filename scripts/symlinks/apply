@@ -33,7 +33,11 @@ output::question "Do you still want to continue? [Y/n]" "REPLY"
 symlinks::apply "conf.yaml"
 
 if platform::is_macos; then
-  symlinks::apply "conf.macos.yaml"
+  if platform::is_macos_arm; then
+    symlinks::apply "conf.macos.yaml"
+  else
+    symlinks::apply "conf.macos-intel.yaml"
+  fi
 else
   symlinks::apply "conf.linux.yaml"
 fi

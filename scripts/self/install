@@ -10,7 +10,7 @@ export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 installer::install_zsh() {
   output::error "zsh not installed, installing"
 
-  if ! "$DOTLY_PATH/bin/dot" package install zsh >/dev/null; then
+  if ! "$DOTLY_PATH/bin/dot" package install zsh | log::file "Installing zsh"; then
     output::error "Could not install zsh!"
     exit 5
   fi
@@ -19,20 +19,27 @@ installer::install_zsh() {
 installer::install_fzf() {
   output::error "fzf not installed, installing"
 
-  if ! $DOTLY_PATH/bin/dot package install fzf >/dev/null; then
+  if ! "$DOTLY_PATH/bin/dot" package install fzf | log::file "Installing fzf"; then
     output::error "Could not install fzf!"
     exit 5
   fi
 }
 
+if platform::is_macos; then
+  output::answer "🍎 Setting up macOS platform"
+  install_macos_custom
+fi
+
+! platform::command_exists cargo && output::error "rust not installed, installing" && "$DOTLY_PATH/bin/dot" package install rust | log::file "Installing rust"
+
 if ! platform::command_exists cargo; then
   output::error "rust not installed, installing"
-  curl https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null
+  curl https://sh.rustup.rs -sSf | sh -s -- -y | log::file "Installing rust from sources"
   source "$HOME/.cargo/env"
 fi
 
-! platform::command_exists docpars && output::error "docpars not installed, installing" && cargo install -q docpars >/dev/null
-! platform::command_exists delta && output::error "delta not installed, installing" && cargo install -q git-delta >/dev/null
+! platform::command_exists docpars && output::error "docpars not installed, installing" && "$DOTLY_PATH/bin/dot" package install docpars | log::file "Installing docpars"
+! platform::command_exists delta && output::error "delta not installed, installing" && "$DOTLY_PATH/bin/dot" package install git-delta | log::file "Installing git delta"
 
 ##? Install dotly and setup dotfiles
 ##?
@@ -41,16 +48,11 @@ fi
 docs::parse "$@"
 
 output::answer "Creating dotfiles structure"
-"$DOTLY_PATH/bin/dot" dotfiles create >/dev/null
-
-if platform::is_macos; then
-  output::answer "🍎 Setting up macOS platform"
-  install_macos_custom
-fi
+"$DOTLY_PATH/bin/dot" dotfiles create | log::file "Creating dotfiles structure"
 
 # @todo Backup if exists before
 output::answer "Setting up symlinks"
-"$DOTLY_PATH/bin/dot" symlinks apply >/dev/null
+"$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks"
 touch "$HOME/.z"
 
 ! platform::command_exists fzf && installer::install_fzf
@@ -58,11 +60,11 @@ touch "$HOME/.z"
 
 if ! str::contains zsh "$SHELL"; then
   output::answer "Setting zsh as the default shell"
-  sudo chsh -s "$(command -v zsh)" >/dev/null
+  sudo chsh -s "$(command -v zsh)" | log::file "Setting zsh as default shell"
 fi
 
 output::answer "Installing zim"
-zsh "$ZIM_HOME/zimfw.zsh" install >/dev/null
+zsh "$ZIM_HOME/zimfw.zsh" install | log::file "Installing zim"
 
 output::answer "Installing completions"
 "$DOTLY_PATH/bin/dot" shell zsh reload_completions
