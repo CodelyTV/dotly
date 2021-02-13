@@ -14,13 +14,15 @@ if [[ "$(ps -p $$ -ocomm=)" =~ (bash$) ]]; then
   export PROMPT_COMMAND="__right_prompt"
 fi
 
-source "$DOTFILES_PATH/shell/init.sh"
+source "$DOTFILES_PATH/shell/paths.sh"
 
 PATH=$(
   IFS=":"
   echo "${path[*]}"
 )
 export PATH
+
+source "$DOTFILES_PATH/shell/init.sh"
 
 themes_paths=(
   "$DOTFILES_PATH/shell/bash/themes"

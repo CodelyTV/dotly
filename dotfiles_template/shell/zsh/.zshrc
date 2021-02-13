@@ -1,6 +1,9 @@
 # Uncomment for debuf with `zprof`
 # zmodload zsh/zprof
 
+# Firstly Paths
+source "$DOTFILES_PATH/shell/paths.sh"
+
 # ZSH Ops
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_FCNTL_LOCK
