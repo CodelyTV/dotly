@@ -8,22 +8,3 @@ export FZF_DEFAULT_OPTS='
 '
 
 export SHELL_THEME='codelytv'
-
-export path=(
-  "$HOME/bin"
-  "$DOTLY_PATH/bin"
-  "$DOTFILES_PATH/bin"
-  "$JAVA_HOME/bin"
-  "$GEM_HOME/bin"
-  "$GOPATH/bin"
-  "$HOME/.cargo/bin"
-  "/usr/local/opt/ruby/bin"
-  "/usr/local/opt/python/libexec/bin"
-  "/opt/homebrew/bin"
-  "/usr/local/bin"
-  "/usr/local/sbin"
-  "/bin"
-  "/usr/bin"
-  "/usr/sbin"
-  "/sbin"
-)
