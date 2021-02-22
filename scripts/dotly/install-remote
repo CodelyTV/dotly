@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+# Save current working directory to return user there
+STARTING_DIRECTORY="$(pwd)"
+LS_BIN="$(which ls)"
+TAIL_BIN="$(which tail)"
+CURL_BIN="$(which curl)"
+MKDIR_BIN="$(which mkdir)"
+CHMOD_BIN="$(which chmod)"
+
+##? Install remote context or script in your $DOTFILES_PATH from url. It
+##? must be the url to the raw file.
+##? If you fill the last param <script_name>, the remote file name will be
+##? omited and renamed in your $DOTFILES_PATH/scripts/<context> folder
+##?
+##? Script information:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+##?
+##? Usage:
+##?   install-remote <context> <script_raw_url> [<script_name>]
+docs::parse "$@"
+
+# Script name if provided if not with downloaded name
+[[ ! -z $script_name ]] && script_name_args="-o $script_name" || script_name_args=${script_name:-"-O"}
+
+# Download command
+download_command="$CURL_BIN -k -L -f -q $script_name_args"
+
+# Scripts context directory
+dotfiles_context="$DOTFILES_PATH/scripts/$context"
+
+# Create context directory and move to it
+$MKDIR_BIN -p $dotfiles_context
+cd $dotfiles_context
+
+# Download the script
+output::write "Downloading the script ⚡️"
+$(echo $download_command "$script_raw_url")
+if [ ! $? ] ; then
+  if [ ! $($LS_BIN -A "$dotfiles_context") ]; then
+    echo "El context $dotfiles_context esta vacio"
+  fi
+fi
+
+# Getting the name
+script_name="$($LS_BIN -Art | $TAIL_BIN -n 1)"
+
+# Applying execution rights
+$CHMOD_BIN u+x $dotfiles_context/$script_name
+
+# How to use it :)
+echo
+output::solution "The script was successfully added 😀"
+output::write "You can execute the script now with:"
+output::write "dot $context $script_name"
+
+cd "$STARTING_DIRECTORY"

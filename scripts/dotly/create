@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/dotly/helpers/templating.sh"
+SCRIPT_TEMPLATE="$DOTLY_PATH/scripts/dotly/helpers/script-template"
+#STARTING_DIRECTORY="$(pwd)"
+
+##? Dotly script creator
+##?
+##? Author:
+##?   Dotly Contributors
+##? Usage:
+##?   create <context> <script_name> [<script_description>]
+docs::parse "$@"
+
+# Variables for the script
+author="$(git config --global --get user.name)"
+email="$(git config --global --get user.email)"
+description="${script_description:-'You should descrive your command'}"
+
+# Path variables
+script_path="$DOTFILES_PATH/scripts/$context"
+script_filepath=""$script_path/$script_name""
+
+# Create the script context (folder)
+mkdir -p $script_path
+
+if [[ -d "$DOTFILES_PATH/scripts/$context" ]]; then
+  output::solution "$script_path were created or exists previously"
+fi
+
+if [[ -f $script_filepath ]]; then
+  output::question "The script exists, do you want to delete it and create a empty script? [y/N]" "SCRIPT_EXISTS_QUESTION"
+  SCRIPT_EXISTS_QUESTION=${SCRIPT_EXISTS_QUESTION:-"N"}
+  if [[ "$SCRIPT_EXISTS_QUESTION" =~ ^[Nn] ]]; then
+    output::error "The script name \"$script_name\" exists in context \"$context\" and user refuse to recreate the script"
+    output::write "Provide a different name for the script or context."
+    exit 1
+  fi
+fi
+
+cp "$SCRIPT_TEMPLATE" "$script_filepath"
+dotly::apply_templating "$script_filepath" "$author" "$email" "$description"
+chmod u+x "$script_filepath"
+
+output::solution "The script '$script_name' where successfully created."
+output::write ""
+output::write "You can access the scipt with your favorite editor by executing:"
+output::write "\$EDITOR \"\$DOTFILES_PATH/scripts/$context/$script_name\""
+echo
+
+#cd "$STARTING_DIRECTORY"

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Adapt the current terminal to use develop dotly
+##?
+##? Usage:
+##?   dev path [<new_dotly_path>]
+##?   dev dotfiles [<new_dotfiles_path>]
+docs::parse "$@"
+
+case $1 in
+"path")
+  echo "export DOTLY_PATH='${new_dotly_path:-$(pwd)}'"
+  ;;
+"dotfiles")
+  echo "export DOTFILES_PATH='${new_dotfiles_path:-$(pwd)}'"
+  ;;
+"both")
+  echo "export DOTLY_PATH='${new_dotly_path:-$(pwd)}'"
+  echo "export DOTFILES_PATH='${new_dotfiles_path:-$(pwd)}'"
+  ;;
+*)
+  output::write 'Use "dotly_dev" alias in your dotly development folder to"
+  output::write "test the dotly stuff you develop 🤘'
+  exit 1
+  ;;
+esac

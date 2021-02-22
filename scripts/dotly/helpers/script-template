@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? XXX_SCRIPT_DESCRIPTION_XXX
+##?
+##? Script information:
+##?   XXX_SCRIPT_AUTHOR_XXX <XXX_SCRIPT_AUTHOR_EMAIL_XXX>
+##?
+##? Usage:
+##?   XXX_SCRIPT_NAME_XXX subcommand <example_variable> [<example_optional_variable>]
+docs::parse "$@"
+
+case $1 in
+"subcommand")
+  echo "This case is optional and only useful if you want to implement subcommands"
+  echo "The example variable value is \"$example_variable\""
+  echo "The optional variable value is \"${example_optional_variable:-no value provided}\""
+  ;;
+*)
+  exit 1
+  ;;
+esac
