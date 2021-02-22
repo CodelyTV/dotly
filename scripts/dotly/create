@@ -3,7 +3,6 @@
 source "$DOTLY_PATH/scripts/core/_main.sh"
 source "$DOTLY_PATH/scripts/dotly/helpers/templating.sh"
 SCRIPT_TEMPLATE="$DOTLY_PATH/scripts/dotly/helpers/script-template"
-#STARTING_DIRECTORY="$(pwd)"
 
 ##? Dotly script creator
 ##?
@@ -48,5 +47,3 @@ output::write ""
 output::write "You can access the scipt with your favorite editor by executing:"
 output::write "\$EDITOR \"\$DOTFILES_PATH/scripts/$context/$script_name\""
 echo
-
-#cd "$STARTING_DIRECTORY"
