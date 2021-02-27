@@ -2,15 +2,40 @@
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 source "$DOTLY_PATH/scripts/dotly/helpers/templating.sh"
+
+SCRIPT_NAME="create"
+SCRIPT_VERSION="1.0.0"
 SCRIPT_TEMPLATE="$DOTLY_PATH/scripts/dotly/helpers/script-template"
 
 ##? Dotly script creator
+##? 
 ##?
-##? Author:
-##?   Dotly Contributors
 ##? Usage:
-##?   create <context> <script_name> [<script_description>]
+##?   create -h | --help
+##?   create -v | --version
+##?   create [-s|--sample] <context> <script_name> [<script_description>]
+##? This part will be only printed when you call with bad arguments.
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?   -s --sample   Create a script using more complete example with some comments.
+##?                 useful if it is your first script. Anyway you can see more help
+##?                 in the docopt website: http://docopt.org
+##?
+##? Author: Gabriel Trabanco <https://keybase.io/gtrabanco>
 docs::parse "$@"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Script part
+if $sample; then
+  SCRIPT_TEMPLATE="$SCRIPT_TEMPLATE-more"
+fi
 
 # Variables for the script
 author="$(git config --global --get user.name)"
