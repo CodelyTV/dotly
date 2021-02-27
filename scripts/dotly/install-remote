@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
+
+SCRIPT_NAME="dot dotly install-remote"
+SCRIPT_VERSION="1.0.0"
+
 # Save current working directory to return user there
 STARTING_DIRECTORY="$(pwd)"
 LS_BIN="$(which ls)"
@@ -15,11 +19,24 @@ CHMOD_BIN="$(which chmod)"
 ##? omited and renamed in your $DOTFILES_PATH/scripts/<context> folder
 ##?
 ##? Script information:
-##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+##?   
 ##?
 ##? Usage:
 ##?   install-remote <context> <script_raw_url> [<script_name>]
+##?
+##? Options:
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
 docs::parse "$@"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Script part
 
 # Script name if provided if not with downloaded name
 [[ ! -z $script_name ]] && script_name_args="-o $script_name" || script_name_args=${script_name:-"-O"}

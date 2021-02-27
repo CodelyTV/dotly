@@ -2,9 +2,6 @@
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
-SCRIPT_NAME="XXX_SCRIPT_NAME_XXX"
-SCRIPT_VERSION="1.0.0"
-
 ##? XXX_SCRIPT_DESCRIPTION_XXX
 ##? 
 ##?
@@ -16,8 +13,12 @@ SCRIPT_VERSION="1.0.0"
 ##?   -h --help     Show this help
 ##?   -v --version  Show the program version
 ##?
-##? Author: XXX_SCRIPT_AUTHOR_XXX <XXX_SCRIPT_AUTHOR_EMAIL_XXX>
+##? Author:
+##?   XXX_SCRIPT_AUTHOR_XXX <XXX_SCRIPT_AUTHOR_EMAIL_XXX>
 docs::parse "$@"
+
+SCRIPT_NAME="dot XXX_SCRIPT_CONTEXT_XXX XXX_SCRIPT_NAME_XXX"
+SCRIPT_VERSION="1.0.0"
 
 # Print name and version
 if $version; then
@@ -25,7 +26,7 @@ if $version; then
   exit
 fi
 
-# Script part
+# Here begin your script
 
 case $1 in
 # Any subcommand should be here
