@@ -16,3 +16,11 @@ coll::contains_element() {
   done
   return 0
 }
+
+coll::map() {
+   local -r fn="$1"
+
+   for x in $(cat); do
+      "$fn" "$x"
+   done
+}
