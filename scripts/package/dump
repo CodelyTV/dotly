@@ -6,7 +6,7 @@ source "$DOTLY_PATH/scripts/package/utils/dump.sh"
 ##? Dump all installed packages from:
 ##?  * Brew
 ##?  * Python
-##?  * NPM
+##?  * Volta.sh or NPM
 ##?
 ##? Usage:
 ##?   dump
@@ -15,6 +15,11 @@ docs::parse "$@"
 platform::is_macos && package::brew_dump && output::answer "Brew apps dumped on $HOMEBREW_DUMP_FILE_PATH"
 
 platform::command_exists pip3 && package::python_dump && output::answer "Python apps dumped on $PYTHON_DUMP_FILE_PATH"
-platform::command_exists npm && package::npm_dump && output::answer "NPM apps dumped on $NPM_DUMP_FILE_PATH"
+
+if platform::command_exists volta; then
+    package::volta_dump && output::answer "Volta apps dumped on $VOLTA_DUMP_FILE_PATH"
+elif platform::command_exists npm; then
+    package::npm_dump && output::answer "NPM apps dumped on $NPM_DUMP_FILE_PATH"
+fi
 
 output::solution 'All packages dumped'
