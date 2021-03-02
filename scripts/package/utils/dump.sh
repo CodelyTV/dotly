@@ -3,6 +3,7 @@
 HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/mac/brew/Brewfile"
 PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/requirements.txt"
 NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/global_modules.txt"
+VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta_dependencies.txt"
 
 package::brew_dump() {
   mkdir -p "$DOTFILES_PATH/os/mac/brew"
@@ -38,5 +39,17 @@ package::npm_dump() {
 package::npm_import() {
   if [ -f "$NPM_DUMP_FILE_PATH" ]; then
     xargs -I_ npm install -g "_" <"$NPM_DUMP_FILE_PATH"
+  fi
+}
+
+package::volta_dump() {
+  mkdir -p "$DOTFILES_PATH/langs/js"
+
+  volta list all --format plain | awk '{print $2}' >"$VOLTA_DUMP_FILE_PATH"
+}
+
+package::volta_import() {
+  if [ -f "$VOLTA_DUMP_FILE_PATH" ]; then
+    xargs -I_ volta install "_" <"$VOLTA_DUMP_FILE_PATH"
   fi
 }
