@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-{
 
 set -euo pipefail
 
@@ -9,7 +8,9 @@ set -euo pipefail
 ##? Usage:
 ##?    install
 
-
+DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
+export DOTLY_ENV=${DOTLY_ENV:-PROD}
+export DOTLY_INSTALLER=true
 
 
 red='\033[0;31m'
@@ -27,6 +28,20 @@ _s() { _a "${green}$1${normal}"; }
 _q() { read -rp "🤔 $1: " "$2"; }
 _pk() { read -rp "Press a key to ${1}... 👇" "REPLY"; }
 
+_log() {
+  log_name="$1"
+  current_date=$(date "+%Y-%m-%d %H:%M:%S")
+
+  touch "$DOTLY_LOG_FILE"
+  echo "----- $current_date - $log_name -----" >>"$DOTLY_LOG_FILE"
+
+  while IFS= read -r log_message; do
+    echo "$log_message" >>"$DOTLY_LOG_FILE"
+  done
+
+  echo "" >>"$DOTLY_LOG_FILE"
+}
+
 current_timestamp() { date +%s; }
 
 command_exists() {
@@ -43,29 +58,34 @@ install_brew_osx() {
 package_install () {
   install_brew_osx #Without this it will try to use apt
   # Because apt that is not package manager exists on macOS
+  
   if command_exists dnf; then
-    _a "Installing ${1} using dnf"
-    sudo dnf -y install "${1}" >/dev/null 2>&1
+    _a "Installing '${@}' using dnf"
+    sudo dnf -y install "${@}" >/dev/null 2>&1 | _log "Installing '${@}' using dnf"
   elif command_exists yum; then
-    _a "Installing ${1} using yum"
-    yes | sudo yum install "${1}" >/dev/null 2>&1
+    _a "Installing '${@}' using yum"
+    yes | sudo yum install "${@}" >/dev/null 2>&1 | _log "Installing '${@}' using yum"
   elif command_exists brew; then
-    _a "Installing ${1} using brew"
-    yes | brew install "${1}" >/dev/null 2>&1
+    _a "Installing '${@}' using brew"
+    yes | brew install "${@}" 2>&1 | _log "Installign '${@}' using brew"
   elif command_exists pacman; then
-    _a "Installing ${1} using pacman"
-    sudo pacman -S --noconfirm "${1}" >/dev/null 2>&1
+    _a "Installing '${@}' using pacman"
+    sudo pacman -S --noconfirm "${@}" >/dev/null 2>&1 | _log "Installign '${1}' using pacman"
   elif command_exists apt; then
-    _a "Installing ${1} using apt"
-    sudo apt -y install "${1}" >/dev/null 2>&1
+    _a "Installing '${@}' using apt"
+    sudo apt -y install "${1}" >/dev/null 2>&1 | _log "Installign '${@}' using apt"
   else
-    _e "Could not install '${1}', no package provider found"
+    _e "Could not install '${@}', no package provider found"
+    return 1
   fi
+  
+  return 0
 }
 
 git_install_dotfiles() {
     local GIT_URL="$1"
     local DOTFILES_PATH="$2"
+    _a "git clone ${GIT_URL} ${DOTFILES_PATH}"
     git clone "${GIT_URL}" "${DOTFILES_PATH}"
     cd "${DOTFILES_PATH}"
     git submodule update --init --recursive
@@ -77,35 +97,30 @@ _w "  └───────────────────────�
 _w
 
 # Git Install
-_w "Checking if Git is installed"
-if ! command_exists git; then
-  _e "Git is not installed, trying to install"
+# In MacOS git is installed if Command Line Tools (CLT) are installed
+# and not if git command exists because it exists but ask you to
+# install CLT.
 
-  if [[ "$OSTYPE" =~ ^[darwin] ]]; then
-    #_a "Updating macOS 🌍"
-    #sudo softwareupdate -i -a
-    
-    _a "Checking if Command Line Tools are installed 🕵️‍♂️"
-    
-    xcode-select --install 2>&1 | grep installed > /dev/null
-    if [[ $? ]]; then
-      _a "Installing Command Line Tools 📺"
-      xcode-select --install
-      _pk "to continue the installation after Command Line Tools installation has finished"
-    fi
-  else
-    package_install git
-  fi
-  
-  if [[ $? ]]; then
-      exit 1
-  fi
+_w "Checking if Git is installed"
+if [[ "$OSTYPE" =~ ^[darwin] ]] && ! ($(ls /Library/Developer/CommandLineTools > /dev/null 2>&1)); then
+  # In macOS if we do not have CLT then we do not have git. This could be wrong
+  # but we will want brew later and if we do not have CLT we can not have brew
+  # 
+  # Brew manages the installation of brew so we will intall Brew
+  _w "CLT could not be detected"
+  install_brew_osx
 fi
-_s "Git is installed on this system"
+
+
+if ! command_exists git; then
+  # Other OS checking if git exists...
+  package_install git
+fi
+_s "Git command exists on this system"
 
 # Files locations
 _q "Where do you want your dotfiles to be located? (default ~/.dotfiles)" "DOTFILES_PATH"
-DOTFILES_PATH="${DOTFILES_PATH:-"$HOME/.dotfiles"}"
+DOTFILES_PATH="${DOTFILES_PATH:-'~/.dotfiles'}"
 DOTFILES_PATH="$(eval echo "$DOTFILES_PATH")"
 export DOTFILES_PATH="$DOTFILES_PATH"
 
@@ -130,7 +145,7 @@ do
           _q "📦 Which is your github repository?" "GITHUB_REPOSITORY_NAME"
       done
       
-      GIT_URL="git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
+      GIT_URL="https://github.com/$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
       _w "  Remember that if your dotfiles repository is private you"
       _w "need to generate or restore the ssh key and added to your"
       _w "github account in:"
@@ -142,7 +157,7 @@ do
     "Keybase")
       _w "Checking if keybase is installed"
 
-      if ! command_exists keybase; then
+      if ! $(ls /Applications/Keybase.app > /dev/null 2>&1); then
         _w "Keybase has not been detected. We will try to install it with the package manager."
         _w "If the installation finish the script re run it to finish the install"
         
@@ -190,8 +205,13 @@ do
 done
 
 # Recovering your files
-git_install_dotfiles "${GIT_URL}" "${DOTFILES_PATH}"
-"$DOTLY_PATH/bin/dot" self install
+_w "Installing your dotfiles"
+git_install_dotfiles "${GIT_URL}" "${DOTFILES_PATH}" >/dev/null 2>&1 | _log "Recovering dotfiles from $GIT_URL in $DOTFILES_PATH"
+
+_w "Installing dotly default tools"
+_w "Please be patient this could take some time...🙏"
+# Installing default dotly tools
+"$DOTLY_PATH/bin/dot" self install > /dev/null 2>&1 | _log "Installing dotly default tools"
 _a "🎉 dotfiles restored! 🎉"
 
 PATH="${PATH}:$HOME/.cargo/bin"
@@ -199,7 +219,12 @@ PATH="${PATH}:$HOME/.cargo/bin"
 # Installing packages
 _q "📦 Do you want to import previous installed packages? [Y/n]" "USER_IMPORT_PACKAGES"
 USER_IMPORT_PACKAGES=${USER_IMPORT_PACKAGES:-'Y'}
-[[ "$USER_IMPORT_PACKAGES" =~ ^[Yy] ]] && "$DOTLY_PATH/bin/dot" package import
+if [[ "$USER_IMPORT_PACKAGES" =~ ^[Yy] ]]; then
+  _w "Importing your packages"
+  _w "This can take a very long time, be patient...🙏"
+  "$DOTLY_PATH/bin/dot" package import >/dev/null 2>&1 | _log "Importing user packages"
+  _a "Packages imported 👏"
+fi
 
 # Importing defaults on macOS
 if [[ "$OSTYPE" =~ ^[darwin] ]]; then
@@ -211,10 +236,9 @@ if [[ "$OSTYPE" =~ ^[darwin] ]]; then
   _w "IMPORTANT! This overwrite all your current configuration if you answer with 'y'"
   _w
   _q "⚙️ Do you want to import stored macOS configuration? [y/N]" "USER_OSX_SETTINGS"
-  [[ "$USER_OSX_SETTINGS" =~ ^[Yy] ]] && "$DOTLY_PATH/bin/dot" mac defaults import
+  [[ "$USER_OSX_SETTINGS" =~ ^[Yy] ]] && "$DOTLY_PATH/bin/dot" mac defaults import >/dev/null 2>&1 | _log "Importing macOS user defaults"
 fi
 _a "🎉 dotfiles restored! 🎉"
 _a "Please, restart your terminal to see the changes."
 _pk "exit terminal"
 exit
-}
