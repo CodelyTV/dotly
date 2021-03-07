@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Checkouts to a branch creating it if it not exists
+#?? 1.0.0
+##?
+##? Usage:
+##?   checkout <branch_name>
+docs::parse "$@"
+
+git::branch_exists() {
+  [ "$(git branch --list ${1})" ]
+}
+
+if git::branch_exists $branch_name; then
+  git checkout $branch_name
+else
+  git checkout -b $branch_name
+fi
