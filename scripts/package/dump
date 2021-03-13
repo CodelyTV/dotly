@@ -9,17 +9,39 @@ source "$DOTLY_PATH/scripts/package/utils/dump.sh"
 ##?  * Volta.sh or NPM
 ##?
 ##? Usage:
-##?   dump
+##?   dump [--silent|-s]
+##?
+##? Options:
+##?   --silent -s  If you use this option you won't prompted for custom file name,
+##?                the file name will be the hostname
 docs::parse "$@"
 
-platform::is_macos && package::brew_dump && output::answer "Brew apps dumped on $HOMEBREW_DUMP_FILE_PATH"
+HOSTNAME="$(hostname -s)"
 
-platform::command_exists pip3 && package::python_dump && output::answer "Python apps dumped on $PYTHON_DUMP_FILE_PATH"
+if !($silent); then
+  output::question_default "Do you want to use current hostname (if not write other name)?" "$HOSTNAME" "HOSTNAME"
+fi
+
+HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/mac/brew/${HOSTNAME}"
+PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/${HOSTNAME}.txt"
+NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/npm/${HOSTNAME}.txt"
+VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta/${HOSTNAME}.txt"
+
+# Brew command is not macOS exclusive, it can be used on Linux. If I am right. Please delete this comment when reviewing PR
+platform::command_exists brew && \
+  package::brew_dump "$HOMEBREW_DUMP_FILE_PATH" && \
+  output::answer "Brew apps dumped on $HOMEBREW_DUMP_FILE_PATH"
+
+platform::command_exists pip3 && \
+  package::python_dump "$PYTHON_DUMP_FILE_PATH" && \
+  output::answer "Python apps dumped on $PYTHON_DUMP_FILE_PATH"
 
 if platform::command_exists volta; then
-    package::volta_dump && output::answer "Volta apps dumped on $VOLTA_DUMP_FILE_PATH"
+    package::volta_dump "$VOLTA_DUMP_FILE_PATH" && \
+    output::answer "Volta apps dumped on $VOLTA_DUMP_FILE_PATH"
 elif platform::command_exists npm; then
-    package::npm_dump && output::answer "NPM apps dumped on $NPM_DUMP_FILE_PATH"
+    package::npm_dump "$NPM_DUMP_FILE_PATH" && \
+      output::answer "NPM apps dumped on $NPM_DUMP_FILE_PATH"
 fi
 
 output::solution 'All packages dumped'

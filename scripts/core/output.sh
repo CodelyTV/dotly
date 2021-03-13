@@ -17,8 +17,20 @@ output::question() {
     output::answer "🤔 $1: ";
     read -r "$2";
   else
-    read -rp " $1: " "$2"
+    read -rp "🤔 $1: " "$2"
   fi
+}
+output::question_default() {
+  local default_answer="$2"
+  local user_value=""
+
+  if [ platform::is_macos ]; then
+    echo -n "🤔 $1 [$2]: ";
+    read -r "$3";
+  else
+    read -rp "🤔 $1 [$2]: " "$3"
+  fi
+  eval "$3=\"\${$3:-$2}\""
 }
 output::empty_line() { echo ''; }
 output::header() { output::empty_line; output::write "${bold_blue}---- $1 ----${normal}"; }
