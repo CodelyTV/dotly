@@ -48,10 +48,18 @@ else
   script_exist "$DOTFILES_PATH" "$context" "$script" && script_path="$DOTFILES_PATH"
   script_exist "$DOTLY_PATH" "$context" "$script" && script_path="$DOTLY_PATH"
 
-  if [ -z "$script_path" ]; then
+  ts_script_path=""
+  script_exist "$DOTFILES_PATH" "$context" "$script.ts" && ts_script_path="$DOTFILES_PATH"
+  script_exist "$DOTLY_PATH" "$context" "$script.ts" && ts_script_path="$DOTLY_PATH"
+
+  if [ -z "$script_path" ] && [ -z "$ts_script_path" ]; then
     output::error "The script <$context / $script> doesn't exist"
     exit 1
   fi
 
-  "${script_path}/scripts/${context}/${script}" "$@"
+  if [ -n "$script_path" ]; then
+    "${script_path}/scripts/${context}/${script}" "$@"
+  else
+    deno run --allow-run "$ts_script_path/scripts/$context/$script.ts" "$@"
+  fi
 fi
