@@ -5,14 +5,13 @@ import { Args }   from './Args.ts'
 export class Dotly {
   static async script(
     documentation: string,
-    argsDefinition: string[],
     body: (args: Args) => void
   ): Promise<void> {
     const name = this.scriptName()
     const args = new Args(parse(Deno.args))
 
     if (args.has('h')) {
-      Output.write(this.buildDocumentation(name, documentation, argsDefinition))
+      Output.write(this.buildDocumentation(name, documentation))
 
       this.exit(0)
     }
@@ -26,7 +25,7 @@ export class Dotly {
     Deno.exit(status)
   }
 
-  private static buildDocumentation(name: string, documentation: string, argsDefinition: string[]): string {
+  private static buildDocumentation(name: string, documentation: string): string {
     return `${documentation}
 
 Usage:

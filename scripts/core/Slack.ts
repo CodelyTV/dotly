@@ -1,3 +1,5 @@
+import { Output } from './Output.ts'
+
 export class Slack {
   constructor(private readonly token: string) {
   }
@@ -19,6 +21,18 @@ export class Slack {
             }
           }
         )
+      }
+    ).then(
+      (response) => response.json(),
+      (error) => Output.error(error)
+    ).then(
+      (response) => {
+        if (response.ok) {
+          Output.write('✅ Slack status changed correctly')
+        } else {
+          Output.error('🚨 Slack status not changed due to an error:')
+          console.error(response)
+        }
       }
     )
   }
