@@ -15,7 +15,7 @@ package::which_file() {
   local var_name="$3"
   local answer=""
 
-  [[ -d "$FILES_PATH" ]] && answer="$FILES_PATH/$(ls -1 "$FILES_PATH/" 2>/dev/null | grep -v ".lock.json$" | sort -u | fzf -0 --filepath-word --prompt "$(hostname -s) > " --header "$header")"
+  [[ -d "$FILES_PATH" ]] && answer="$FILES_PATH/$(ls -1 "$FILES_PATH/" 2>/dev/null | grep -v ".lock.json$" | sort -u | fzf -0 --filepath-word --prompt "$(hostname -s) > " --header "$header" --preview "cat $FILES_PATH/{}")"
   eval "$var_name=$answer"
 }
 
