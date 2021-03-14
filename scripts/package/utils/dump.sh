@@ -9,13 +9,30 @@ package::exists_dump_current_machine_file() {
   ls -1 -d "$FILES_PATH"/* 2>/dev/null | grep -v ".lock.json$" | grep "$(hostname -s)"
 }
 
+package::preview() {
+  local filename="$1"
+  local FILES_PATH="$(realpath -sm $2)"
+
+  if $filename == "No import"; then
+    echo "No import any file for this package manager"
+    return
+  fi
+
+  [[ -f "$FILES_PATH/$filename" ]] && cat "$FILES_PATH/$filename" || "Could not find the file '$FILES_PATH/$filename'"
+}
+
 package::which_file() {
   local FILES_PATH="$(realpath -sm $1)"
   local header="$2"
   local var_name="$3"
   local answer=""
 
-  [[ -d "$FILES_PATH" ]] && answer="$FILES_PATH/$(ls -1 "$FILES_PATH/" 2>/dev/null | grep -v ".lock.json$" | sort -u | fzf -0 --filepath-word --prompt "$(hostname -s) > " --header "$header" --preview "cat $FILES_PATH/{}")"
+  local files="$(ls -1 "$FILES_PATH/" 2>/dev/null | grep -v ".lock.json$" | sort -u | tr '\n' ',' && echo 'No import')"
+
+  if [[ -d "$FILES_PATH" ]]; then
+    answer="$(echo $files | tr ',' '\n' | fzf -0 --filepath-word -d ',' --prompt "$(hostname -s) > " --header "$header" --preview "[[ -f $FILES_PATH/{} ]] && cat $FILES_PATH/{} || echo No import a file for this package manager")"
+    [[ -f "$FILES_PATH/$answer" ]] && answer="$FILES_PATH/$answer" || answer=""
+  fi
   eval "$var_name=$answer"
 }
 

@@ -45,14 +45,16 @@ fi
 
 output::write "🎩 Let's import your packages (this could take a while)"
 
-platform::command_exists brew && [[ ! -z "$HOMEBREW_DUMP_FILE_PATH" ]] && output::header "Importing Brew apps from $HOMEBREW_DUMP_FILE_PATH" && package::brew_import
+(platform::command_exists brew && [[ ! -z "$HOMEBREW_DUMP_FILE_PATH" ]] && output::header "Importing Brew apps from $HOMEBREW_DUMP_FILE_PATH" && package::brew_import) || output::answer "Ignoring Brew"
 
-platform::command_exists pip3 && [[ ! -z "$PYTHON_DUMP_FILE_PATH" ]] && output::header "Importing Python apps from $PYTHON_DUMP_FILE_PATH" && package::python_import
+(platform::command_exists pip3 && [[ ! -z "$PYTHON_DUMP_FILE_PATH" ]] && output::header "Importing Python apps from $PYTHON_DUMP_FILE_PATH" && package::python_import) || output::answer "Ignoring the import of python packages"
 
 if platform::command_exists volta && [[ ! -z "$VOLTA_DUMP_FILE_PATH" ]]; then
-    output::header "Importing Volta apps from $VOLTA_DUMP_FILE_PATH" && package::volta_import
+  output::header "Importing Volta apps from $VOLTA_DUMP_FILE_PATH" && package::volta_import $VOLTA_DUMP_FILE_PATH
 elif platform::command_exists npm && [[ ! -z "$NPM_DUMP_FILE_PATH" ]]; then
-    output::header "Importing NPM apps from $NPM_DUMP_FILE_PATH" && package::npm_import
+  output::header "Importing NPM apps from $NPM_DUMP_FILE_PATH" && package::npm_import $NPM_DUMP_FILE_PATH
+else
+  platform::command_exists volta && output::answer "Ignoring the import of volta packages" || output::answer "Ignoring the import of NPM packages"
 fi
 
 output::solution 'All packages imported'
