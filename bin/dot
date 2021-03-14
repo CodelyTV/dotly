@@ -60,6 +60,6 @@ else
   if [ -n "$script_path" ]; then
     "${script_path}/scripts/${context}/${script}" "$@"
   else
-    deno run --allow-run "$ts_script_path/scripts/$context/$script.ts" "$@"
+    deno run --allow-all --quiet "$ts_script_path/scripts/$context/$script.ts" "$@"
   fi
 fi
