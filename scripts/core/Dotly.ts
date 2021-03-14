@@ -4,14 +4,16 @@ import { Args }   from './Args.ts'
 
 export class Dotly {
   static async script(
-    name: string, documentation: string,
+    documentation: string,
     argsDefinition: string[],
     body: (args: Args) => void
   ): Promise<void> {
+    const name = this.scriptName()
     const args = new Args(parse(Deno.args))
 
-    if (args.hasOwnProperty('h')) {
+    if (args.has('h')) {
       Output.write(this.buildDocumentation(name, documentation, argsDefinition))
+
       this.exit(0)
     }
 
@@ -30,5 +32,11 @@ export class Dotly {
 Usage:
    ${name}
     `
+  }
+
+  private static scriptName(): string {
+    const mainModulePath = Deno.mainModule.split('/')
+
+    return mainModulePath[mainModulePath.length - 1].replace('.ts', '')
   }
 }

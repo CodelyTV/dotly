@@ -4,7 +4,7 @@ import { Env }    from '../core/Env.ts'
 import { Args }   from '../core/Args.ts'
 import { Output } from '../core/Output.ts'
 
-await Dotly.script('change_status', 'Change your Slack status', ['arg'], async (args: Args) => {
+await Dotly.script('Change your Slack status', ['arg'], async (args: Args) => {
   const slack = new Slack(Env.get('SLACK_TOKEN'))
 
   await slack.changeStatus(args.get('text'), args.get('emoji'))

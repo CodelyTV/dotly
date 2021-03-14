@@ -5,4 +5,8 @@ export class Args {
   get(name: string): string {
     return this.value[name]
   }
+
+  has(name: string): boolean {
+    return this.value.hasOwnProperty(name)
+  }
 }
