@@ -1,7 +1,14 @@
+export type CommandOutput = {
+  stdout: string;
+  stderr: string;
+  statusCode: number;
+  isSuccessful: boolean;
+};
+
 export class Shell {
   static async run(
     ...commandAndArgs: string[]
-  ): Promise<{ stdout: string; stderr: string; statusCode: number; isSuccessful: boolean; }> {
+  ): Promise<CommandOutput> {
     const process = Deno.run({cmd: commandAndArgs, stdout: 'piped', stderr: 'piped'})
 
     const output = await process.output()
