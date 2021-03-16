@@ -6,8 +6,8 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##? 
 ##?
 ##? Usage:
-##?   XXX_SCRIPT_NAME_XXX -h | --help
-##?   XXX_SCRIPT_NAME_XXX -v | --version
+##?   XXX_SCRIPT_NAME_XXX [-h | --help]
+##?   XXX_SCRIPT_NAME_XXX [-v | --version]
 ##?
 ##? Options:
 ##?   -h --help     Show this help

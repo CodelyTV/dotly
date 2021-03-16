@@ -10,3 +10,7 @@
 	path = modules/z
 	url = https://github.com/rupa/z.git
 	ignore = dirty
+[submodule "modules/dotly_marketplace"]
+	path = modules/dotly_marketplace
+	url = https://github.com/gtrabanco/dotly_marketplace
+	branch = master
