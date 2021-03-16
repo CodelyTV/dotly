@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTFILES_PATH/scripts/dotly/helpers/templating.sh"
+source "$DOTLY_PATH/scripts/dotly/helpers/templating.sh"
 
 SCRIPT_NAME="dot dotly create"
 SCRIPT_VERSION="1.0.0"
-SCRIPT_TEMPLATE="$DOTFILES_PATH/scripts/dotly/helpers/script-template"
+SCRIPT_TEMPLATE="$DOTLY_PATH/scripts/dotly/helpers/script-template"
 
 ##? Dotly script creator
 ##? 
