@@ -73,4 +73,4 @@ output::solution "The script '$script_name' where successfully created."
 output::write ""
 output::write "You can access the scipt with your favorite editor by executing:"
 output::write "\$EDITOR \"\$DOTFILES_PATH/scripts/$context/$script_name\""
-echo
+output::empty_line
