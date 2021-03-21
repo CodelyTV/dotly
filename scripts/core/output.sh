@@ -21,16 +21,17 @@ output::question() {
   fi
 }
 output::question_default() {
-  local default_answer="$2"
-  local user_value=""
+  local question="$1"
+  local default_value="$2"
+  local var_name="$3"
 
   if [ platform::is_macos ]; then
-    echo -n "🤔 $1 [$2]: ";
-    read -r "$3";
+    echo -n "🤔 $question [$default_value]: ";
+    read -r "$var_name";
   else
-    read -rp "🤔 $1 [$2]: " "$3"
+    read -rp "🤔 $question [$default_value]: " "$var_name"
   fi
-  eval "$3=\"\${$3:-$2}\""
+  eval "$var_name=\"\${$var_name:-$default_value}\""
 }
 output::empty_line() { echo ''; }
 output::header() { output::empty_line; output::write "${bold_blue}---- $1 ----${normal}"; }
