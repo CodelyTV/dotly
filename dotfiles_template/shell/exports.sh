@@ -1,3 +1,6 @@
+export DOTLY_AUTO_UPDATE_DAYS=7
+export DOTLY_AUTO_UPDATE_MODE="reminder" # reminder*, auto, prompt
+
 export JAVA_HOME='/Library/Java/JavaVirtualMachines/amazon-corretto-15.jdk/Contents/Home'
 export GEM_HOME="$HOME/.gem"
 export GOPATH="$HOME/.go"

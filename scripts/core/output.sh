@@ -20,5 +20,27 @@ output::question() {
     read -rp " $1: " "$2"
   fi
 }
+output::yesno() {
+  local question="$1"
+  local default="${2:-Y}"
+  local PROMPT_REPLY values default_check
+
+  if [[ "$default" =~ ^[Yy] ]]; then
+    values="Y/n"
+    default_check="Yy"
+  else
+    values="y/N"
+    default_check="Nn"
+  fi
+
+  if [ platform::is_macos ]; then
+    echo -n "🤔 $question [$values]: ";
+    read -r "PROMPT_REPLY";
+  else
+    read -rp "🤔 $question [$values]: " "PROMPT_REPLY"
+  fi
+  PROMPT_REPLY=${PROMPT_REPLY:-$default}
+  [[ "$PROMPT_REPLY" =~ ^[$default_check] ]]
+}
 output::empty_line() { echo ''; }
 output::header() { output::empty_line; output::write "${bold_blue}---- $1 ----${normal}"; }

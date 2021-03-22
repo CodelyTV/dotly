@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Autoupdater enable/disable script
+##? 
+##?
+##? Usage:
+##?   autoupdater [-h | --help]
+##?   autoupdater [-v | --version]
+##?   autoupdater enable
+##?   autoupdater disable
+##?   autoupdater status
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+
+# Options part its important because assign short and long version of the params
+docs::parse "$@"
+
+SCRIPT_NAME="dot self autoupdater"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Needed vars
+autoupdater_full_path="$DOTLY_PATH/shell/init-scripts/autoupdater_loader"
+init_scripts_dir_path="$DOTFILES_PATH/shell/init-scripts.enabled"
+
+# Create enabled folder if it does not exists
+mkdir -p "$init_scripts_dir_path"
+
+case $1 in
+"enable")
+  [[ -f "$autoupdater_full_path" ]] &&\
+    ln -s "$autoupdater_full_path" "$init_scripts_dir_path/autoupdater_loader"
+  output::solution "DOTLY Autoupdater enabled"
+  ;;
+"disable")
+  rm -f "$init_scripts_dir_path/autoupdater_loader"
+  output::error "DOTLY Autoupdater disabled"
+  ;;
+*)
+  [[ -f "$init_scripts_dir_path/autoupdater_loader" ]] &&\
+    output::solution "DOTLY Autoupdater enabled" ||\
+    output::error "DOTLY Autoupdater disabled"
+  ;;
+esac

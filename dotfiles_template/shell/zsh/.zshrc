@@ -24,3 +24,10 @@ prompt ${DOTLY_THEME:-codely}
 source "$DOTLY_PATH/shell/zsh/bindings/dot.zsh"
 source "$DOTLY_PATH/shell/zsh/bindings/reverse_search.zsh"
 source "$DOTFILES_PATH/shell/zsh/key-bindings.zsh"
+
+# Auto Init scripts at the end
+init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled/*"
+mkdir -p $init_scripts_path
+for init_script in $init_scripts_path; do
+  source "$init_script"
+done
