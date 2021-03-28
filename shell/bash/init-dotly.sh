@@ -1,7 +1,3 @@
-export DOTFILES_PATH="XXX_DOTFILES_PATH_XXX"
-export DOTLY_PATH="$DOTFILES_PATH/modules/dotly"
-export DOTLY_THEME="codely"
-
 if [[ "$(ps -p $$ -ocomm=)" =~ (bash$) ]]; then
   __right_prompt() {
     RIGHT_PROMPT=""
@@ -22,7 +18,7 @@ PATH=$(
 )
 export PATH
 
-source "$DOTFILES_PATH/shell/init.sh"
+[[ -f "$DOTFILES_PATH/shell/init.sh" ]] && source "$DOTFILES_PATH/shell/init.sh"
 
 themes_paths=(
   "$DOTFILES_PATH/shell/bash/themes"
@@ -43,3 +39,10 @@ if [ -n "$(ls -A "$DOTFILES_PATH/shell/bash/completions/")" ]; then
     source "$bash_file"
   done
 fi
+
+# Auto Init scripts at the end
+init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
+mkdir -p $init_scripts_path
+for init_script in $init_scripts_path/*; do
+  source "$init_script"
+done
