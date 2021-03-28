@@ -51,6 +51,7 @@ case $1 in
   sudo -v
   sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
   chmod u+w /usr/local/share/zsh /usr/local/share/zsh/site-functions
+  ;;
 *)
   exit 1
   ;;
