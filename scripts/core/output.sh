@@ -50,12 +50,5 @@ output::yesno() {
 }
 output::empty_line() { echo ''; }
 output::header() { output::empty_line; output::write "${bold_blue}---- $1 ----${normal}"; }
-output::str_to_upper() { echo $@ | tr '[:lower:]' '[:upper:]'; }
-# split is not compatible with strings that have new space
-output::split() { local IFS="$1"; shift; echo "${!@[@]}"; unset IFS; }
 # output::join: https://stackoverflow.com/a/17841619
 output::join() { local glue="$1"; local first="$2"; shift 2; printf "%s" "$2" "${@/#/$glue}"; }
-# Usage: output::array_* "${arr1[@]}" "${arr2[@]}"
-output::array_union() { echo "${@}" | tr ' ' '\n' | sort | uniq; }
-output::array_disjunction() { echo "${@}" | tr ' ' '\n' | sort | uniq -u; }
-output::array_difference() { echo "${@}" | tr ' ' '\n' | sort | uniq -d; }

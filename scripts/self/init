@@ -46,19 +46,29 @@ enabled_scripts=("$(init::get_enabled)")
 
 case $1 in
 "enable")
+  # If the user gives the script_name
   if [[ -n "$script_name" ]]; then
+    status=0
     if init::exists_script "$script_name"; then
       init::enable "$script_name"
-      init::status "$script_name" && output::solution "Enabled" && exit 0
-      output::error "Could not be enabled." && exit 1
+      init::status "$script_name" && output::solution "Enabled"
+      output::error "Could not be enabled." && status=1
     else
       output::error "$script_name does not exists."
-      exit 1
+      status=1
     fi
+    exit $status
   fi
 
-  not_enabled_scripts=("$(output::array_disjunction "${init_scripts[@]}" "${enabled_scripts[@]}")")
-  [[ -n "$not_enabled_scripts" ]] && to_enable=$(output::array_disjunction "${init_scripts[@]}" "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to enable when init terminal") || output::answer "Nothing can be enabled"
+  # If there is no script_name
+  # If there is nothing that can be enabled or not select scripts to
+  # be enabled, exit
+  not_enabled_scripts=("$(array::disjunction "${init_scripts[@]}" "${enabled_scripts[@]}")")
+  if [[ -n "$not_enabled_scripts" ]]; then
+    to_enable=$(array::disjunction "${init_scripts[@]}" "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to enable when init terminal")
+  else
+    output::answer "Nothing can be enabled"
+  fi
   [[ -z "$to_enable" ]] && exit 0
 
   for item in "${to_enable[@]}"; do
@@ -73,21 +83,31 @@ case $1 in
   done
   ;;
 "disable")
+  # If there is script_name
   if [[ -n "$script_name" ]]; then
+    status=0
     if init::exists_script "$script_name"; then
       init::disable "$script_name"
       if ! init::status "$script_name"; then
-        output::solution "Disabled" && exit 0
+        output::solution "Disabled"
       fi
 
-      output::error "Could not be disabled." && exit 1
+      output::error "Could not be disabled." && status=1
     else
       output::error "$script_name does not exists."
-      exit 1
+      status=1
     fi
+
+    exit $status
   fi
 
-  [[ -n "$enabled_scripts" ]] && to_disable=$(echo "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to disable from init terminal") || output::answer "Nothing to be disabled"
+  # If there is no script_name
+  # If there are no enabled scripts or nothing to be disabled, exit
+  if [[ -n "$enabled_scripts" ]]; then
+    to_disable=$(echo "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to disable from init terminal")
+  else
+    output::answer "Nothing to be disabled"
+  fi
   [[ -z "$to_disable" ]] && exit 0
   
   init::disable "${to_disable[@]}"
@@ -102,9 +122,15 @@ case $1 in
   done
   ;;
 "status")
-  if [ ! -z "$script_name" ]; then
-    init::status "$script_name" && output::solution "'$script_name' is enabled" || output::error "'$script_name' is disabled"
+  # Check status, if user gives a script_name
+  if [ -n "$script_name" ]; then
+    if init::status "$script_name"; then
+      output::solution "'$script_name' is enabled"
+    else
+      output::error "'$script_name' is disabled"
+    fi
   else
+    # If there is no script_name, gives the status of all
     for item in "${init_scripts[@]}"; do
       init::status "$item" &&\
         output::solution "'$item'... Enabled." ||\
@@ -113,6 +139,7 @@ case $1 in
   fi
   ;;
 *)
+  # Gives help
   "$DOTLY_PATH/bin/dot" self init -h
   ;;
 esac
