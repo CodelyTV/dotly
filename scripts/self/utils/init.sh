@@ -5,14 +5,14 @@ DOTLY_INIT_SCRIPTS_PATH=${DOTLY_INIT_SCRIPTS_PATH:-$DOTLY_PATH/shell/init-script
 DOTFILES_INIT_SCRIPTS_PATH=${DOTFILES_INIT_SCRIPTS_PATH:-$DOTFILES_PATH/shell/init-scripts}
 ENABLED_INIT_SCRIPTS_PATH=${ENABLED_INIT_SCRIPTS_PATH:-$DOTFILES_PATH/shell/init-scripts.enabled}
 
-# check if init script is enabled or disabled
-init::status() {
-    [[ -f "$ENABLED_INIT_SCRIPTS_PATH/$1" ]]
-}
-
 # Check if init script exists in dotly or dotfiles
 init::exists_script() {
     [[ -f "$DOTLY_INIT_SCRIPTS_PATH/$1" ]] || [[ -f "$DOTFILES_INIT_SCRIPTS_PATH" ]]
+}
+
+# check if init script is enabled or disabled
+init::status() {
+  init::exists_script "$1" && [[ -f "$ENABLED_INIT_SCRIPTS_PATH/$1" ]]
 }
 
 # Stored init scripts
