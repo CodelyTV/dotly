@@ -52,7 +52,7 @@ case $1 in
     if init::exists_script "$script_name"; then
       init::enable "$script_name"
       init::status "$script_name" && output::solution "Enabled"
-      output::error "Could not be enabled." && status=1
+      ! init::status "$script_name" && output::error "Could not be enabled." && status=1
     else
       output::error "$script_name does not exists."
       status=1
@@ -92,7 +92,7 @@ case $1 in
         output::solution "Disabled"
       fi
 
-      output::error "Could not be disabled." && status=1
+      init::status "$script_name" && output::error "Could not be disabled." && status=1
     else
       output::error "$script_name does not exists."
       status=1
