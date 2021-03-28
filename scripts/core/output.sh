@@ -50,5 +50,3 @@ output::yesno() {
 }
 output::empty_line() { echo ''; }
 output::header() { output::empty_line; output::write "${bold_blue}---- $1 ----${normal}"; }
-# output::join: https://stackoverflow.com/a/17841619
-output::join() { local glue="$1"; local first="$2"; shift 2; printf "%s" "$2" "${@/#/$glue}"; }

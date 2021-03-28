@@ -23,7 +23,7 @@ templating::replace_var () {
     any="$1"; shift
   fi
 
-  local var_name="XXX_$(output::str_to_upper $1 | tr '-' '_')_XXX"; shift
+  local var_name="XXX_$(str::to_upper $1 | tr '-' '_')_XXX"; shift
   local values=($@); shift
 
   # Replacer
@@ -48,7 +48,7 @@ templating::replace_var_join() {
   local input="$(</dev/stdin)"
   local var_name="$1"; shift
   local glue="$1"; shift
-  local joined_str="$(output::join "$glue" "$@")"
+  local joined_str="$(str::join "$glue" "$@")"
   local IFS=''
   echo $input | templating::replace_var "$var_name" "$joined_str"
 }
