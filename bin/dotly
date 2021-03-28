@@ -12,6 +12,49 @@ case $1 in
 "self-update")
   dot self update
   ;;
+"autoupdate")
+  # Variables with default values
+  DOTLY_AUTO_UPDATE_DAYS=${DOTLY_AUTO_UPDATE_DAYS:-7}
+  DOTLY_AUTO_UPDATE_MODE=${DOTLY_AUTO_UPDATE_MODE:-reminder} # prompt
+
+  # Other needed variables
+  CURRENT_DIR="$(pwd)"
+
+  # Change to dotly path
+  cd "$DOTLY_PATH"
+
+  if [[ $(date -r "$DOTLY_PATH" +%s) -lt $(date -d "now - $DOTLY_AUTO_UPDATE_DAYS days" +%s) ]] &&\
+    git diff --quiet "origin/$(git branch --show-current)"; then
+
+    output::empty_line
+    output::write " -------------------------------------------"
+    output::write "|  🥳🎉🍾 NEW DOTLY VERSION AVAILABLE 🥳🎉🍾  |"
+    output::write " -------------------------------------------"
+    output::empty_line
+
+    case "$DOTLY_AUTO_UPDATE_MODE" in
+      "auto")
+        output::answer "🚀 Updating"
+        dot self update
+        output::solution "Updated"
+        ;;
+      "prompt")
+        output::yesno "Do you want to update now" &&\
+          output::answer "🚀 Updating" &&\
+          dot self update &&\
+          output::solution "Updated"
+        ;;
+      *)
+        output::write "🚀 To update your current version just type:"
+        output::answer "dotly self-update"
+      ;;
+    esac
+
+    output::empty_line
+  fi
+
+  cd "$CURRENT_DIR"
+  ;;
 *)
   exit 1
   ;;

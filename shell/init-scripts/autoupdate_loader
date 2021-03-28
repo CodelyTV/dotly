@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# If auto update is disabled then it should not run
+"$DOTLY_PATH/dotly" autoupdate
