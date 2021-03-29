@@ -13,19 +13,81 @@ symlinks::apply() {
   echo
 }
 
+symlinks::get_files() {
+  [[ -d "$DOTLY_PATH/symlinks" ]] &&\
+    find "$DOTLY_PATH/symlinks" -name "*" -type f -print0 |\
+    xargs -I _ basename _ | sort
+}
+
+symlinks::fzf() {
+  local piped_values="$(</dev/stdin)"
+
+  printf "%s\n" ${piped_values[@]} | fzf --extended \
+    --header "Select file to apply symlinks update"\
+    --preview "echo 'Press Ctrl+C to exit with no selection.'"
+}
+
 ##? Apply all symlinks
 ##?
 ##? Usage:
 ##?    apply
+##?    apply update [<symlinks_file>]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
 ##?
 docs::parse "$@"
 
-symlinks::apply "conf.yaml"
+SCRIPT_NAME="dot symlinks apply"
+SCRIPT_VERSION="1.0.0"
 
-if platform::is_macos; then
-  symlinks::apply "conf.macos.yaml"
-else
-  symlinks::apply "conf.linux.yaml"
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
 fi
 
-log::success "Done!"
+case "${1:-}" in
+"update")
+  if [[ -z "$symlinks_file" ]]; then
+    symlinks_file="$DOTLY_PATH/symlinks/$(symlinks::get_files | symlinks::fzf)"
+    [[ -z "$symlinks_file" ]] && exit 0
+  else
+    if [[ -f "$DOTLY_PATH/symlinks/$symlinks_file.yaml" ]]; then
+      symlinks_file="$DOTLY_PATH/symlinks/$symlinks_file.yaml"
+    elif [[ -f "$DOTLY_PATH/symlinks/$symlinks_file" ]]; then
+      symlinks_file="$DOTLY_PATH/symlinks/$symlinks_file"
+    else
+      output::error "The file does not exists"
+      exit 1
+    fi
+  fi
+
+
+  output::header "Apply dotbot update to your dotfiles"
+  output::write "This will apply a selected symlinks to apply any dotly update"
+  
+  output::empty_line
+  "$DOTLY_PATH/modules/dotbot/bin/dotbot" -d "$DOTFILES_PATH" -c "$symlinks_file"
+  output::empty_line
+
+  output::write "Remember to merge this symlinks file to yours in:"
+  output::answer "$DOTFILES_PATH/symlinks/conf.yaml"
+  ;;
+*)
+  symlinks::apply "conf.yaml"
+
+  if platform::is_macos; then
+    if platform::is_macos_arm; then
+      symlinks::apply "conf.macos.yaml"
+    else
+      symlinks::apply "conf.macos-intel.yaml"
+    fi
+  else
+    symlinks::apply "conf.linux.yaml"
+  fi
+
+  log::success "Done!"
+  ;;
+esac

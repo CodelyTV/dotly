@@ -7,6 +7,9 @@
 
 - create:
     - ~/.ssh/control
+    - $DOTLY_PATH/shell/init-scripts
+    - $DOTFILES_PATH/shell/init-scripts
+    - $DOTFILES_PATH/shell/init-scripts.enabled
 
 - link:
     ~/.bash_profile: shell/bash/.bash_profile
@@ -17,6 +20,8 @@
     ~/.zshrc: shell/zsh/.zshrc
     ~/.ssh/config.d: ssh/config.d
     ~/.ssh/config: ssh/config
+    ~/.inputrc: shell/.inputrc
 
 - shell:
     - [chmod 0700 ~/.ssh && chmod 0700 ~/.ssh/control]
+

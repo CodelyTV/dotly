@@ -14,10 +14,10 @@ output::write "🎩 Let's update all your packages"
 
 if platform::is_macos; then
   output::header '🍎 Updating App Store apps'
-  mas upgrade
+  platform::command_exists mas && mas upgrade
 
   output::header '🍺 Updating Brew and Brew apps (this could take a while)'
-  brew update >/dev/null 2>&1
+  brew update 2>&1 | log::file "Updating brew"
   brew outdated | xargs -n1 brew upgrade
 
   output::header '🍻 Updating Brew Cask apps (this could take a while)'
@@ -33,6 +33,8 @@ platform::command_exists composer && output::header '🐘 Updating Composer' && 
 platform::command_exists pip3 && output::header '🐍 Updating pip' && pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 install -U
 platform::command_exists gem && output::header '♦️ Updating gem' && gem update
 platform::command_exists npm && output::header '🌈 Updating npm' && npm install -g npm && npm update -g
+platform::command_exists cargo && output::header '📦 Updating cargo' && cargo install "$(cargo install --list | egrep '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ')"
+platform::command_exists deno && output::header '🦕 Updating deno' && deno upgrade
 
 output::empty_line
 output::solution '👌 All your packages have been successfully updated'

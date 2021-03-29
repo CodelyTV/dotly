@@ -29,9 +29,15 @@ jobs:
         run: |
           echo "DOTLY_REPOSITORY=${DOTLY_PR_REPOSITORY:-CodelyTV/dotly}" >> $GITHUB_ENV
           echo "DOTLY_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+          echo "DOTLY_ENV=CI" >> $GITHUB_ENV
 
       - name: Install
+        run: echo "$HOME/.dotfiles" | bash installer
+
+      - name: Debug on error
+        if: ${{ failure() }}
         run: |
           echo "DOTLY_REPOSITORY: $DOTLY_REPOSITORY"
           echo "DOTLY_BRANCH: $DOTLY_BRANCH"
-          echo "$HOME/.dotfiles" | bash installer
+          echo "DOTLY_ENV: $DOTLY_ENV"
+          cat "$HOME/dotly.log"

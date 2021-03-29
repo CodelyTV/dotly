@@ -2,10 +2,16 @@
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
-##? Some defaults utils
+DOTLY_SETTINGS_PATH=${2:-"${DOTFILES_PATH}/os/mac/settings"}
+
+##? Some defaults utils to view your changes, import and export.
+##? Optional params path_to and path_from will be replaced by
+##? your "$DOTFILES_PATH/os/mac/settings" folder
 ##?
 ##? Usage:
 ##?   defaults view_changed
+##?   defaults export [<path_to>]
+##?   defaults import [<path_from>]
 docs::parse "$@"
 
 case $1 in
@@ -14,6 +20,23 @@ case $1 in
   defaults read >"$current_defaults_path"
 
   git diff -w --no-index "$DOTLY_PATH/scripts/mac/utils/macos-11.0-defaults" "$current_defaults_path" | delta --side-by-side
+  ;;
+"export")
+  export_plist_path="${DOTLY_SETTINGS_PATH}"
+  [[ -d "$export_plist_path" ]] || mkdir -p "$export_plist_path"
+  defaults domains | tr ", " "\n" | sed -r '/^\s*$/d' | xargs -I_ defaults export _ "$export_plist_path/_.plist"
+  ;;
+"import")
+  import_plist_path="${DOTLY_SETTINGS_PATH}"
+
+  killall System\ Preferences
+  sudo -v
+
+  if [[ -d "$import_plist_path" ]]; then
+    for plist in "${import_plist_path}"/*.plist; do
+      defaults import $(basename ${plist%.*}) "$plist"
+    done
+  fi
   ;;
 *)
   exit 1
