@@ -78,7 +78,7 @@ case "${1:-}" in
   fi
   [[ -z "$to_enable" ]] && exit 0
 
-  for item in ${to_enable[@]}; do
+  for item in "${to_enable[@]}"; do
     init::enable "$item"
     
     if init::status "$item"; then
