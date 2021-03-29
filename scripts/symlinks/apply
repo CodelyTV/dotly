@@ -15,7 +15,7 @@ symlinks::apply() {
 
 symlinks::get_files() {
   [[ -d "$DOTLY_PATH/symlinks" ]] &&\
-    find "$DOTLY_PATH/symlinks" -name "*" -type f |\
+    find "$DOTLY_PATH/symlinks" -name "*" -type f -print0 |\
     xargs -I _ basename _ | sort
 }
 
