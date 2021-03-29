@@ -5,6 +5,11 @@
       create: true
       force: true
 
+- create:
+    - $DOTLY_PATH/shell/init-scripts
+    - $DOTFILES_PATH/shell/init-scripts
+    - $DOTFILES_PATH/shell/init-scripts.enabled
+
 - link:
     ~/.bash_profile: shell/bash/.bash_profile
     ~/.bashrc: shell/bash/.bashrc

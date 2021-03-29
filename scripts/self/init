@@ -37,14 +37,14 @@ mkdir -p "$DOTLY_INIT_SCRIPTS_PATH"
 mkdir -p "$DOTFILES_INIT_SCRIPTS_PATH"
 mkdir -p "$ENABLED_INIT_SCRIPTS_PATH"
 
-[[ ! -d "$ENABLED_INIT_SCRIPTS_PATH" ]] && output::error "The folder path to enable scripts does not exists" && exit 1
-[[ ! -d "$DOTLY_INIT_SCRIPTS_PATH" ]] && output::error "The init scripts of DOTLY does not exists" && exit 1
+[[ ! -d "$ENABLED_INIT_SCRIPTS_PATH" ]] && output::error "The folder path to enable scripts does not exists.\n\tTry with 'dot symlinks apply update core-feature' first." && exit 1
+[[ ! -d "$DOTLY_INIT_SCRIPTS_PATH" ]] && output::error "The init scripts of DOTLY does not exists.\n\tTry with 'dot symlinks apply update core-feature' first." && exit 1
 
 # Get the scripts
 init_scripts=("$(init::get_scripts)")
 enabled_scripts=("$(init::get_enabled)")
 
-case $1 in
+case "${1:-}" in
 "enable")
   # If the user gives the script_name
   if [[ -n "$script_name" ]]; then
@@ -72,12 +72,11 @@ case $1 in
   [[ -z "$to_enable" ]] && exit 0
 
   for item in "${to_enable[@]}"; do
-    output::answer "Init script '$item'..."
     init::enable "$item"
     if init::status "$item"; then
-      output::solution "Enabled"
+      output::solution "Init script '$item'...  Enabled"
     else
-      output::error "Could not be enabled."
+      output::error "Init script '$item' error... It could not be enabled."
       exit 1
     fi
   done
@@ -143,5 +142,3 @@ case $1 in
   "$DOTLY_PATH/bin/dot" self init -h
   ;;
 esac
-
-exit 0
