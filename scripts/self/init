@@ -33,9 +33,9 @@ if $version; then
 fi
 
 # Create folders if they does not exists
-mkdir -p "$DOTLY_INIT_SCRIPTS_PATH"
-mkdir -p "$DOTFILES_INIT_SCRIPTS_PATH"
-mkdir -p "$ENABLED_INIT_SCRIPTS_PATH"
+# mkdir -p "$DOTLY_INIT_SCRIPTS_PATH"
+# mkdir -p "$DOTFILES_INIT_SCRIPTS_PATH"
+# mkdir -p "$ENABLED_INIT_SCRIPTS_PATH"
 
 [[ ! -d "$ENABLED_INIT_SCRIPTS_PATH" ]] && output::error "The folder path to enable scripts does not exists" && exit 1
 [[ ! -d "$DOTLY_INIT_SCRIPTS_PATH" ]] && output::error "The init scripts of DOTLY does not exists" && exit 1
