@@ -48,7 +48,7 @@ if $version; then
   exit
 fi
 
-case $1 in
+case "${1:-}" in
 "update")
   symlinks_file="$DOTLY_PATH/symlinks/$(symlinks::get_files | symlinks::fzf)"
   [[ -z "$symlinks_file" ]] && exit 0
