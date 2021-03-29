@@ -31,7 +31,7 @@ symlinks::fzf() {
 ##?
 ##? Usage:
 ##?    apply
-##?    apply update
+##?    apply update [<symlinks_file>]
 ##?
 ##? Options:
 ##?   -h --help     Show this help
@@ -50,8 +50,20 @@ fi
 
 case "${1:-}" in
 "update")
-  symlinks_file="$DOTLY_PATH/symlinks/$(symlinks::get_files | symlinks::fzf)"
-  [[ -z "$symlinks_file" ]] && exit 0
+  if [[ -z "$symlinks_file" ]]; then
+    symlinks_file="$DOTLY_PATH/symlinks/$(symlinks::get_files | symlinks::fzf)"
+    [[ -z "$symlinks_file" ]] && exit 0
+  else
+    if [[ -f "$DOTLY_PATH/symlinks/$symlinks_file.yaml" ]]; then
+      symlinks_file="$DOTLY_PATH/symlinks/$symlinks_file.yaml"
+    elif [[ -f "$DOTLY_PATH/symlinks/$symlinks_file" ]]; then
+      symlinks_file="$DOTLY_PATH/symlinks/$symlinks_file"
+    else
+      output::error "The file does not exists"
+      exit 1
+    fi
+  fi
+
 
   output::header "Apply dotbot update to your dotfiles"
   output::write "This will apply a selected symlinks to apply any dotly update"
@@ -60,7 +72,7 @@ case "${1:-}" in
   "$DOTLY_PATH/modules/dotbot/bin/dotbot" -d "$DOTFILES_PATH" -c "$symlinks_file"
   output::empty_line
 
-  output::write "Remember to merge this symlinks file to yours:"
+  output::write "Remember to merge this symlinks file to yours in:"
   output::answer "$DOTFILES_PATH/symlinks/conf.yaml"
   ;;
 *)
