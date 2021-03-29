@@ -13,15 +13,10 @@ source "$DOTLY_PATH/scripts/core/templating.sh"
 docs::parse "$@"
 
 dotfiles::apply_templating() {
-  # Old template files
-  # local tpl_files=(
-  #   "$DOTFILES_PATH/bin/sdot"
-  #   "$DOTFILES_PATH/shell/bash/.bashrc"
-  #   "$DOTFILES_PATH/shell/zsh/.zshenv"
-  # )
   local tpl_files=(
     "$DOTFILES_PATH/bin/sdot"
-    "$DOTFILES_PATH/shell/dotly-vars.sh"
+    "$DOTFILES_PATH/shell/bash/.bashrc"
+    "$DOTFILES_PATH/shell/zsh/.zshenv"
   )
 
   for file in "$tpl_files"; do
