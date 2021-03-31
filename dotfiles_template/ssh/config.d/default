@@ -5,4 +5,6 @@ Host *
 	TCPKeepAlive yes
 	ServerAliveInterval 20
 	ServerAliveCountMax 10
+	UseKeychain yes
+	AddKeysToAgent yes
 	IdentityFile ~/.ssh/id_rsa

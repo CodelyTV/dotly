@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/ssh/lib/ssh.sh"
+
+DOTFILES_SSH_CONFIGD="${DOTFILES_SSH_CONFIGD:-$DOTFILES_PATH/ssh/config.d}"
+DOTFILES_SSH_CONFIG_ENABLED="${DOTFILES_SSH_CONFIG_ENABLED:-"$DOTFILES_PATH/ssh/config.d-enabled"}"
+
+##? Create ssh configurations, enable or disable them easily
+##? 
+##?
+##? Usage:
+##?   config [-h | --help]
+##?   config [-v | --version]
+##?   config delete <ssh_alias_or_file> <option>
+##?
+##? Options:
+##?   -h --help                            Show this help
+##?   -v --version                         Show the program version
+##?   delete <ssh_alias_or_file> <option>  Delete "option" from SSH file with the alias or the
+##?                                        file specified.
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.co>
+
+# Options part its important because assign short and long version of the params
+docs::parse "$@"
+
+SCRIPT_NAME="dot ssh config"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+ssh_file="$(ssh::check_configd_file_name "$ssh_alias_or_file")"
+[[ -z "$ssh_file" ]] && ssh_file="$(ssh::get_configd_file_by_alias "$ssh_alias")"
+
+to_be_deleted="$(cat "$ssh_file" | grep "$option" | xargs)"
+[[ -z "$to_be_deleted" ]] && output::answer "Nothing to be deleted" && exit
+
+output::write "This will delete from '$(basename "$ssh_file")', the next content:"
+output::write "$to_be_deleted"
+output::yesno "Are you sure you want to continue" &&\
+  { sed -i "$(cat -n "$ssh_file" | grep "$option" | awk '{print $1}')d" "$ssh_file"; } &&\
+  output::solution "Deleted"

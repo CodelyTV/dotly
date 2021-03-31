@@ -18,9 +18,10 @@
     ~/.zlogin: shell/zsh/.zlogin
     ~/.zshenv: shell/zsh/.zshenv
     ~/.zshrc: shell/zsh/.zshrc
-    ~/.ssh/config.d: ssh/config.d
-    ~/.ssh/config: ssh/config
     ~/.inputrc: shell/.inputrc
+    ~/.ssh/config.d: ssh/config.d
+    ~/.ssh/config.d-enabled: ssh/config.d-enabled
+    ~/.ssh/config: ssh/config
 
 - shell:
     - [chmod 0700 ~/.ssh && chmod 0700 ~/.ssh/control]

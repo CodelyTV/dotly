@@ -1,0 +1,13 @@
+- defaults:
+    link:
+      create: true
+      force: true
+
+- create:
+    - $DOTFILES_PATH/ssh/config.d
+    - $DOTFILES_PATH/ssh/config.d-enabled
+
+- link:
+    ~/.ssh/config.d: ssh/config.d
+    ~/.ssh/config.d-enabled: ssh/config.d-enabled
+    ~/.ssh/config: ssh/config
