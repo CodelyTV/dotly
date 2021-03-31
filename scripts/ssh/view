@@ -37,4 +37,4 @@ fi
 
 find "$DOTFILES_SSH_CONFIGD" -name "*" -type f | xargs -I _ basename _ | fzf --extended\
   --header "View your ssh config files"\
-  --preview "cat {}"
+  --preview "cat $DOTFILES_SSH_CONFIGD/{}"
