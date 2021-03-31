@@ -54,10 +54,18 @@ platform::semver_compare() {
   compare_patch="$(compare_ver $patch1 $patch2)"
 
   if [[ $compare_major -ne 0 ]]; then
-    echo $compare_major
+    echo "$compare_major"
   elif [[ $compare_minor -ne 0 ]]; then
-    echo $compare_minor
+    echo "$compare_minor"
   else
-    echo $compare_patch
+    echo "$compare_patch"
   fi
+}
+
+platform::get_script_path() {
+    echo "$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+}
+
+platform::get_full_script_path() {
+    echo "$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )/$(basename $0)"
 }
