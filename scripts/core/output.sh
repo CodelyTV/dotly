@@ -18,7 +18,7 @@ output::error() { output::answer "${red}$@${normal}"; }
 output::solution() { output::answer "${green}$@${normal}"; }
 output::question() {
   if [ platform::is_macos ]; then
-    output::answer "🤔 $1: ";
+    echo -n " > 🤔 $1: ";
     read -r "$2";
   else
     read -rp "🤔 $1: " "$2"
