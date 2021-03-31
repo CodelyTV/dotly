@@ -54,11 +54,11 @@ platform::semver_compare() {
   compare_patch="$(compare_ver $patch1 $patch2)"
 
   if [[ $compare_major -ne 0 ]]; then
-    echo $compare_major
+    echo "$compare_major"
   elif [[ $compare_minor -ne 0 ]]; then
-    echo $compare_minor
+    echo "$compare_minor"
   else
-    echo $compare_patch
+    echo "$compare_patch"
   fi
 }
 
