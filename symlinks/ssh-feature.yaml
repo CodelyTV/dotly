@@ -1,13 +1,11 @@
-- defaults:
-    link:
-      create: true
-      force: true
+- clean: ['~/.ssh']
 
 - create:
+    - ~/.ssh/control
     - $DOTFILES_PATH/ssh/config.d
     - $DOTFILES_PATH/ssh/config.d-enabled
 
 - link:
-    ~/.ssh/config.d: ssh/config.d
-    ~/.ssh/config.d-enabled: ssh/config.d-enabled
-    ~/.ssh/config: ssh/config
+    ~/.ssh/config.d: $DOTFILES_PATH/ssh/config.d
+    ~/.ssh/config.d-enabled: $DOTFILES_PATH/ssh/config.d-enabled
+    ~/.ssh/config: $DOTFILES_PATH/ssh/config
