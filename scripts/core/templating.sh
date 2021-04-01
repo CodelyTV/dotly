@@ -6,7 +6,6 @@
 # Author: Gabriel Trabanco
 # This was done, using "dot dotfiles create" as reference
 
-
 # templating::replace_var [<file_path>|<template_string>] <var_name> [value1 [... [valueN]]
 # echo "template string" | templating::replace_var <var_name> [value1 [... [valueN]]
 #
@@ -23,14 +22,16 @@ templating::replace_var () {
     any="$1"; shift
   fi
 
-  local var_name="XXX_$(str::to_upper $1 | tr '-' '_')_XXX"; shift
-  local values=($@); shift
+  local var_name="XXX_$(str::to_upper "$1" | tr '-' '_')_XXX"; shift
+  local value="$1"; shift
 
   # Replacer
   if [[ -f $any ]]; then
-    sed -i -e "s|$var_name|$values|g" "$any"
+    echo "Using sed: $var_name = $value"
+    sed -i -e "s|${var_name}|${value}|g" "$any"
   else
-    echo "$any" | sed -e "s|$var_name|$values|g"
+    echo "Using var"
+    echo "${any//$var_name/$value}"
   fi
 }
 
@@ -50,7 +51,11 @@ templating::replace_var_join() {
   local glue="$1"; shift
   local joined_str="$(str::join "$glue" "$@")"
   local IFS=''
-  echo $input | templating::replace_var "$var_name" "$joined_str"
+  if [[ -f "$input" ]]; then
+    templating::replace_var "$input" "$var_name" "$joined_str"
+  else
+    echo "$input" | templating::replace_var "$var_name" "$joined_str"
+  fi
 }
 
 # templating::replace "XXX_NAME_XXX <XXX_EMAIL_ADDRESS_XXX>" --name=Gabriel --email-address=no-email@example.com
@@ -58,6 +63,10 @@ templating::replace_var_join() {
 # templating::replace "XXX_NAME_XXX <XXX_EMAIL_ADDRESS_XXX>" name Gabriel email-address no-email@example.com
 # echo "XXX_NAME_XXX <XXX_EMAIL_ADDRESS_XXX>" |\
 #   templating::replace name Gabriel email-address no-email@example.com
+# templating::replace /path/to/file --name=Gabriel --email-address=no-email@example.com
+# templating::replace /path/to/file --name Gabriel --email-address no-email@example.com
+# templating::replace /path/to/file name Gabriel email-address no-email@example.com
+
 #
 # This will print
 #   "Gabriel <no-email@example.com>"
@@ -69,11 +78,7 @@ templating::replace() {
       output=$(</dev/stdin)
       ;;
     *)
-      if [[ -f "$1" ]]; then
-        output="$(cat $1)"
-      else
-        output="$1"
-      fi
+      output="$1"
       shift
       ;;
   esac
@@ -95,25 +100,16 @@ templating::replace() {
         ;;
     esac
 
-    output="$(templating::replace_var "$output" "$var_name" "$var_value")"
+    if [[ -f "$output" ]]; then
+      templating::replace_var "$output" "$var_name" "$var_value"
+    else
+      output="$(echo "$output" | templating::replace_var "$var_name" "$var_value")"
+    fi
   done
 
-  echo "$output"
-}
-
-#
-# This will do the same as "templating::replace" but first param should
-# be a path to existing file and will replace all passed vars
-# 
-# templating::file /path/to/file --name=Gabriel --email-address=no-email@example.com
-# templating::file /path/to/file --name Gabriel --email-address no-email@example.com
-# templating::file /path/to/file name Gabriel email-address no-email@example.com
-#
-templating::file() {
-  local file="$1"; shift
-  local IFS="\n"
-  local templated
-  templated=("$(cat "$file" | templating::replace "$@")")
-
-  echo ${templated[@]} > "$file"
+  if [[ -f "$output" ]]; then
+    cat "$output"
+  else
+    echo "$output"
+  fi
 }
