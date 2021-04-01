@@ -19,8 +19,8 @@ dotfiles::apply_templating() {
     "$DOTFILES_PATH/shell/zsh/.zshenv"
   )
 
-  for file in "$tpl_files"; do
-    templating::file "$file" --dotfiles-path="$DOTFILES_PATH" 
+  for file in "${tpl_files[@]}"; do
+    templating::replace "$file" --dotfiles-path="$DOTFILES_PATH" 
   done
 }
 
