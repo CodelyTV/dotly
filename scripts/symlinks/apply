@@ -13,25 +13,10 @@ symlinks::apply() {
   echo
 }
 
-symlinks::get_files() {
-  [[ -d "$DOTLY_PATH/symlinks" ]] &&\
-    find "$DOTLY_PATH/symlinks" -name "*" -type f -print0 |\
-    xargs -I _ basename _ | sort
-}
-
-symlinks::fzf() {
-  local piped_values="$(</dev/stdin)"
-
-  printf "%s\n" ${piped_values[@]} | fzf --extended \
-    --header "Select file to apply symlinks update"\
-    --preview "echo 'Press Ctrl+C to exit with no selection.'"
-}
-
 ##? Apply all symlinks
 ##?
 ##? Usage:
 ##?    apply
-##?    apply update [<symlinks_file>]
 ##?
 ##? Options:
 ##?   -h --help     Show this help
@@ -78,20 +63,14 @@ case "${1:-}" in
   "$DOTLY_PATH/modules/dotbot/bin/dotbot" -d "$DOTFILES_PATH" -c "$symlinks_file"
   output::empty_line
 
-  output::write "Remember to merge this symlinks file to yours in:"
-  output::answer "$DOTFILES_PATH/symlinks/conf.yaml"
-  ;;
-*)
-  symlinks::apply "conf.yaml"
-
-  if platform::is_macos; then
-    if platform::is_macos_arm; then
-      symlinks::apply "conf.macos.yaml"
-    else
-      symlinks::apply "conf.macos-intel.yaml"
-    fi
+if platform::is_macos; then
+  if platform::is_macos_arm; then
+    symlinks::apply "conf.macos.yaml"
   else
-    symlinks::apply "conf.linux.yaml"
+    symlinks::apply "conf.macos-intel.yaml"
   fi
+else
+  symlinks::apply "conf.linux.yaml"
+fi
 
 log::success "Done!"
