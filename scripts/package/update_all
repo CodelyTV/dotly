@@ -30,10 +30,10 @@ fi
 
 platform::command_exists tldr && output::header '📜 Updating tldr database' && tldr --update
 platform::command_exists composer && output::header '🐘 Updating Composer' && composer self-update && composer global update
-platform::command_exists pip3 && output::header '🐍 Updating pip' && pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 install -U
+platform::command_exists pip3 && output::header '🐍 Updating pip' && pip3 freeze --local | grep -v '^\-e' || [[ $? == 1 ]] | cut -d = -f 1 | xargs -n1 pip3 install -U
 platform::command_exists gem && output::header '♦️ Updating gem' && gem update
 platform::command_exists npm && output::header '🌈 Updating npm' && npm install -g npm && npm update -g
-platform::command_exists cargo && output::header '📦 Updating cargo' && cargo install "$(cargo install --list | egrep '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ')"
+platform::command_exists cargo && output::header '📦 Updating cargo' && cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' | xargs -n1 cargo install
 platform::command_exists deno && output::header '🦕 Updating deno' && deno upgrade
 
 output::empty_line
