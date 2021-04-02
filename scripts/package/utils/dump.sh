@@ -13,7 +13,7 @@ package::preview() {
   local filename="$1"
   local FILES_PATH="$(realpath -sm $2)"
 
-  if $filename == "No import"; then
+  if "$filename" == "No import"; then
     echo "No import any file for this package manager"
     return
   fi
@@ -22,12 +22,12 @@ package::preview() {
 }
 
 package::which_file() {
-  local FILES_PATH="$(realpath -sm $1)"
-  local header="$2"
-  local var_name="$3"
-  local answer=""
+  local FILES_PATH header var_name answer files
+  FILES_PATH="$(realpath -sm "$1")"
+  header="$2"
+  var_name="$3"
 
-  local files="$(ls -1 "$FILES_PATH/" 2>/dev/null | grep -v ".lock.json$" | sort -u | tr '\n' ',' && echo 'No import')"
+  files="$(ls -1 "$FILES_PATH/" 2>/dev/null | grep -v ".lock.json$" | sort -u | tr '\n' ',' && echo 'No import')"
 
   if [[ -d "$FILES_PATH" ]]; then
     answer="$(echo $files | tr ',' '\n' | fzf -0 --filepath-word -d ',' --prompt "$(hostname -s) > " --header "$header" --preview "[[ -f $FILES_PATH/{} ]] && cat $FILES_PATH/{} || echo No import a file for this package manager")"
@@ -40,7 +40,7 @@ package::brew_dump() {
   HOMEBREW_DUMP_FILE_PATH="${1:-$HOMEBREW_DUMP_FILE_PATH}"
 
   if platform::command_exists brew; then
-    mkdir -p "$(dirname $HOMEBREW_DUMP_FILE_PATH)"
+    mkdir -p "$(dirname "$HOMEBREW_DUMP_FILE_PATH")"
 
     output::write "🚀 Starting Brew dump to '$HOMEBREW_DUMP_FILE_PATH'"
 
@@ -112,7 +112,7 @@ package::npm_import() {
 
   if [ -f "$NPM_DUMP_FILE_PATH" ] && platform::command_exists npm; then
     output::write "🚀 Importing NPM packages from '$NPM_DUMP_FILE_PATH'"
-    xargs -I_ npm install -g "_" <"$NPM_DUMP_FILE_PATH"
+    xargs -I_ npm install -g "_" < "$NPM_DUMP_FILE_PATH"
   fi
 
   return 1
@@ -122,7 +122,7 @@ package::volta_dump() {
   VOLTA_DUMP_FILE_PATH="${1:-$VOLTA_DUMP_FILE_PATH}"
 
   if platform::command_exists volta; then
-    mkdir -p "$(dirname $VOLTA_DUMP_FILE_PATH)"
+    mkdir -p "$(dirname "$VOLTA_DUMP_FILE_PATH")"
     output::write "🚀 Starting VOLTA packages from '$VOLTA_DUMP_FILE_PATH'"
     volta list all --format plain | awk '{print $2}' >"$VOLTA_DUMP_FILE_PATH"
 
