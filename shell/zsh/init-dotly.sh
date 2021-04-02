@@ -34,6 +34,6 @@ prompt ${DOTLY_THEME:-codely}
 # Auto Init scripts at the end
 init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
 mkdir -p "$init_scripts_path"
-find "$init_scripts_path" -mindepth 1 -maxdepth 1 -type f -name '*' -print0 | grep -v \. | while read init_script; do
-    #[[ -f "$init_script" ]] && . "$init_script"
+find "$init_scripts_path" -mindepth 1 -maxdepth 1 -type f,l -name '*' | while read -r init_script; do
+    . "$init_script"
   done
