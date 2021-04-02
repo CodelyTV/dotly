@@ -12,4 +12,4 @@ source "$DOTLY_PATH/scripts/self/utils/autoupdate.sh"
 docs::parse "$@"
 
 set +eu # Needed to use async
-async "autoupdate::updater /Users/gtrabanco/MyCodes/dotly2" autoupdate::success autoupdate::reject
+async autoupdate::updater autoupdate::success autoupdate::reject
