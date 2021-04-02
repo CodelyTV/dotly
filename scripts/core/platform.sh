@@ -24,8 +24,7 @@ platform::wsl_home_path(){
   wslpath "$(wslvar USERPROFILE 2> /dev/null)"
 }
 
-# Used as reference: https://gist.github.com/maxrimue/ca69ee78081645e1ef62
-platform::semver_compare() {
+platform::semver_is_minor_patch_update() {
   normalize_ver() {
     echo "${${1//./ }//v/}"
   }
@@ -53,13 +52,7 @@ platform::semver_compare() {
   compare_minor="$(compare_ver $minor1 $minor2)"
   compare_patch="$(compare_ver $patch1 $patch2)"
 
-  if [[ $compare_major -ne 0 ]]; then
-    echo "$compare_major"
-  elif [[ $compare_minor -ne 0 ]]; then
-    echo "$compare_minor"
-  else
-    echo "$compare_patch"
-  fi
+  [[ $compare_major -eq 0 ]] && { [[ $compare_minor -ne 0 ]] || [[ $compare_patch -ne 0 ]]; }
 }
 
 platform::get_script_path() {

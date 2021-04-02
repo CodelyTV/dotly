@@ -8,7 +8,7 @@ source "$DOTLY_PATH/scripts/core/templating.sh"
 ##? Create the dotfiles structure
 ##?
 ##? Usage:
-##?    test
+##?    create [dotfiles_path]
 ##?
 docs::parse "$@"
 

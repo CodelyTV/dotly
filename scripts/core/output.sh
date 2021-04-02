@@ -25,28 +25,27 @@ output::question() {
   fi
 }
 output::question_default() {
-  local question="$1"
-  local default_value="$2"
-  local var_name="$3"
+  local question default_value var_name
+  question="$1"
+  default_value="$2"
+  var_name="$3"
 
   output::question "$question? [$default_value]" "$var_name"
   eval "$var_name=\"\${$var_name:-$default_value}\""
 }
 output::yesno() {
-  local question="$1"
-  local default="${2:-Y}"
-  local PROMPT_REPLY values default_check
+  local question default PROMPT_REPLY values
+  question="$1"
+  default="${2:-Y}"
 
   if [[ "$default" =~ ^[Yy] ]]; then
     values="Y/n"
-    default_check="Yy"
   else
     values="y/N"
-    default_check="Nn"
   fi
 
-  output::question_default "$question" "$values" "PROMPT_REPLY"
-  [[ "$PROMPT_REPLY" =~ ^[$default_check] ]]
+  output::question "$question? [$values]" "PROMPT_REPLY"
+  [[ "${PROMPT_REPLY:-$default}" =~ ^[Yy] ]]
 }
 output::empty_line() { echo ''; }
 output::header() { output::empty_line; output::write "${bold_blue}---- $1 ----${normal}"; }
