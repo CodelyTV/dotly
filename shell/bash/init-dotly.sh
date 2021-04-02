@@ -30,12 +30,12 @@ for THEME_PATH in ${themes_paths[@]}; do
   [ -f "$THEME_PATH" ] && source "$THEME_PATH" && break
 done
 
-for bash_file in "$DOTLY_PATH"/shell/bash/completions/*; do
+for bash_file in "$DOTLY_PATH"/shell/bash/completions/_*; do
   . "$bash_file"
 done
 
 if [ -n "$(ls -A "$DOTFILES_PATH/shell/bash/completions/")" ]; then
-  for bash_file in "$DOTFILES_PATH"/shell/bash/completions/*; do
+  for bash_file in "$DOTFILES_PATH"/shell/bash/completions/_*; do
     . "$bash_file"
   done
 fi
@@ -43,6 +43,6 @@ fi
 # Auto Init scripts at the end
 init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
 mkdir -p "$init_scripts_path"
-find "$init_scripts_path" -mindepth 1 -maxdepth 1 -type f -name '*' -not -path '*/\.*' -print0 | grep -v \. | while read init_script; do
+find "$init_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*' | while read init_script; do
     echo "$init_script"
   done
