@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/self/utils/autoupdate.sh"
+
+##? Async autoupdate dotly to avoid load all core functions in default bash
+##?
+##? Usage:
+##?    autoupdate
+docs::parse "$@"
+
+DOTLY_AUTO_UPDATE_DAYS=0
+DOTLY_AUTO_UPDATE_MODE="info" # auto, info, prompt
+
+output::write "Async autoupdater checking for new version..."
+
+set +eu # Needed to use async
+async "autoupdate::updater /Users/gtrabanco/MyCodes/dotly2" autoupdate::success autoupdate::reject
