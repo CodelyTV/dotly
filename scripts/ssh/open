@@ -10,9 +10,9 @@ DOTFILES_SSH_CONFIG_ENABLED="${DOTFILES_SSH_CONFIG_ENABLED:-"$DOTFILES_PATH/ssh/
 ##? 
 ##?
 ##? Usage:
-##?   config [-h | --help]
-##?   config [-v | --version]
-##?   config open
+##?   open [-h | --help]
+##?   open [-v | --version]
+##?   open
 ##?
 ##? Options:
 ##?   -h --help     Show this help
@@ -25,7 +25,7 @@ DOTFILES_SSH_CONFIG_ENABLED="${DOTFILES_SSH_CONFIG_ENABLED:-"$DOTFILES_PATH/ssh/
 # Options part its important because assign short and long version of the params
 docs::parse "$@"
 
-SCRIPT_NAME="dot ssh config"
+SCRIPT_NAME="dot ssh open"
 SCRIPT_VERSION="1.0.0"
 
 # Print name and version
