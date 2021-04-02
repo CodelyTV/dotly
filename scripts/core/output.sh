@@ -45,8 +45,8 @@ output::yesno() {
     default_check="Nn"
   fi
 
-  output::question_default "$question" "$values" "PROMPT_REPLY"
-  [[ "$PROMPT_REPLY" =~ ^[$default_check] ]]
+  output::question "$question? [$values]" "PROMPT_REPLY"
+  [[ "${PROMPT_REPLY:-$default}" =~ ^[$default_check] ]]
 }
 output::empty_line() { echo ''; }
 output::header() { output::empty_line; output::write "${bold_blue}---- $1 ----${normal}"; }
