@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/dotly/tools/github.sh"
+
+##? Get or delete the cache for searching and installing scripts from dotly
+##? marketplace.
+##? 
+##?
+##? Usage:
+##?   cache [-h | --help]
+##?   cache [-v | --version]
+##?   cache [--async] [--force]
+##?   cache [--delete]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?   --async       Download the cache in async mode. Async makes this script
+##?                 run silently.
+##?   --force       Delete the current cache and recreate it. This can be used
+##?                 with --async option.
+##?   --delete      Delete the current cache
+##?
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+docs::parse "$@"
+
+SCRIPT_NAME="dot dotly cache"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+void () {
+  return
+}
+
+! ${async:-} && output::header "Marketplace cache"
+
+if ${delete:-}; then
+  output::answer "Cleaning marketplace cache"
+  github::clean_cache
+  output::answer "Marketplace cache cleaned"
+else
+  if ${force_cache:-}; then
+    ! ${async:-} && output::answer "Cleaning marketplace cache"
+    github::clean_cache
+    ! ${async:-} && output::answer "Marketplace cache cleaned"
+  fi
+
+  if ${async:-}; then
+    async github::check_cache_folder_should_be_created github::create_cache_tree void
+  else
+    output::answer "Creating the cache if necessary"
+    github::check_cache_folder_should_be_created && github::create_cache_tree
+    output::answer "End of cache creation"
+  fi
+fi

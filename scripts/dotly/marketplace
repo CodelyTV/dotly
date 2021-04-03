@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/dotly/tools/github.sh"
+
+
+##? Marketplace for dotly makes a marketplace and select what you
+##? want to install. Important thing is that, if you do not want
+##? to install any package just use Abort option or Ctrl+C
+##? 
+##?  
+##? For advantage use of this script just see the wiki when ready.
+##? Is also recommended to use a github token with GITHUB_TOKEN env.
+##?
+##? Usage:
+##?   marketplace [<search_query>]
+##?   marketplace search [<search_query>]
+##?   marketplace [--yes|-y] install <context> [<script>]
+##?   marketplace [--force-cache|-c]
+##?   marketplace [-h | --help]
+##?   marketplace [-v | --version]
+##?
+##? Options:
+##?   -h --help         Show this help
+##?   -v --version      Show the program version
+##?   --force-cache -c  Force to create the cache
+##?   --yes -y          Force to answer yes overwriting scripts when
+##?                     installing. No prompt when update.
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+
+# Options part its important because assign short and long version of the params
+docs::parse "$@"
+
+SCRIPT_NAME="dot dotly marketplace"
+SCRIPT_VERSION="1.0.0"
+
+# Variables
+DOTFILES_PATH="${DOTFILES_PATH:-$HOME/.dotfiles}"
+DOTFILES_SCRIPTS_PATH="${DOTFILES_SCRIPTS_PATH:-$DOTFILES_PATH/scripts}"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Create cache directory if it is not
+if $force_cache; then
+  github::clean_cache && github::create_cache_tree
+  exit
+else
+  github::check_cache_folder_should_be_created && github::create_cache_tree
+fi
+
+case $1 in
+  "install")
+    install="$context"
+    ! github::check_remote_exists "$context" "$script" && output::error "Script or context could not be found" && exit
+    # Check if it is installed
+    if [[ -n "$script" ]]; then
+      if [[ -f "$DOTFILES_SCRIPTS_PATH/$context/$script" ]] && [[ -z "$yes" ]]; then
+        output::error "ATTENTION! THIS IS IMPORTANT!"
+        output::write "The script you are trying to install exists in your dotfiles scripts. If you"
+        output::write "continue this installation, will overwrite the script in your context with the"
+        output::write "same name as the one you are trying to install."
+        output::write "PLEASE, MAKE SURE ABOUT WHAT YOU ARE DOING, ANY LOSING OF DATA WILL BE YOUR"
+        output::write "RESPONSABILITY."
+        output::yesno "Sure you want to continue?" || exit
+        install="$context/$script"
+      fi
+    elif [[ -d "$DOTFILES_SCRIPTS_PATH/$context" ]] && [[ -z $yes ]]; then
+      output::error "ATTENTION! THIS IS IMPORTANT!"
+      output::write "The context \"$context\" exists in your dotfiles scripts. If you continue"
+      output::write "this installation will overwrite the scripts in your context with the"
+      output::write "same name as the remote files. This is the unique way to update but could"
+      output::write "be also a way to lost any custom script."
+      output::write "PLEASE, MAKE SURE ABOUT WHAT YOU ARE DOING, ANY LOSING OF DATA WILL BE YOUR"
+      output::write "RESPONSABILITY."
+      output::question_default "Sure you want to continue?" || exit
+    fi
+    
+    if github::install_from_search "$install"; then
+      output::solution "Installed, now you can use it with dot command"
+    else
+      output::error "Could not be installed. Please try installing from the search."
+    fi
+    ;;
+  "update")
+    output::answer "Not implemented yet. You can use install overwriting the scripts"
+    ;;
+  "search"|*)
+    results=($(github::search_in_cache ${2:-" "}))
+
+    # If user selected abourt or has no result exit
+    ([[ " ${results[*]} " == *" Abort "* ]] || [[ -z "${results[@]}" ]]) && output::error "Operation aborted" && exit
+
+    output::header "Search Results"
+
+    # Remove those scripts that are under selected context
+    for i in "${results[@]}"; do
+      [[ $(github::is_script $i) -eq 1 ]] && results=(${results[@]//$i\/*})
+    done
+
+    # Print search results
+    printf "%s\n" ${results[@]}
+
+    for i in "${results[@]}"; do
+      install_string="\""
+
+      [[ "$i" =~ '/' ]] &&\
+        install_string+="$(echo dot $i| tr '/' ' ')\" command" ||\
+        install_string+="$i\" context"
+
+      output::yesno "Do you want to install $install_string?" &&\
+        github::install_from_search $i &&\
+        output::solution "$install_string Installed" ||\
+        output::error "$install_string Not Installed"
+    done
+    ;;
+esac
