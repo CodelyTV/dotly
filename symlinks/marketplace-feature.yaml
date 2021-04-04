@@ -1,0 +1,7 @@
+- defaults:
+    link:
+      create: true
+      force: true
+
+- link:
+    $DOTFILES_PATH/shell/init-scripts.enabled/marketplace: $DOTLY_PATH/shell/init-scripts/marketplace

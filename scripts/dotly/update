@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Update script from dotly marketplace
+##?   NOTE: Currently the unique thing this do is to perform a install and
+##?         recommend you to overwrite if you want.
+##?
+##? Usage:
+##?   update [-h | --help]
+##?   update [-v | --version]
+##?   update [-y | --yes] <context> [<script>]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?   -y --yes      No prompt when installing a script, it will be overwrite
+##?                 if exists.
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+docs::parse "$@"
+
+SCRIPT_NAME="dot dotly install"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+output::empty_line
+output::write "Currently the unique way to update a script/context is overwriting the script."
+output::write "Just reply yes when you will be asked to replace a script/context."
+output::empty_line
+output::answer "Important! If you replace a context and you have a custom script there, you will"
+output::answer "lost your custom script."
+output::empty_line
+
+cmd_args=("dotly" "install")
+$yes && cmd_args+=("--yes")
+cmd_args+=("$context" "${script:-}")
+
+"$DOTLY_PATH/bin/dot" "${cmd_args[@]}"

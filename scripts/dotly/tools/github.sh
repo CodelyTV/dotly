@@ -16,6 +16,9 @@ MARKETPLACE_API_URL="$GITHUB_API_URL/$MARKETPLACE_REPOSITORY"
 # Binary of curl
 CURL_BIN="${CURL_BIN:-$(which curl)}"
 
+# Constants
+readonly DOTFILES_SCRIPTS_PATH="$DOTFILES_PATH/scripts"
+
 # Make http petitions, url can be piped
 github::curl() {
   local md5command cached_request_file_path _command url
@@ -101,9 +104,10 @@ github::compare_numbers() {
 
 # Check if there is a newer commit of the configured GITHUB repository
 github::check_newer_version() {
-  local cache_folder github_date cache_folder_date
+  local cache_folder github_date cache_folder_date branch
   cache_folder="${1:-$(github::get_scripts_cache_path)}"
-  github_date="$(github::get_commit_date)"
+  branch="$2"
+  github_date="$(github::get_commit_date "$branch")" # Maybe you want to check a different branch
   cache_folder_date="$(date -r "$cache_folder" +%s)"
 
   [[ "$(github::compare_numbers "$github_date" "$cache_folder_date")" -gt -1 ]]
@@ -114,8 +118,8 @@ github::check_cache_folder_should_be_created() {
   local cache_path
   cache_path="${1:-$(github::get_scripts_cache_path)}"
   [[ -d "$cache_path" ]] &&\
-    platform::check_if_path_is_older "$cache_path" "$MARKETPLACE_MAX_CACHE_DAYS" &&\
-    github::check_newer_version "$cache_path" ||\
+    { [[ $(date -r "$cache_path" +%s) -lt $(date -d "now - $MARKETPLACE_MAX_CACHE_DAYS days" +%s) ]] &&\
+    github::check_newer_version "$cache_path"; } ||\
     [[ ! -d "$cache_path" ]]
 }
 

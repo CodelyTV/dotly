@@ -22,7 +22,7 @@
 ##?                 run silently.
 ##?   --force       Delete the current cache and recreate it. This can be used
 ##?                 with --async option.
-##?   --delete      Delete the current cache
+##?   --delete      Delete the current cache. Just perform a deletion.
 ##?
 ##?
 ##? Author:
@@ -38,8 +38,16 @@ if ${version:-}; then
   exit
 fi
 
-void () {
-  return
+create_asycn_cache() {
+  github::create_cache_tree >/dev/null 2>&1
+}
+
+success() {
+  output::solution "Async cache created"
+}
+
+reject () {
+  output::error "Cache could not be created"
 }
 
 ! ${async:-} && output::header "Marketplace cache"
@@ -56,7 +64,7 @@ else
   fi
 
   if ${async:-}; then
-    async github::check_cache_folder_should_be_created github::create_cache_tree void
+    github::check_cache_folder_should_be_created && async create_asycn_cache success reject
   else
     output::answer "Creating the cache if necessary"
     github::check_cache_folder_should_be_created && github::create_cache_tree

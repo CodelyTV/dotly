@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+"$DOTLY_PATH/bin/dot" dotly cache --async
