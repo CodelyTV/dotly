@@ -17,7 +17,7 @@ autoupdate::updater() {
 
   [[ -f "$DOTFILES_PATH/.dotly_update_available" ]] && return 0
   
-  if [[ $(date -r "$GIT_UPDATE_CHECK" +%s) -lt $(date -d "now - ${DOTLY_AUTO_UPDATE_DAYS:-7} days" +%s) ]] &&\
+  if files::check_if_path_is_older "$GIT_UPDATE_CHECK" "${DOTLY_AUTO_UPDATE_DAYS:-7}" "days" &&\
     [ "$(git rev-parse HEAD)" != "$(git ls-remote $(git rev-parse --abbrev-ref @{u} | sed 's/\// /g') | cut -f1)" ]
   then
     touch "$DOTFILES_PATH/.dotly_update_available"
