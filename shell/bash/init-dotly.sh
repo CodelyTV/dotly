@@ -44,5 +44,5 @@ fi
 init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
 mkdir -p "$init_scripts_path"
 find "$init_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*' | while read init_script; do
-    echo "$init_script"
+    [[ -e "$init_script" ]] && . "$init_script"
   done
