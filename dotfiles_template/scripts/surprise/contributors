@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Show the contributors list with their avatars
+##? 
+##?
+##? Usage:
+##?   contributors -h | --help
+##?   contributors -v | --version
+##?   contributors
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+docs::parse "$@"
+
+SCRIPT_NAME="dot surprise contributors"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Here begin your script
+
+if ! platform::command_exists catimg; then
+    output::write "Installing catimg"
+    $(echo "$DOTLY_PATH/bin/dot package install catimg") | log::file "Installing catimg"
+    echo
+fi
+
+# Some vars
+TMP_FILE="/tmp/dotly/contributors.json"
+TMP_AVATARS="$(dirname $TMP_FILE)/avatars"
+
+# Creating dirs
+#mkdir -p "$(dirname $TMP_FILE)"
+#mkdir -p "$TMP_AVATARS"
+
+# Download JSON if not downloaded
+if [[ ! -f "$TMP_FILE" ]]; then
+  curl -s --create-dirs --output "$TMP_FILE" \
+    -H "Accept: application/vnd.github.v3+json" \
+    'https://api.github.com/repos/codelytv/dotly/contributors'
+fi
+
+
+for index in $(cat $TMP_FILE | jq 'keys | .[]' ); do
+  #[ -z $index ] && continue
+  login="$(cat $TMP_FILE | jq -r ".[$index].login")"
+  avatar_url="$(cat $TMP_FILE | jq -r ".[$index].avatar_url")"
+  avatar_file="$TMP_AVATARS/$login.jpg"
+  contributions="$(cat $TMP_FILE | jq -r ".[$index].contributions")"
+  [ ! -f $avatar_file ] && curl -s --create-dirs --output "$avatar_file" "$avatar_url"
+  
+  # Formatting stuff
+  center_str_wl="$(( (15 - ((${#login}+1)/2)) ))"
+
+  # Image
+  catimg -w 60 "$avatar_file"
+  
+  # Text
+  printf "%${center_str_wl}s"
+  output::write "$login"
+  echo
+done
+
+output::write "Thank you all. Dotly Core Team"
