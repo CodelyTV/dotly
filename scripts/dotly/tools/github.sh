@@ -158,6 +158,17 @@ github::recursive_tree() {
     done
 }
 
+# Helper to list all scripts that will be installed when installing a context
+github::print_tab_find() {
+  local find_path
+  find_path="$1"
+
+  find "$find_path" -mindepth 1 -maxdepth 1 -type f -name '*' | while read item; do
+    item="$(echo "${item#$find_path/}" | xargs)"
+    printf "\t* %s\n" "$item"
+  done
+}
+
 # Create the cache tree (only if neccessary no previous checks needed)
 github::create_cache_tree() {
   local url cache_folder
@@ -230,8 +241,6 @@ github::preview_search() {
       return
       ;;
     0)
-      IFS=' '
-      param=($1)
       output::write "Select to install $bold$green$1$normal script"
       ;;
 
@@ -245,21 +254,11 @@ github::preview_search() {
 
   output::empty_line
   output::empty_line
-  output::write "To install simply push enter or write in the shell:\n\t\tdotly install $bold$green$(echo "$1" | tr '/' ' ')$normal"
+  output::write "To install simply push enter or write in the shell:"
+  output::write "\t\tdotly install $bold$green$(echo "$1" | tr '/' ' ')$normal"
   output::empty_line
   output::write "THIS IS PREVISUALIZATION INSTALL IS NOT AVAILBLE YET"
   output::empty_line
-}
-
-# Helper to list all scripts that will be installed when installing a context
-github::print_tab_find() {
-  local find_path
-  find_path="$1"
-
-  find "$find_path" -mindepth 1 -maxdepth 1 -type f -name '*' | while read item; do
-    item="$(echo "${item#$find_path/}" | xargs)"
-    printf "\t* %s" "$item"
-  done
 }
 
 # Helper for find
