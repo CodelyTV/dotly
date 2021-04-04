@@ -67,7 +67,7 @@ else
     github::check_cache_folder_should_be_created && async create_asycn_cache success reject
   else
     output::answer "Creating the cache if necessary"
-    github::check_cache_folder_should_be_created && github::create_cache_tree
-    output::answer "End of cache creation"
+    { github::check_cache_folder_should_be_created && github::create_cache_tree; } || output::error "Any error happened during the cache creation"
+    output::header "End of Marketplace cache"
   fi
 fi
