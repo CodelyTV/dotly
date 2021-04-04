@@ -3,6 +3,7 @@
 . "$DOTLY_PATH/scripts/core/platform.sh"
 . "$DOTLY_PATH/scripts/core/output.sh"
 . "$DOTLY_PATH/scripts/core/str.sh"
+. "$DOTLY_PATH/scripts/core/files.sh"
 
 # Variables
 MARKETPLACE_REPOSITORY="${MARKETPLACE_REPOSITORY:-rgomezcasas/dotfiles}"
@@ -118,7 +119,7 @@ github::check_cache_folder_should_be_created() {
   local cache_path
   cache_path="${1:-$(github::get_scripts_cache_path)}"
   [[ -d "$cache_path" ]] &&\
-    { [[ $(date -r "$cache_path" +%s) -lt $(date -d "now - $MARKETPLACE_MAX_CACHE_DAYS days" +%s) ]] &&\
+    { files::check_if_path_is_older "$cache_path" "$MARKETPLACE_MAX_CACHE_DAYS" &&\
     github::check_newer_version "$cache_path"; } ||\
     [[ ! -d "$cache_path" ]]
 }
