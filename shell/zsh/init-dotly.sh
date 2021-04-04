@@ -35,5 +35,5 @@ prompt ${DOTLY_THEME:-codely}
 init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
 mkdir -p "$init_scripts_path"
 find "$init_scripts_path" -mindepth 1 -maxdepth 1 -type f,l -name '*' | while read -r init_script; do
-    . "$init_script"
+    [[ -e "$init_script" ]] && . "$init_script"
   done
