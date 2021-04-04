@@ -25,7 +25,7 @@ github::curl() {
   local md5command cached_request_file_path _command url
   # Read piped url if no arguments
   declare url=${1:-$(</dev/stdin)}
-  [[ $# > 0 ]] && shift
+  [[ $# -gt 0 ]] && shift
   
   md5command=""
   cached_request_file_path=""
@@ -179,13 +179,13 @@ github::create_cache_tree() {
   output::header "Downloading a scripts database to create a cache"
 
   # Check if we have url and cache directory
-  ([[ -z "$url" ]] || [[ -z "$cache_folder" ]]) && output::error "No url or cache" && return 1
+  { [[ -z "$url" ]] || [[ -z "$cache_folder" ]]; } && output::error "No url or cache" && return 1
 
   # Inform the uset about possible long time
   output::answer "This might take some time"
   
   # Check if we got the API calls rate limit
-  [[ -n "$(github::curl "$url" | jq -r '.message' | grep -v 'null')" ]] &&\
+  github::curl "$url" | jq -r '.message' | grep -qv 'null' &&\
     output::error "You have reached the GITHUB API calls limit. Consider to get a auth token and" &&\
     output::error "set it through ENV var GITHUB_TOKEN." &&\
     return 1
