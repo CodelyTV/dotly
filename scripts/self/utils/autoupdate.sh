@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 # DOTLY_AUTO_UPDATE_DAYS=${DOTLY_AUTO_UPDATE_DAYS:-7}
-# DOTLY_AUTO_UPDATE_MODE=${DOTLY_AUTO_UPDATE_MODE:-reminder} # prompt
-# async "autoupdate::updater '/Users/gtrabanco/MyCodes/dotly2'" autoupdate::success autoupdate::reject
+# DOTLY_AUTO_UPDATE_MODE=${DOTLY_AUTO_UPDATE_MODE:-reminder} # prompt, auto
 
 
 autoupdate::updater() {

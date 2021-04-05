@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/self/utils/init.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/self/utils/init.sh"
 
 ##? Enable/Disable init scripts
 ##? 
@@ -130,7 +130,7 @@ case "${1:-}" in
     fi
   else
     # If there is no script_name, gives the status of all
-    for item in "${init_scripts[@]}"; do
+    for item in ${init_scripts[@]}; do
       init::status "$item" &&\
         output::solution "'$item'... Enabled." ||\
         output::error "'$item'... Disabled."
