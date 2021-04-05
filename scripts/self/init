@@ -71,8 +71,9 @@ case "${1:-}" in
   fi
   [[ -z "$to_enable" ]] && exit 0
 
-  for item in "${to_enable[@]}"; do
+  for item in ${to_enable[@]}; do
     init::enable "$item"
+    
     if init::status "$item"; then
       output::solution "Init script '$item'...  Enabled"
     else
@@ -109,14 +110,13 @@ case "${1:-}" in
   fi
   [[ -z "$to_disable" ]] && exit 0
   
-  init::disable "${to_disable[@]}"
-  for item in "${to_disable[@]}"; do
-    output::answer "Init script '$item'..."
+  for item in ${to_disable[@]}; do
+    init::disable "$item"
 
     if ! init::status "$item"; then
-      output::solution "Disabled"
+      output::solution "Init script '$item'... Disabled"
     else
-      output::error "Could not be disabled."
+      output::error "Init script '$item'... Could not be disabled."
     fi
   done
   ;;
