@@ -35,7 +35,6 @@ if $version; then
   exit
 fi
 
-
 ssh_file="$(ssh::check_configd_file_name "${ssh_alias_or_file:-}")"
 [[ -z "$ssh_file" ]] && ssh_file="$(ssh::get_configd_file_by_alias "${ssh_alias_or_file:-}")"
 
