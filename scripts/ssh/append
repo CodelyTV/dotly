@@ -41,7 +41,7 @@ ssh_file="$(ssh::check_configd_file_name "$ssh_alias_or_file")"
 
 # Delete the option if exists
 file_line="$(cat -n "$ssh_file" | grep "$option" | awk '{print $1}')"
-sed -i "${file_line}d" "$ssh_file"
+[[ -n "$file_line" ]] && sed -i "${file_line}d" "$ssh_file"
 
 # Append the option
 echo "    $option $value" >> "$ssh_file"
