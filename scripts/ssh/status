@@ -3,9 +3,6 @@
 . "$DOTLY_PATH/scripts/core/_main.sh"
 . "$DOTLY_PATH/scripts/ssh/lib/ssh.sh"
 
-DOTFILES_SSH_CONFIGD="${DOTFILES_SSH_CONFIGD:-$DOTFILES_PATH/ssh/config.d}"
-DOTFILES_SSH_CONFIG_ENABLED="${DOTFILES_SSH_CONFIG_ENABLED:-"$DOTFILES_PATH/ssh/config.d-enabled"}"
-
 ##? Create ssh configurations, enable or disable them easily
 ##? 
 ##?
