@@ -82,7 +82,7 @@ ssh::enable_by_configd_file() {
   # Required params
   [[ -z "$ssh_file" ]] && return 1
 
-  ln -sf "$(realpath --relative-to "$DOTFILES_SSH_CONFIG_ENABLED" "$ssh_file")" "$DOTFILES_SSH_CONFIG_ENABLED"
+  [[ -f "$ssh_file" ]] && ln -sf "$(realpath --relative-to "$DOTFILES_SSH_CONFIG_ENABLED" "$ssh_file")" "$DOTFILES_SSH_CONFIG_ENABLED"
 }
 
 ssh::disable_by_configd_file() {
@@ -92,7 +92,7 @@ ssh::disable_by_configd_file() {
     ssh_link=""
     # Getting ssh file by inception: $($(^_^))
     ssh_link="$DOTFILES_SSH_CONFIG_ENABLED/$(basename "$(ssh::check_configd_file_name "${1:-}")")"
-    [[ -e "$ssh_link" ]] && rm -f "$ssh_link"
+    [[ -L "$ssh_link" ]] && rm -f "$ssh_link"
   done
 }
 
