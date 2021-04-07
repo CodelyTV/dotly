@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/ssh/lib/ssh.sh"
+
+ssh_fzf() {
+  find "$DOTFILES_SSH_CONFIGD" -name "*" -type f | xargs -I _ basename _ | fzf --extended\
+    --header "View your ssh view files"\
+    --preview "cat $DOTFILES_SSH_CONFIGD/{}" "$@"
+}
+
+##? View all and edit a ssh configuration or edit a given file or alias you can
+##?   also append/edit or delete options.
+##? By default use four spaces as tab, you can edit by defining SSH_EDIT_TAB
+##?
+##?
+##? Usage:
+##?   edit [-h | --help]
+##?   edit [-v | --version]
+##?   edit [-w | --view] [<ssh_alias_or_file> [<option> [<value>]]]
+##?
+##? Options:
+##?   -h --help                                        Show this help.
+##?   -v --version                                     Show the program version.
+##?   -w --view                                        Just view a ssh file. If no
+##?                                                    arguments are provided just
+##?                                                    show all and cat seleted file.
+##?   edit                                             View all configuration files
+##?                                                    and select one to edit. If you
+##?                                                    type the configuration it will
+##?                                                    do a cat of the given file or
+##?                                                    alias.
+##?   edit [<ssh_alias_or_file>]                       Edit given ssh file name or
+##?                                                    alias.
+##?   edit [<ssh_alias_or_file> [<option> [<value>]]]  Edit or add the configuration
+##?                                                    option.
+##?   edit [<ssh_alias_or_file> [<option>]]            Delete the given option from
+##?                                                    ssh file or alias if exits.
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.co>
+
+# Options part its important because assign short and long version of the params
+docs::parse "$@"
+
+SCRIPT_NAME="dot ssh view"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+
+[[ -n "$ssh_alias_or_file" ]] && ssh_file="$(ssh::check_configd_file_name "$ssh_alias_or_file")"
+[[ -n "$ssh_alias_or_file" ]] && [[ -z "$ssh_file" ]] && ssh_file="$(ssh::get_configd_file_by_alias "$ssh_alias_or_file")"
+
+if [[ -z "$ssh_file" ]]; then
+  ssh_file="$DOTFILES_SSH_CONFIGD/$(ssh_fzf)"
+
+  # if [[ -n "$ssh_file" ]]; then
+  #   ssh_file="$DOTFILES_SSH_CONFIGD/$ssh_file"
+  # fi
+fi
+
+# Give a file or alias, but no editor configured and no view
+if [[ -n "${ssh_alias_or_file:-}" ]] && [[ -z "$EDITOR" ]] && !$view; then
+  output::error "👎 Executing in view mode: You must set your favourite editor in 'EDITOR' environmental variable."
+  output::empty_line
+  view=true
+fi
+
+if [[ ! -e "$ssh_file" ]]; then
+  output::error "❌ Wrong ssh file or alias."
+elif $view; then
+  cat "$ssh_file"
+elif [[ -n "$option" ]]; then
+  # Delete the option if exists
+  file_line="$(cat -n "$ssh_file" | grep "$option" | awk '{print $1}')"
+  [[ -n "$file_line" ]] && sed -i "${file_line}d" "$ssh_file"
+
+  # Append the option
+  [[ -n "$value" ]] && echo "${SSH_EDIT_TAB:-    }$option $value" >> "$ssh_file"
+  output::solution "'$option' added or modified."
+else
+  "$EDITOR" "$ssh_file"
+fi

@@ -44,7 +44,9 @@ ssh::check_enabled_alias() {
 ssh::check_configd_file_name() {
   local ssh_file
   ssh_file="$DOTFILES_SSH_CONFIGD/$(basename "$1")"
-  [[ -f "$ssh_file" ]] && echo "$ssh_file"
+  [[ -n "$1" ]] && [[ -f "$ssh_file" ]] && echo "${ssh_file:-}" && return 0
+
+  return 1
 }
 
 ssh::check_is_enabled_file_name() {
@@ -63,9 +65,9 @@ ssh::get_configd_file_by_alias() {
     return 0
   fi
 
-  find "$DOTFILES_SSH_CONFIGD" -name "*" -type f | while read -r config_file; do
+  [[ -n "$ssh_alias" ]] && find "$DOTFILES_SSH_CONFIGD" -name "*" -type f | while read -r config_file; do
     if ssh::get_alias "$config_file" | grep -qiwE "$ssh_alias"; then
-      echo "$config_file"
+      echo "${config_file:-}"
       return 0
     fi
   done

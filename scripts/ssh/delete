@@ -35,14 +35,4 @@ if $version; then
   exit
 fi
 
-ssh_file="$(ssh::check_configd_file_name "$ssh_alias_or_file")"
-[[ -z "$ssh_file" ]] && ssh_file="$(ssh::get_configd_file_by_alias "$ssh_alias")"
-
-to_be_deleted="$(cat "$ssh_file" | grep "$option" | xargs)"
-[[ -z "$to_be_deleted" ]] && output::answer "Nothing to be deleted" && exit
-
-output::write "This will delete from '$(basename "$ssh_file")', the next content:"
-output::write "$to_be_deleted"
-output::yesno "Are you sure you want to continue" &&\
-  { sed -i "$(cat -n "$ssh_file" | grep "$option" | awk '{print $1}')d" "$ssh_file"; } &&\
-  output::solution "Deleted"
+"$DOTLY_PATH/bin/dot" ssh edit "$ssh_alias_of_file" "${option:-}"

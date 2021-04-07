@@ -1,23 +1,20 @@
 #!/usr/bin/env bash
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-. "$DOTLY_PATH/scripts/ssh/lib/ssh.sh"
 
-DOTFILES_SSH_CONFIGD="${DOTFILES_SSH_CONFIGD:-$DOTFILES_PATH/ssh/config.d}"
-DOTFILES_SSH_CONFIG_ENABLED="${DOTFILES_SSH_CONFIG_ENABLED:-"$DOTFILES_PATH/ssh/config.d-enabled"}"
-
-##? Create ssh configurations, enable or disable them easily
+##? View all or selected ssh configurations
 ##? 
 ##?
 ##? Usage:
 ##?   view [-h | --help]
 ##?   view [-v | --version]
-##?   view
+##?   view [<ssh_alias_or_file>]
 ##?
 ##? Options:
 ##?   -h --help                                    Show this help
 ##?   -v --version                                 Show the program version
 ##?   view                                         View all configuration files
+##?   view [<ssh_alias_or_file>]                   View configuration file or alias
 ##?
 ##? Author:
 ##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.co>
@@ -34,7 +31,4 @@ if $version; then
   exit
 fi
 
-
-find "$DOTFILES_SSH_CONFIGD" -name "*" -type f | xargs -I _ basename _ | fzf --extended\
-  --header "View your ssh view files"\
-  --preview "cat $DOTFILES_SSH_CONFIGD/{}"
+"$DOTLY_PATH/bin/dot" ssh edit --view "${ssh_alias_or_file:-}"
