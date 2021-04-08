@@ -4,6 +4,7 @@
 readonly GITHUB_API_URL="https://api.github.com/repos"
 readonly GITHUB_DOTLY_REPOSITORY="CodelyTV/dotly"
 readonly GITHUB_CACHE_PETITIONS="$DOTFILES_PATH/.cached_github_api_calls"
+GITHUB_CACHE_PETITIONS_PERIOD_IN_DAYS="${GITHUB_CACHE_PETITIONS_PERIOD_IN_DAYS:-1}"
 
 github::curl() {
   local url CURL_BIN
@@ -31,9 +32,11 @@ github::cached_curl() {
   md5command="$(md5 -s "$_command")"
   cached_request_file_path="$GITHUB_CACHE_PETITIONS/$md5command"
 
+  [[ -f "$cached_request_file_path" ]] &&\
+    files::check_if_path_is_older "$cached_request_file_path" "$GITHUB_CACHE_PETITIONS_PERIOD_IN_DAYS"
+
   # Cache result if is not
   if [ ! -f "$cached_request_file_path" ]; then
-    #debug::log_exec $command > "$cached_request_file_path"
     eval "$_command" > "$cached_request_file_path"
   fi
 
