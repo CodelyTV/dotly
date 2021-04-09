@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+SCRIPT_NAME="dot dotly install-remote"
+SCRIPT_VERSION="1.0.0"
+
+# Save current working directory to return user there
+STARTING_DIRECTORY="$(pwd)"
+CURL_BIN="$(which curl)"
+
+##? Install remote context or script in your $DOTFILES_PATH from url. It
+##? must be the url to the raw file.
+##? If you fill the last param <script_name>, the remote file name will be
+##? omited and renamed in your $DOTFILES_PATH/scripts/<context> folder
+##?
+##? Usage:
+##?   install-remote [ -h | --help ]
+##?   install-remote [ -v | --version ]
+##?   install-remote <context> <script_raw_url> [<script_name>]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+docs::parse "$@"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Script name if provided if not with downloaded name
+[[ -n $script_name ]] && script_name_args="-o $script_name" || script_name_args=${script_name:-"-O"}
+
+# Download command
+download_command="$CURL_BIN -k -L -f -q $script_name_args"
+
+# Scripts context directory
+dotfiles_context="$DOTFILES_PATH/scripts/$context"
+
+# Create context directory and move to it
+mkdir -p "$dotfiles_context"
+cd "$dotfiles_context"
+
+# Download the script
+output::write "Downloading the script ⚡️"
+$(echo "$download_command" "$script_raw_url")
+if [ ! $? ] ; then
+  if [ ! $(ls -A "$dotfiles_context") ]; then
+    output::answer "El context $dotfiles_context esta vacio"
+  fi
+fi
+
+# Getting the name
+script_name="$(ls -Art | tail -n 1)"
+
+# Applying execution rights
+chmod u+x "$dotfiles_context/$script_name"
+
+# How to use it :)
+echo
+output::solution "The script was successfully added 😀"
+output::write "You can execute the script now with:"
+output::write "dot $context $script_name"
+
+cd "$STARTING_DIRECTORY"
