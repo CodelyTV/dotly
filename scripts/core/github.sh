@@ -2,6 +2,7 @@
 
 # Api Url
 readonly GITHUB_API_URL="https://api.github.com/repos"
+readonly GITHUB_RAW_FILES_URL="https://raw.githubusercontent.com"
 readonly GITHUB_DOTLY_REPOSITORY="CodelyTV/dotly"
 readonly GITHUB_DOTLY_CACHE_PETITIONS="$DOTFILES_PATH/.cached_github_api_calls"
 GITHUB_CACHE_PETITIONS_PERIOD_IN_DAYS="${GITHUB_CACHE_PETITIONS_PERIOD_IN_DAYS:-1}"
@@ -86,11 +87,11 @@ github::branch_raw_url() {
   [[ $# -gt 1 ]] && branch="$1" && shift
   [[ $# -gt 0 ]] && file="/$(str::join '/' "$*")"
 
-  echo "https://raw.githubusercontent.com/$user/$repository/${branch:-master}${file:-}"
+  echo "$GITHUB_RAW_FILES_URL/$user/$repository/${branch:-master}${file:-}"
 }
 
 github::clean_cache() {
-  rm -rf "$GITHUB_CACHE_PETITIONS"
+  rm -rf "$GITHUB_DOTLY_CACHE_PETITIONS"
 }
 
 github::_command() {
@@ -129,11 +130,11 @@ github::curl() {
 
   if $cached; then
     # Force creation of cache folder
-    mkdir -p "$GITHUB_CACHE_PETITIONS"
+    mkdir -p "$GITHUB_DOTLY_CACHE_PETITIONS"
 
     # Cache vars
     md5command="$(echo "$_command" | md5)"
-    cached_request_file_path="$GITHUB_CACHE_PETITIONS/$md5command"
+    cached_request_file_path="$GITHUB_DOTLY_CACHE_PETITIONS/$md5command"
 
     [[ -f "$cached_request_file_path" ]] &&\
       files::check_if_path_is_older "$cached_request_file_path" "$cache_period"
