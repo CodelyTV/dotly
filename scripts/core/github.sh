@@ -8,8 +8,6 @@ GITHUB_CACHE_PETITIONS_PERIOD_IN_DAYS="${GITHUB_CACHE_PETITIONS_PERIOD_IN_DAYS:-
 
 github::get_api_url() {
   local user repository branch arguments
-  
-  branch="master"
 
   while [ $# -gt 0 ]; do
     case $1 in
@@ -22,7 +20,7 @@ github::get_api_url() {
         shift 2
         ;;
       --branch|-b)
-        branch="$2"
+        branch="/branches/$2"
         shift 2
         ;;
       *)
@@ -42,11 +40,10 @@ github::get_api_url() {
       shift 2
     fi
   fi
-
-  [[ $# -gt 0 ]] && branch="$1" && shift
+  
   [[ $# -gt 0 ]] && arguments="/$(str::join '/' "$*")"
 
-  echo "$GITHUB_API_URL/$user/$repository/branches/${branch}${arguments:-}"
+  echo "$GITHUB_API_URL/$user/$repository${branch:-}${arguments:-}"
 }
 
 github::branch_raw_url() {
