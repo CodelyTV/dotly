@@ -54,7 +54,7 @@ autoupdate::success() {
         ;;
       "minor"|"only_minor")
         # Needs a file in DOTLY_PATH called VERSION with current installed VERSION
-        latest_github_version=$(github::cached_curl "$GITHUB_API_URL/$GITHUB_DOTLY_REPOSITORY/tags" | jq -r '.[0].name' | uniq)
+        latest_github_version=$(github::get_latest_dotly_tag)
         current_dotly_version="0.0.0"
         [ -f "$DOTLY_PATH/VERSION" ] && current_dotly_version="$(cat "$DOTLY_PATH/VERSION")"
         

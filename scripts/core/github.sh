@@ -148,3 +148,7 @@ github::curl() {
     eval "$_command 2>/dev/null"
   fi
 }
+
+github::get_latest_dotly_tag() {
+  github::curl $(github::get_api_url "$GITHUB_DOTLY_REPOSITORY" "tags") | jq -r '.[0].name' | uniq
+}
