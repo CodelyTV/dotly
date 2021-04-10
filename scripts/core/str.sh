@@ -15,4 +15,4 @@ str::to_upper() { echo "${@:-$(</dev/stdin)}" | tr '[:lower:]' '[:upper:]'; }
 str::to_lower() { echo "${@:-$(</dev/stdin)}" | tr '[:upper:]' '[:lower:]'; }
 
 # output::join: https://stackoverflow.com/a/17841619
-str::join() { local glue="$1"; local first="$2"; shift 2; printf "%s" "$2" "${@/#/$glue}"; }
+str::join() { local glue=${1-} f=${2-}; if shift 2; then printf "%s" "$f" "${@/#/$glue}"; fi; }
