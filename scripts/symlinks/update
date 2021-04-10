@@ -6,7 +6,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 
 symlinks::get_files() {
   [[ -d "$DOTLY_PATH/symlinks" ]] &&\
-    find "$DOTLY_PATH/symlinks" -name "*" -type f -print0 |\
+    find "$DOTLY_PATH/symlinks" -name "*.yaml" -type f |\
     xargs -I _ basename _ | sort
 }
 
