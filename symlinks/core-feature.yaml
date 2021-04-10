@@ -9,4 +9,6 @@
     - $DOTFILES_PATH/shell/init-scripts.enabled
 
 - shell:
-    - [echo ".dotly_update_available" && echo ".dotly_updated" && echo ".cached_github_api_calls" >> $DOTFILES_PATH/.gitignore, Add to gitignore autoupdate files and github api cache path]
+    - [echo ".dotly_update_available" >> $DOTFILES_PATH/.gitignore, Add to gitignore autoupdate files and github api cache path 1/3]
+    - [echo ".dotly_updated" >> $DOTFILES_PATH/.gitignore, Add to gitignore autoupdate files and github api cache path 2/3]
+    - [echo ".cached_github_api_calls" >> $DOTFILES_PATH/.gitignore, Add to gitignore autoupdate files and github api cache path 3/3]
