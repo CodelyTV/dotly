@@ -1,7 +1,6 @@
 - defaults:
     link:
       create: true
-      force: true
 
 - create:
     - $DOTLY_PATH/shell/init-scripts
