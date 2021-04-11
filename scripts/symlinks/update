@@ -43,11 +43,11 @@ if [[ -z "$symlinks_file" ]]; then
   symlinks_file="$DOTLY_PATH/symlinks/$(symlinks::get_files | symlinks::fzf)"
   [[ -z "$symlinks_file" ]] && exit 0
 else
-  if [[ -f "$DOTLY_PATH/symlinks/$symlinks_file.yaml" ]]; then
-    symlinks_file="$DOTLY_PATH/symlinks/$symlinks_file.yaml"
-  elif [[ -f "$DOTLY_PATH/symlinks/$symlinks_file" ]]; then
-    symlinks_file="$DOTLY_PATH/symlinks/$symlinks_file"
-  else
+  for f in "$symlinks_file" "$symlinks_file.yaml" "$symlinks_file.yml"; do
+    [[ -f "$f" ]] && symlinks_file="$f" && break
+  done
+  
+  if [[ ! -e "$symlinks_file" ]]; then
     output::error "The file does not exists"
     exit 1
   fi
