@@ -7,6 +7,12 @@ readonly GITHUB_DOTLY_REPOSITORY="CodelyTV/dotly"
 readonly GITHUB_DOTLY_CACHE_PETITIONS="$DOTFILES_PATH/.cached_github_api_calls"
 GITHUB_CACHE_PETITIONS_PERIOD_IN_DAYS="${GITHUB_CACHE_PETITIONS_PERIOD_IN_DAYS:-1}"
 
+[[ -z "${GITHUB_TOKEN:-}" ]] && {
+  output::error " THIS IS IMPORTANT!!!"
+  output::answer "  If you do not have defined GITHUB_TOKEN variable you could receive"
+  output::answer "  not expected results when calling GITHUB API"
+}
+
 github::get_api_url() {
   local user repository branch arguments
 
