@@ -6,7 +6,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 
 symlinks::get_files() {
   [[ -d "$DOTLY_PATH/symlinks" ]] &&\
-    find "$DOTLY_PATH/symlinks" -name "*.yaml" -type f |\
+    find "$DOTLY_PATH/symlinks" -name "*.yaml" -type f,l |\
     xargs -I _ basename _ | sort
 }
 
@@ -44,7 +44,7 @@ if [[ -z "$symlinks_file" ]]; then
   [[ -z "$symlinks_file" ]] && exit 0
 else
   for f in "$symlinks_file" "$symlinks_file.yaml" "$symlinks_file.yml"; do
-    [[ -f "$f" ]] && symlinks_file="$f" && break
+    [[ -e "$f" ]] && symlinks_file="$f" && break
   done
   
   if [[ ! -e "$symlinks_file" ]]; then
