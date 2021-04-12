@@ -16,7 +16,7 @@ init::get_scripts() {
   [[ -d "$DOTLY_INIT_SCRIPTS_PATH" ]] &&\
     [[ -d "$DOTFILES_INIT_SCRIPTS_PATH" ]] &&\
     find "$DOTLY_INIT_SCRIPTS_PATH" \
-        "$DOTFILES_INIT_SCRIPTS_PATH" -name "*" -type f |\
+        "$DOTFILES_INIT_SCRIPTS_PATH" -name "*" -type f,l |\
     xargs -I _ basename _ | sort | uniq
 }
 
