@@ -5,7 +5,7 @@ DOTFILES_INIT_SCRIPTS_PATH=${DOTFILES_INIT_SCRIPTS_PATH:-$DOTFILES_PATH/shell/in
 ENABLED_INIT_SCRIPTS_PATH=${ENABLED_INIT_SCRIPTS_PATH:-$DOTFILES_PATH/shell/init-scripts.enabled}
 
 init::exists_script() {
-    [[ -f "$DOTLY_INIT_SCRIPTS_PATH/$1" ]] || [[ -f "$DOTFILES_INIT_SCRIPTS_PATH" ]]
+    [[ -e "$DOTLY_INIT_SCRIPTS_PATH/$1" ]] || [[ -e "$DOTFILES_INIT_SCRIPTS_PATH" ]]
 }
 
 init::status() {
@@ -16,7 +16,7 @@ init::get_scripts() {
   [[ -d "$DOTLY_INIT_SCRIPTS_PATH" ]] &&\
     [[ -d "$DOTFILES_INIT_SCRIPTS_PATH" ]] &&\
     find "$DOTLY_INIT_SCRIPTS_PATH" \
-        "$DOTFILES_INIT_SCRIPTS_PATH" -name "*" -type f |\
+        "$DOTFILES_INIT_SCRIPTS_PATH" -name "*" -type f,l |\
     xargs -I _ basename _ | sort | uniq
 }
 
@@ -35,33 +35,30 @@ init::fzf() {
 }
 
 init::enable() {
-  local from1="$DOTLY_INIT_SCRIPTS_PATH"
-  local from2="$DOTFILES_INIT_SCRIPTS_PATH"
-  local to="$ENABLED_INIT_SCRIPTS_PATH"
-  local item
+  local dotly_init_scripts_path dotfiles_init_scripts_path to item
+  dotly_init_scripts_path="$DOTLY_INIT_SCRIPTS_PATH"
+  dotfiles_init_scripts_path="$DOTFILES_INIT_SCRIPTS_PATH"
+  to="$ENABLED_INIT_SCRIPTS_PATH"
 
   for item in "$@"; do
-    # Check if exists in DOTLY_PATH
-    [[ -f "$from1/$item" ]] &&\
-      [[ ! -f "$to/$item" ]] &&\
+    [[ -e "$dotly_init_scripts_path/$item" ]] &&\
+      [[ ! -e "$to/$item" ]] &&\
       rm -f "$to/$item" &&\
-      ln -s "$from1/$item" "$to/"
+      ln -s "$dotly_init_scripts_path/$item" "$to/"
     
-    # Check if exists in DOTFILES_PATH
-    # This will prevail over DOTLY_PATH
-    [[ -f "$from2/$item" ]] &&\
-      [[ ! -f "$to/$item" ]] &&\
+    [[ -e "$dotfiles_init_scripts_path/$item" ]] &&\
+      [[ ! -e "$to/$item" ]] &&\
       rm -f "$to/$item" &&\
-      ln -s "$from2/$item" "$to/"
+      ln -s "$dotfiles_init_scripts_path/$item" "$to/"
   done
 }
 
 init::disable() {
-  local enabled_path="$ENABLED_INIT_SCRIPTS_PATH"
-  local item
+  local enabled_path item
+  enabled_path="$ENABLED_INIT_SCRIPTS_PATH"
 
   for item in "$@"; do
-    [[ -f "$enabled_path/$item" ]] &&\
+    [[ -e "$enabled_path/$item" ]] &&\
       rm -f "$enabled_path/$item"
   done
 }

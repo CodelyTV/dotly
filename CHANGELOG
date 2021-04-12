@@ -1,0 +1,13 @@
+---------------------------------------------
+Branch: feature/core
+
+Features:
+- Async autoupdater
+- Init scripts
+- Out of the .bashrc the dotly core loader
+- Added some core libraries that are used in common in other PRs
+- Added some other no core libraries that should be avaible form core when you develop any dotly script.
+
+Fixes:
+- When execution `dot self update` automatically was switching to master branch even if you have installed from another branch.
+- [Autocompletion on bash commands](https://github.com/CodelyTV/dotly/issues/93)
