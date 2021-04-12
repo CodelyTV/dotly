@@ -6,6 +6,7 @@ readonly GITHUB_RAW_FILES_URL="https://raw.githubusercontent.com"
 readonly GITHUB_DOTLY_REPOSITORY="CodelyTV/dotly"
 readonly GITHUB_DOTLY_CACHE_PETITIONS="$DOTFILES_PATH/.cached_github_api_calls"
 GITHUB_CACHE_PETITIONS_PERIOD_IN_DAYS="${GITHUB_CACHE_PETITIONS_PERIOD_IN_DAYS:-1}"
+GITHUB_TOKEN=${GITHUB_TOKEN:-$("$DOTLY_PATH/bin/dot" secrets var GITHUB_TOKEN)}
 
 [[ -z "${GITHUB_TOKEN:-}" ]] && {
   output::error " THIS IS IMPORTANT!!!"
