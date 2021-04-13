@@ -18,7 +18,7 @@ if ! ${DOTLY_SECRETS_MODULE_PATH:-false}; then
 fi
 
 secrets::check_exists() {
-  [[ -d "$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH" ]]
+  [[ -e "$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/$1" ]]
 }
 
 secrets::check_remote_repository_exists() {
