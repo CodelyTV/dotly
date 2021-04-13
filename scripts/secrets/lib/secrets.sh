@@ -150,13 +150,16 @@ secrets::remove_symlink_by_stored_file() {
       ".[] | select( .link != null) | .link | map_values(select(. == \"$relative_path_to_remove\")) | keys[0]" \
       "$secrets_json" | while read -r item; do
         [[ "$item" == "null" ]] && continue
-        
+        file_path=""
+        file_path="$(jq -r ".[1].link.\"$item\"" "$secrets_json")"
+        file_path="${file_path/$DOTLY_SECRETS_MODULE_PATH\//}"
+
         jq -r "del(.[1].link.\"$item\")" "$secrets_json" | sponge "$secrets_json"
         
-        eval rm -rf "$(jq -r ".[1].link.\"$item\"" "$secrets_json")"
+        secrets::remove_file "$file_path"
         eval rm -f "$item"
 
-        output::solution "File '$1' removed."
+        output::solution "File '$1' with alias '$item' removed."
     done
   fi
 
