@@ -17,8 +17,49 @@ if ! ${DOTLY_SECRETS_MODULE_PATH:-false}; then
   fi
 fi
 
+secrets::find () {
+  local find_relative_path exclude_itself arguments
+
+  case "$1" in
+    --exclude)
+      exclude_itself=true; shift
+    ;;
+    *)
+      exclude_itself=false
+    ;;
+  esac
+
+  find_relative_path="$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/"
+  arguments=()
+
+  if [ -e "$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/${1:-}" ]; then
+    find_relative_path="$find_relative_path${1:-}"; shift
+  fi
+
+  if $exclude_itself; then
+    arguments+=(-not -path "$find_relative_path")
+  fi
+
+  arguments+=("$@")
+
+  find "$find_relative_path" -not -iname ".*" "${arguments[@]}" -print | while read -r item; do
+    printf "%s\n" "${item/$find_relative_path\//}"
+  done
+}
+
+secrets::fzf() {
+  local piped_values
+  piped_values="$(</dev/stdin)"
+
+  printf "%s\n" ${piped_values[@]} | fzf -m --extended \
+    --header "$1"\
+    --preview "echo 'Press Tab+Shift to select multiple options.\
+    \nPress Ctrl+C to exit with no selection.\n\n\
+    CONTENT IS NOT SHOW DUE TO SECURITY REASONS'"
+}
+
 secrets::check_exists() {
-  [[ -e "$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/$1" ]]
+  [[ -e "$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/$1" ]] && echo "$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/$1"
 }
 
 secrets::check_remote_repository_exists() {
@@ -87,12 +128,36 @@ secrets::revert() {
   cd "$DOTFILES_PATH" || return 1
 
   if [[ -f "$file_path" ]]; then
-    jq -r '.[] | select( .link != null) | .link | keys[]' "$file_path" |\
+    jq -r '.[] | select( .link != null) | .link | keys[1:] | .[]' "$file_path" |\
       while read -r item; do
-        [ "shell/init-scripts/secrets_autoload" == "$item" ] && continue
         output::answer "Remove symlink: $item"
         eval rm -f "$item"
       done
+  fi
+
+  cd "$start_dir" || return
+}
+
+secrets::remove_symlink_by_stored_file() {
+  local secrets_json item start_dir relative_path_to_remove file_path
+  relative_path_to_remove="$DOTLY_SECRETS_MODULE_PATH/files/$1"
+  secrets_json="$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/symlinks/secrets.json"
+  start_dir="$(pwd)"
+  cd "$DOTFILES_PATH" || return 1
+
+  if [[ -f "$secrets_json" ]] && [[ -n "$1" ]]; then
+    jq -r \
+      ".[] | select( .link != null) | .link | map_values(select(. == \"$relative_path_to_remove\")) | keys[0]" \
+      "$secrets_json" | while read -r item; do
+        [[ "$item" == "null" ]] && continue
+        
+        jq -r "del(.[1].link.\"$item\")" "$secrets_json" | sponge "$secrets_json"
+        
+        eval rm -rf "$(jq -r ".[1].link.\"$item\"" "$secrets_json")"
+        eval rm -f "$item"
+
+        output::solution "File '$1' removed."
+    done
   fi
 
   cd "$start_dir" || return
@@ -105,10 +170,10 @@ secrets::store() {
 
   if [[ -n "$2" ]]; then
     secret_files_path="$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/files/$2"
-    secret_link="\$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/files/$2/$(basename "$1")"
+    secret_link="$DOTLY_SECRETS_MODULE_PATH/files/$2/$(basename "$1")"
   else
     secret_files_path="$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/files"
-    secret_link="\$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/files/$(basename "$1")"
+    secret_link="$DOTLY_SECRETS_MODULE_PATH/files/$(basename "$1")"
   fi
 
   if [[ -e "$secret_files_path/$(basename "$1")" ]]; then
