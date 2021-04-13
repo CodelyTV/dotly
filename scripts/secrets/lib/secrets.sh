@@ -122,7 +122,7 @@ secrets::relative_path() {
 
 secrets::revert() {
   local file_path item start_dir
-  file_path="$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/symlinks/secrets.json"
+  file_path="$DOTFILES_PATH/modules/secrets/symlinks/secrets.json"
   
   start_dir="$(pwd)"
   cd "$DOTFILES_PATH" || return 1
@@ -136,6 +136,15 @@ secrets::revert() {
   fi
 
   cd "$start_dir" || return
+}
+
+secrets::purge_secrets_json() {
+  local file_path item start_dir
+  file_path="$DOTFILES_PATH/modules/secrets/symlinks/secrets.json"
+  
+  jq -r '.[] | select( .link != null) | .link | map_values(.) | keys[1:] | .[]' "$file_path" | while prompt -r item; do
+    jq -r "del(.[1].link.\"$item\")" "$secrets_json" | sponge "$secrets_json"
+  done
 }
 
 secrets::remove_symlink_by_stored_file() {
