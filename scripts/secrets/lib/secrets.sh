@@ -5,14 +5,24 @@ if ! ${DOTLY_SECRETS_MODULE_PATH:-false}; then
   readonly DOTLY_SECRETS_MODULE_PATH="modules/secrets"
 
   if ! platform::command_exists yq; then
-    # can be also installed with 'brew install python-yq'
-    pip_cmd="$(which pip3)"
-    [[ -z "$pip_cmd" ]] &&\
-      output::error "Could not find pip3 to install 'yq' package." &&\
-      exit 1
-    
-    $(which pip3) install yq
-    unset pip_cmd
+    output::error "The command yq version 4 is needed, try by executing:"
+    output::answer "$DOTLY_PATH/bin/dot" package install yq
+    output::empty_line
+    output::yesno "Do you want to execute now and continue" &&\
+      "$DOTLY_PATH/bin/dot" package install yq || exit 1
+    output::empty_line
+  elif [[ $(platform::semver_compare 4.0.0 "$(yq --version | awk '{print $3}')") -gt 0 ]]; then
+    output::error "Wrong 'yq' version: There is needed at least version 4.0.0"
+    exit 1
+  fi
+
+  if [[ ! -f "$DOTFILES_PATH/shell/zsh/completions/_yq" ]]; then
+    yq shell-completion zsh > "$DOTFILES_PATH/shell/zsh/completions/_yq"
+    "$DOTLY_PATH/bin/dot" shell zsh reload_completions
+  fi
+
+  if [[ ! -f "$DOTFILES_PATH/shell/bash/completions/_yq" ]]; then
+    yq shell-completion bash > "$DOTFILES_PATH/shell/bash/completions/_yq"
   fi
 fi
 
@@ -55,7 +65,7 @@ secrets::var_delete() {
 
 secrets::apply() {
   local file_path
-  file_path="$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/symlinks/secrets.yaml"
+  file_path="$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/symlinks/secrets.json"
   if [[ -f "$file_path" ]]; then
     echo
     "$DOTLY_PATH/modules/dotbot/bin/dotbot" -d "$DOTFILES_PATH" -c "$file_path" "$@"
@@ -63,33 +73,30 @@ secrets::apply() {
   fi
 }
 
-secrets::revert() {
-  local file_path item item_path start_dir
-  file_path="$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/symlinks/secrets.yaml"
-  
-  start_dir="$(pwd)"
-  cd "$DOTFILES_PATH" || return 1
-
-  if [[ -f "$file_path" ]]; then
-    yq -j '.' "$file_path" |\
-      jq '.[].link' | grep -v null  |\
-      jq -r 'keys[]' | while read -r item; do
-        # Ignore autoload script
-        [ "shell/init-scripts/secrets_autoload" == "$item" ] && continue
-        item_path="" item_path="$(realpath -q -m "$item")"
-        output::answer "Remove symlink: $item_path"
-        rm -f "$item_path"
-      done
-  fi
-
-  cd "$start_dir" || return
-}
-
 secrets::relative_path() {
   local item
   item="$(realpath -q -m "$1")"
   item="${item//$DOTFILES_PATH\//}"
   echo "${item//$HOME/\~}"
+}
+
+secrets::revert() {
+  local file_path item start_dir
+  file_path="$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/symlinks/secrets.json"
+  
+  start_dir="$(pwd)"
+  cd "$DOTFILES_PATH" || return 1
+
+  if [[ -f "$file_path" ]]; then
+    jq -r '.[] | select( .link != null) | .link | keys[]' "$file_path" |\
+      while read -r item; do
+        [ "shell/init-scripts/secrets_autoload" == "$item" ] && continue
+        output::answer "Remove symlink: $item"
+        eval rm -f "$item"
+      done
+  fi
+
+  cd "$start_dir" || return
 }
 
 secrets::store() {
@@ -111,13 +118,16 @@ secrets::store() {
   fi
 
   output::answer "Moving the file to your secrets path"
-  mv "$1" "$secret_files_path/"
+  #mv "$1" "$secret_files_path/"
 
   output::answer "Linking your file"
-  eval ln -s "$secret_files_path/$(basename "$item_symlink_path")" "$item_symlink_path"
+  #eval ln -s "$secret_files_path/$(basename "$item_symlink_path")" "$item_symlink_path"
 
   # Add to yaml secrets file
-  yq -r ".[].link += {\"$item_symlink_path\": \"$secret_link\"}" "$secrets_yaml" > "$secrets_yaml.tmp"
-  rm -f "$secrets_yaml"
-  mv "$secrets_yaml.tmp" "$secrets_yaml"
+  #TODO Test and if it fails fix this when link is not the firs element, we need to search firs wich is the good one to modify
+  #yq --yaml-output -r "select(.[].link != null) .[].link += {\"$item_symlink_path\": \"$secret_link\"}" "$secrets_yaml" > "$secrets_yaml.tmp"
+  yq ". | select(.[].link != null)" "$secrets_yaml"
+  #yq ".[] | select(.link != null) .link += {\"$item_symlink_path\": \"$secret_link\"}" "$secrets_yaml"
+  #rm -f "$secrets_yaml"
+  #mv "$secrets_yaml.tmp" "$secrets_yaml"
 }
