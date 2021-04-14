@@ -175,7 +175,7 @@ secrets::remove_symlink_by_stored_file() {
   cd "$start_dir" || return
 }
 
-secrets::store() {
+secrets::store_file() {
   local secret_files_path item_symlink_path secret_link secrets_json
   item_symlink_path="$(secrets::relative_path "$1")"
   secrets_json="$DOTFILES_PATH/$DOTLY_SECRETS_MODULE_PATH/symlinks/secrets.json"
