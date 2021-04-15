@@ -3,7 +3,7 @@ name: 🔎 Help Needed
 about: Requesting some help using or developing for DOTLY
 title: 'Help Request: <Add any descriptive title about>'
 labels: tracking issue, needs triage
-assignees: rgomezcasas, javiercane, gtrabanco
+assignees: rgomezcasas, javiercane
 --
 
 # About your problem
