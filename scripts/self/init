@@ -32,6 +32,11 @@ if $version; then
   exit
 fi
 
+if [ -n "${DOTLY_NO_INIT_SCRIPTS:-false}" ]; then
+  output::error "Init scripts are disabled"
+  exit 1
+fi
+
 # Create folders if they does not exists
 mkdir -p "$DOTLY_INIT_SCRIPTS_PATH"
 mkdir -p "$DOTFILES_INIT_SCRIPTS_PATH"

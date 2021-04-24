@@ -41,8 +41,10 @@ if [ -n "$(ls -A "$DOTFILES_PATH/shell/bash/completions/")" ]; then
 fi
 
 # Auto Init scripts at the end
-init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
-mkdir -p "$init_scripts_path"
-find "$init_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*' | while read init_script; do
-    [[ -e "$init_script" ]] && . "$init_script"
-  done
+if [ -z "${DOTLY_NO_INIT_SCRIPTS:-false}" ]; then
+  init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
+  mkdir -p "$init_scripts_path"
+  find "$init_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*' | while read init_script; do
+      [[ -e "$init_script" ]] && . "$init_script"
+    done
+fi
