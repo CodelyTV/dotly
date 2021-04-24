@@ -1,4 +1,11 @@
 ---------------------------------------------
+Branch: feature/dotly2.0
+
+Features:
+- Added a script to install remote scripts in the given context
+- Added a way to add scripts from template
+
+---------------------------------------------
 Branch: feature/core
 
 Features:

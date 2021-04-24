@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? XXX_SCRIPT_DESCRIPTION_XXX
+##? 
+##?
+##? Usage:
+##?   XXX_SCRIPT_NAME_XXX [-h | --help]
+##?   XXX_SCRIPT_NAME_XXX [-v | --version]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
+##? Author:
+##?   XXX_SCRIPT_AUTHOR_XXX <XXX_SCRIPT_AUTHOR_EMAIL_XXX>
+docs::parse "$@"
+
+SCRIPT_NAME="dot XXX_SCRIPT_CONTEXT_XXX XXX_SCRIPT_NAME_XXX"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Here begin your script
+
+case $1 in
+# Any subcommand should be here
+*)
+  exit 1
+  ;;
+esac
