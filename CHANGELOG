@@ -1,4 +1,11 @@
 ---------------------------------------------
+Branch: feature/multiple_machine2.0
+
+Features:
+- Now you can import/export packages in a different file so now you can have different configurations by machine.
+- Added import/export mac defaults per machine or given name.
+
+---------------------------------------------
 Branch: feature/move_files
 
 Features:

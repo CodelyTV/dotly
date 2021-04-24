@@ -30,6 +30,10 @@ symlinks::apply() {
 ##?   -h --help     Show this help
 ##?   -v --version  Show the program version
 ##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
 docs::parse "$@"
 
 SCRIPT_NAME="dot symlinks apply"
@@ -54,7 +58,6 @@ _args+=(
 )
 
 symlinks::apply "conf.yaml" "${_args[@]}"
-
 
 if platform::is_macos; then
   if platform::is_macos_arm; then
