@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/dotly/lib/marketplace.sh"
+
+##? Search for script in dotly marketplace
+##? 
+##?
+##? Usage:
+##?   search [-h | --help]
+##?   search [-v | --version]
+##?   search [<search_query>]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+##?
+docs::parse "$@"
+
+SCRIPT_NAME="dot dotly search"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Check cache first
+if marketplace::check_cache_folder_should_be_created; then
+  output::error "There is no cache to install scripts."
+  output::answer "It can be updated and created asynchronously by executing 'dot self init marketplace'"
+  output::yesno "Do you want to create synchonously (it could take some time)" && "$DOTLY_PATH/bin/dot" dotly cache --force
+fi
+
+results=($(marketplace::search_in_cache ${search_query:-" "}))
+
+# If user selected Abort or has no result, exit this script
+{ [[ " ${results[*]} " == *" Abort "* ]] || [[ -z "${results[*]}" ]]; } && output::error "Operation aborted" && exit
+
+output::header "Search Results"
+
+# Remove those scripts that are under selected context from results array
+# don't quote or wont work right
+for i in "${results[@]}"; do
+  [[ $(marketplace::is_script "$i") -eq 1 ]] && results=(${results[@]//$i\/*})
+done
+
+for i in "${results[@]}"; do
+  # Reset values
+  context=""
+  script=""
+  install_string="\""
+  
+  # Current values
+  context="$(echo "$i" | tr '/' ' ' | awk '{print $1}')"
+  script="$(echo "$i" | tr '/' ' ' | awk '{print $2}')"
+
+  [[ "$i" =~ '/' ]] &&\
+    install_string+="$(echo "dot $i"| tr '/' ' ')\" script" ||\
+    install_string+="$i\" context"
+
+  output::answer "Trying to install $install_string"
+  "$DOTLY_PATH/bin/dot" dotly install "$context" "${script:-}"
+done

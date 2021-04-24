@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/dotly/lib/marketplace.sh"
+
+[ -z "$DOTFILES_SCRIPTS_PATH" ] && output::error "Failed to load needed GitHub library" && exit
+
+##? Install script from dotly marketplace
+##? 
+##?
+##? Usage:
+##?   install [-h | --help]
+##?   install [-v | --version]
+##?   install [-y | --yes] <context> [<script>]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?   -y --yes      No prompt when installing a script, it will be overwrite
+##?                 if exists.
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+##?
+docs::parse "$@"
+
+SCRIPT_NAME="dot dotly install"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Begin with empty line
+output::empty_line
+
+if marketplace::check_cache_folder_should_be_created; then
+  output::error "There is no cache to install scripts."
+  output::answer "It can be updated and created asynchronously by executing 'dot self init marketplace'"
+  output::yesno "Do you want to create synchonously (it could take some time)" && "$DOTLY_PATH/bin/dot" dotly cache --force
+fi
+
+install="$context"
+! marketplace::check_remote_exists "$context" "${script:-}" && output::error "Script or context could not be found" && exit
+
+# Check if it is installed
+if [[ -n "$script" ]]; then
+  install="$context/$script"
+
+  if [[ -f "$DOTFILES_SCRIPTS_PATH/$context/$script" ]] && ! $yes; then
+    output::error "ATTENTION! THIS IS IMPORTANT!"
+    output::empty_line
+    output::write "The script you are trying to install exists in your dotfiles scripts. If you"
+    output::write "continue this installation, will overwrite the script in your context with the"
+    output::write "same name as the one you are trying to install."
+    output::empty_line
+    output::write "PLEASE, MAKE SURE ABOUT WHAT YOU ARE DOING, ANY LOSING OF DATA WILL BE YOUR"
+    output::write "RESPONSABILITY."
+    output::empty_line
+    output::yesno "Sure you want to continue?" || exit
+    output::empty_line
+  fi
+elif [[ -d "$DOTFILES_SCRIPTS_PATH/$context" ]] && ! $yes; then
+  output::empty_line
+  output::error "ATTENTION! THIS IS IMPORTANT!"
+  output::write "The context \"$context\" exists in your dotfiles scripts. If you continue"
+  output::write "this installation will overwrite the scripts in your context with the"
+  output::write "same name as the remote files. This is the unique way to update but could"
+  output::write "be also a way to lost any current existing custom script in this context."
+  output::empty_line
+  output::write "PLEASE, MAKE SURE ABOUT WHAT YOU ARE DOING, ANY LOSING OF DATA WILL BE YOUR"
+  output::write "RESPONSABILITY."
+  output::empty_line
+  output::yesno "Sure you want to continue?" || exit
+  output::empty_line
+fi
+
+if marketplace::install_from_search "$install"; then
+  output::solution "Installed, now you can use it with dot command:"
+  output::write "    dot ${context} ${script:-}"
+else
+  output::error "Could not be installed. Please try installing from the search with:"
+  output::error "dot dotly search ${script:-$context}"
+fi
+
+output::empty_line
