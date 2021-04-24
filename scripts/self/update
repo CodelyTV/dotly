@@ -10,10 +10,20 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?    update
 docs::parse "$@"
 
+current_dir="$(pwd)"
+
+cd "$DOTFILES_PATH"
+branch=$(git config -f .gitmodules submodule.modules/dotly.branch)
+
 cd "$DOTLY_PATH"
 git discard >/dev/null 2>&1
-git checkout master >/dev/null 2>&1
+git checkout "$branch" >/dev/null 2>&1
 git pull >/dev/null 2>&1
 git submodule update --init --recursive > /dev/null 2>&1
 
 output::answer '✅ dotly updated to the latest version'
+
+rm -f "$DOTFILES_PATH/.dotly_update_available"
+[ "$DOTLY_AUTO_UPDATE_MODE" != "silent" ] && touch "$DOTFILES_PATH/.dotly_updated"
+
+cd "$current_dir"

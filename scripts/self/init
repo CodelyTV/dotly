@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/self/utils/init.sh"
+
+##? Enable/Disable init scripts
+##? 
+##?
+##? Usage:
+##?   init [-h | --help]
+##?   init [-v | --version]
+##?   init enable [<script_name>]
+##?   init disable [<script_name>]
+##?   init status [<script_name>]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+
+# Options part its important because assign short and long version of the params
+docs::parse "$@"
+
+SCRIPT_NAME="dot self autoupdater"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+if [ -n "${DOTLY_NO_INIT_SCRIPTS:-false}" ]; then
+  output::error "Init scripts are disabled"
+  exit 1
+fi
+
+# Create folders if they does not exists
+mkdir -p "$DOTLY_INIT_SCRIPTS_PATH"
+mkdir -p "$DOTFILES_INIT_SCRIPTS_PATH"
+mkdir -p "$ENABLED_INIT_SCRIPTS_PATH"
+
+[[ ! -d "$ENABLED_INIT_SCRIPTS_PATH" ]] && output::error "The folder path to enable scripts does not exists.\n\tTry with 'dot symlinks apply update core-feature' first." && exit 1
+[[ ! -d "$DOTLY_INIT_SCRIPTS_PATH" ]] && output::error "The init scripts of DOTLY does not exists.\n\tTry with 'dot symlinks apply update core-feature' first." && exit 1
+
+# Get the scripts
+init_scripts=("$(init::get_scripts)")
+enabled_scripts=("$(init::get_enabled)")
+
+case "${1:-}" in
+"enable")
+  # If the user gives the script_name
+  if [[ -n "$script_name" ]]; then
+    status=0
+    if init::exists_script "$script_name"; then
+      init::enable "$script_name"
+      init::status "$script_name" && output::solution "Enabled"
+      ! init::status "$script_name" && output::error "Could not be enabled." && status=1
+    else
+      output::error "$script_name does not exists."
+      status=1
+    fi
+    exit $status
+  fi
+
+  # If there is no script_name
+  # If there is nothing that can be enabled or not select scripts to
+  # be enabled, exit
+  not_enabled_scripts=("$(array::disjunction "${init_scripts[@]}" "${enabled_scripts[@]}")")
+  if [[ -n "$not_enabled_scripts" ]]; then
+    to_enable=$(array::disjunction "${init_scripts[@]}" "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to enable when init terminal")
+  else
+    output::answer "Nothing can be enabled"
+  fi
+  [[ -z "$to_enable" ]] && exit 0
+
+  for item in ${to_enable[@]}; do
+    init::enable "$item"
+    
+    if init::status "$item"; then
+      output::solution "Init script '$item'...  Enabled"
+    else
+      output::error "Init script '$item' error... It could not be enabled."
+      exit 1
+    fi
+  done
+  ;;
+"disable")
+  # If there is script_name
+  if [[ -n "$script_name" ]]; then
+    status=0
+    if init::exists_script "$script_name"; then
+      init::disable "$script_name"
+      if ! init::status "$script_name"; then
+        output::solution "Disabled"
+      fi
+
+      init::status "$script_name" && output::error "Could not be disabled." && status=1
+    else
+      output::error "$script_name does not exists."
+      status=1
+    fi
+
+    exit $status
+  fi
+
+  # If there is no script_name
+  # If there are no enabled scripts or nothing to be disabled, exit
+  if [[ -n "$enabled_scripts" ]]; then
+    to_disable=$(echo "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to disable from init terminal")
+  else
+    output::answer "Nothing to be disabled"
+  fi
+  [[ -z "$to_disable" ]] && exit 0
+  
+  for item in ${to_disable[@]}; do
+    init::disable "$item"
+
+    if ! init::status "$item"; then
+      output::solution "Init script '$item'... Disabled"
+    else
+      output::error "Init script '$item'... Could not be disabled."
+    fi
+  done
+  ;;
+"status")
+  # Check status, if user gives a script_name
+  if [ -n "$script_name" ]; then
+    if init::status "$script_name"; then
+      output::solution "'$script_name' is enabled"
+    else
+      output::error "'$script_name' is disabled"
+    fi
+  else
+    # If there is no script_name, gives the status of all
+    for item in ${init_scripts[@]}; do
+      init::status "$item" &&\
+        output::solution "'$item'... Enabled." ||\
+        output::error "'$item'... Disabled."
+    done
+  fi
+  ;;
+*)
+  # Gives help
+  "$DOTLY_PATH/bin/dot" self init -h
+  ;;
+esac
