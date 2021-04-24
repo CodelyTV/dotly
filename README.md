@@ -25,7 +25,7 @@ DOTLY_REPOSITORY=gtrabanco/dotly DOTLY_BRANCH=master bash <(curl -s https://raw.
 
 Using wget
 ```bash
-DOTLY_REPOSITORY=gtrabanco/dotly DOTLY_BRANCH=master  bash <(wget -qO- https://raw.githubusercontent.com/gtrabanco/dotly/master/installer)
+DOTLY_REPOSITORY=gtrabanco/dotly DOTLY_BRANCH=master bash <(wget -qO- https://raw.githubusercontent.com/gtrabanco/dotly/master/installer)
 ```
 
 ### Beta Branch
@@ -36,5 +36,5 @@ DOTLY_REPOSITORY=gtrabanco/dotly DOTLY_BRANCH=beta bash <(curl -s https://raw.gi
 
 Using wget
 ```bash
-DOTLY_REPOSITORY=gtrabanco/dotly DOTLY_BRANCH=beta  bash <(wget -qO- https://raw.githubusercontent.com/gtrabanco/dotly/master/installer)
+DOTLY_REPOSITORY=gtrabanco/dotly DOTLY_BRANCH=beta bash <(wget -qO- https://raw.githubusercontent.com/gtrabanco/dotly/master/installer)
 ```
