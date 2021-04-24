@@ -27,7 +27,7 @@ jobs:
 
       - name: Set current repository and branch
         run: |
-          echo "DOTLY_REPOSITORY=${DOTLY_PR_REPOSITORY:-CodelyTV/dotly}" >> $GITHUB_ENV
+          echo "DOTLY_REPOSITORY=${DOTLY_PR_REPOSITORY:-gtrabanco/dotly}" >> $GITHUB_ENV
           echo "DOTLY_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
           echo "DOTLY_ENV=CI" >> $GITHUB_ENV
 
