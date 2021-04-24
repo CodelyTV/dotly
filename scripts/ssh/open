@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/ssh/lib/ssh.sh"
+
+##? Create ssh configurations, enable or disable them easily
+##? 
+##?
+##? Usage:
+##?   open [-h | --help]
+##?   open [-v | --version]
+##?   open
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?   open          Open your SSH Config files
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.co>
+
+# Options part its important because assign short and long version of the params
+docs::parse "$@"
+
+SCRIPT_NAME="dot ssh open"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+case $1 in
+"create")
+  output::header "This will create a ssh config file"
+  output::empty_line
+  output::write "Set up an ssh alias, you can use multiple separated by space, the"
+  output::write "name of your ssh config file in config.d will be the hostname."
+  output::write "The alias are created and enabled by default."
+  output::empty_line
+
+  # We want to execute while as do...while (at least once)
+  # so this is the method to get in without duplicate code
+  tmp_ssh_alias="${ssh_alias:-}"
+  ssh_alias=""
+  while [ -z "$ssh_alias" ]; do
+    if [[ -n "$tmp_ssh_alias" ]]; then
+      ssh_alias="$tmp_ssh_alias"
+      tmp_ssh_alias=""
+    fi
+    
+    [[ -z "$ssh_alias" ]] && output::question "Set your alias/es (use a simple space to insert multiple)" "ssh_alias"
+
+    if [[ -n "$ssh_alias" ]]; then
+      for item_alias in $(echo "$ssh_alias" | tr " " "\n"); do
+        if ssh::check_alias_exists "$item_alias"; then
+          ssh_alias=""
+          output::error "The '$item_alias' alias exists in your ssh configuration file:"
+          output::error "\t'$(ssh::get_configd_file_by_alias "$item_alias")'."
+        fi
+      done
+    fi
+  done
+
+  while [[ -z "${ssh_hostname:-}" ]]; do
+    output::question "Set the hostname" "ssh_hostname"
+    if ssh::check_configd_file_name "$ssh_hostname"; then
+      output::error "The '$ssh_hostname' file currently exists in:"
+      output::error "\t$(ssh::check_configd_file_name "$ssh_hostname")"
+    fi
+  done
+
+  output::question_default "Set the user (write 'null' for no user)" "$USER" "ssh_user"
+  [[ "$ssh_user" == "null" ]] && ssh_user=""
+  output::question_default "Set the port (write 'null' for no port)" "22" "ssh_port"
+  [[ "$ssh_port" == "null" ]] && ssh_port=""
+
+  ssh::new_ssh_config_from_tpl "$ssh_alias" "$ssh_hostname" "$ssh_user" "$ssh_port" &&\
+    output::solution "'$ssh_hostname' file created."
+
+  output::yesno "Do you want to enable it" &&\
+    ssh::enable_by_configd_file "$ssh_hostname" &&\
+    output::solution "'$ssh_hostname' enabled"
+  ;;
+"enable")
+  [[ -z "$ssh_alias" ]] && ssh_alias="$(ssh::get_configd_fzf)"
+  [[ -n "${ssh_alias[*]}" ]] && ssh::enable "${ssh_alias[@]}"
+  ;;
+"disable")
+  [[ -z "$ssh_alias" ]] && ssh_alias="$(ssh::get_enabled_fzf)"
+  [[ -n "${ssh_alias[*]}" ]] && ssh::disable "${ssh_alias[@]}"
+  ;;
+"status")
+  if [[ -z "$ssh_alias" ]]; then
+    find "$DOTFILES_SSH_CONFIGD" -name "*" -type f | xargs -I _ basename _ | while read -r item; do
+      if (ssh::check_is_enabled_file_name "$item" >/dev/null); then
+        output::solution "'$item' enabled."
+      else
+        output::error "'$item' disabled."
+      fi
+    done
+  else
+    if ssh::check_is_enabled_file_name "$ssh_alias" >/dev/null || ssh::check_enabled_alias "$ssh_alias" >/dev/null; then
+      output::solution "'$ssh_alias' enabled."
+    elif ! ssh::check_alias_exists "$ssh_alias" >/dev/null && ! ssh::check_configd_file_name "$ssh_alias" >/dev/null; then
+      output::error "'$ssh_alias' not exists."
+    else
+      output::error "'$ssh_alias' disabled."
+    fi
+  fi
+  ;;
+"append")
+  ssh_file="$(ssh::check_configd_file_name "$ssh_alias_or_file")"
+  [[ -z "$ssh_file" ]] && ssh_file="$(ssh::get_configd_file_by_alias "$ssh_alias")"
+  
+  # Delete the option if exists
+  file_line="$(cat -n "$ssh_file" | grep "$option" | awk '{print $1}')"
+  sed -i "${file_line}d" "$ssh_file"
+
+  # Append the option
+  echo "    $option $value" >> "$ssh_file"
+  output::solution "'$option' added or modified."
+  ;;
+"view")
+  find "$DOTFILES_SSH_CONFIGD" -name "*" -type f | xargs -I _ basename _ | fzf --extended\
+    --header "View your ssh config files"\
+    --preview "cat {}"
+  ;;
+"open")
+  open "$DOTFILES_SSH_CONFIGD"
+  ;;
+"delete")
+  ssh_file="$(ssh::check_configd_file_name "$ssh_alias_or_file")"
+  [[ -z "$ssh_file" ]] && ssh_file="$(ssh::get_configd_file_by_alias "$ssh_alias")"
+
+  to_be_deleted="$(cat "$ssh_file" | grep "$option" | xargs)"
+  [[ -z "$to_be_deleted" ]] && output::answer "Nothing to be deleted" && exit
+
+  output::write "This will delete from '$(basename "$ssh_file")', the next content:"
+  output::write "$to_be_deleted"
+  output::yesno "Are you sure you want to continue" &&\
+    { sed -i "$(cat -n "$ssh_file" | grep "$option" | awk '{print $1}')d" "$ssh_file"; } &&\
+    output::solution "Deleted"
+  ;;
+*)
+  exit 1
+  ;;
+esac
+
+# Create a new config for ssh server
+
+# Enable/Disable config for new ssh server
+
+# View status of ssh config
+
+# Append/Delete lines in ssh config

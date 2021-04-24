@@ -34,6 +34,10 @@ symlinks::apply() {
 ##?   -h --help     Show this help
 ##?   -v --version  Show the program version
 ##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
 docs::parse "$@"
 
 SCRIPT_NAME="dot symlinks apply"

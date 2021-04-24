@@ -32,7 +32,6 @@ if $version; then
   exit
 fi
 
-
 if [ -n "${DOTLY_NO_INIT_SCRIPTS:-false}" ]; then
   output::error "Init scripts are disabled"
   exit 1

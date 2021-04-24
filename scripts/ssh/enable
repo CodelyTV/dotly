@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/ssh/lib/ssh.sh"
+
+##? Create ssh configurations, enable or disable them easily
+##? 
+##?
+##? Usage:
+##?   enable [-h | --help]
+##?   enable [-v | --version]
+##?   enable [<ssh_alias>]
+##?
+##? Options:
+##?   -h --help             Show this help
+##?   -v --version          Show the program version
+##?   enable [<ssh_alias>]  Enable SSH alias or file. If not provided you will be
+##?                         prompted for the files to enable.
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.co>
+
+# Options part its important because assign short and long version of the params
+docs::parse "$@"
+
+SCRIPT_NAME="dot ssh enable"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+
+[[ -z "$ssh_alias" ]] && ssh_alias="$(ssh::get_configd_fzf)"
+[[ -n "${ssh_alias[*]}" ]] && ssh::enable "${ssh_alias[@]}"

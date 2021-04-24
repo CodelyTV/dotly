@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/ssh/lib/ssh.sh"
+
+##? Create ssh configurations, enable or disable them easily
+##? 
+##?
+##? Usage:
+##?   status [-h | --help]
+##?   status [-v | --version]
+##?   status [<ssh_alias>]
+##?
+##? Options:
+##?   -h --help             Show this help
+##?   -v --version          Show the program version
+##?   status [<ssh_alias>]  Check if the SSH alias or file is or not enabled. If
+##?                         you do not provide you will show all files and they
+##?                         status (enabled/disabled).
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.co>
+
+# Options part its important because assign short and long version of the params
+docs::parse "$@"
+
+SCRIPT_NAME="dot ssh status"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+if [[ -z "$ssh_alias" ]]; then
+  find "$DOTFILES_SSH_CONFIGD" -name "*" -type f | xargs -I _ basename _ | while read -r item; do
+    if (ssh::check_is_enabled_file_name "$item" >/dev/null); then
+      output::solution "'$item' enabled."
+    else
+      output::error "'$item' disabled."
+    fi
+  done
+else
+  if ssh::check_is_enabled_file_name "$ssh_alias" >/dev/null || ssh::check_enabled_alias "$ssh_alias" >/dev/null; then
+    output::solution "'$ssh_alias' enabled."
+  elif ! ssh::check_alias_exists "$ssh_alias" >/dev/null && ! ssh::check_configd_file_name "$ssh_alias" >/dev/null; then
+    output::error "'$ssh_alias' not exists."
+  else
+    output::error "'$ssh_alias' disabled."
+  fi
+fi

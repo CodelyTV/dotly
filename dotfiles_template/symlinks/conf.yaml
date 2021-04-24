@@ -13,3 +13,7 @@
     ~/.zshenv: shell/zsh/.zshenv
     ~/.zshrc: shell/zsh/.zshrc
     ~/.inputrc: shell/.inputrc
+    ~/.ssh: ssh
+
+- shell:
+  - [chmod -R 0700 ~/.ssh, Apply right file permissions to SSH config files]

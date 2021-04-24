@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+
+current_timestamp() { date +%s; }
+
+create_backup_file_or_dir() {
+  if [ -d "$1" ] || [ -f "$1" ]; then
+    local -r backup_path="$1.$(current_timestamp).back"
+
+    output::error "The path '$1' already exist"
+    output::answer "Creating a backup in '$backup_path'"
+
+    mv "$1" "$backup_path"
+  elif [ -f "$1" ]; then
+    local -r backup_path="$1.$(current_timestamp).back"
+
+    output::error "The file '$1' already exist"
+    output::answer "Creating a backup in '$backup_path'"
+
+    mv "$1" "$backup_path"
+  fi
+}
+
+##? Apply feature/ssh update to your current DOTLY dotfiles
+##? 
+##?
+##? Usage:
+##?   apply-update [-h | --help]
+##?   apply-update [-v | --version]
+##?   apply-update
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.co>
+
+# Options part its important because assign short and long version of the params
+docs::parse "$@"
+
+SCRIPT_NAME="dot ssh apply-update"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+if [[ -d "$DOTFILES_PATH/ssh" ]]; then
+  output::error "This update was applied or you have same file names or directory path."
+  output::yesno "Do you want to perform a backup of your current configuration inside your dotfiles and continue" || { output::error "User aborted"; exit; }
+  create_backup_file_or_dir "$DOTFILES_PATH/ssh"
+fi
+
+if [[ -d "$HOME/.ssh" ]]; then
+  output::yesno "Do you want to perform a backup of your current ~/.ssh directory" && create_backup_file_or_dir "$HOME/.ssh"
+fi
+
+output::answer "Copying template ssh folder to your current DOTFILES_PATH"
+cp -R "$DOTLY_PATH/dotfiles_template/ssh" "$DOTFILES_PATH/"
+
+output::answer "Applying right permissions to ssh folder"
+chmod -R 0700 "$DOTFILES_PATH/ssh"
+
+"$DOTLY_PATH/bin/dot" symlinks update ssh-feature

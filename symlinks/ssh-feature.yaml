@@ -1,0 +1,12 @@
+- defaults:
+    link:
+      create: true
+      force: true
+
+- link:
+    ~/.ssh: ssh
+
+- shell:
+  - [chmod -R 0700 ~/.ssh, Apply right file permissions to SSH config files]
+  - [echo "ssh/control/*" >> $DOTFILES_PATH/.gitignore, Remove control session ssh files from git]
+  - [echo "!ssh/control/.gitkeep" >> $DOTFILES_PATH/.gitignore, Keep the ssh/control folder in the dotfiles]

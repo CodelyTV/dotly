@@ -2,3 +2,5 @@
 .dotly_updated
 .cached_github_api_calls
 .marketplace-cache
+ssh/control/*
+!ssh/control/.gitkeep

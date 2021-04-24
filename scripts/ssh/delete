@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/ssh/lib/ssh.sh"
+
+##? Create ssh configurations, enable or disable them easily
+##? 
+##?
+##? Usage:
+##?   delete [-h | --help]
+##?   delete [-v | --version]
+##?   delete <ssh_alias_or_file> <option>
+##?
+##? Options:
+##?   -h --help                            Show this help
+##?   -v --version                         Show the program version
+##?   delete <ssh_alias_or_file> <option>  Delete "option" from SSH file with the alias or the
+##?                                        file specified.
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.co>
+
+# Options part its important because assign short and long version of the params
+docs::parse "$@"
+
+SCRIPT_NAME="dot ssh delete"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+"$DOTLY_PATH/bin/dot" ssh edit "$ssh_alias_of_file" "${option:-}"

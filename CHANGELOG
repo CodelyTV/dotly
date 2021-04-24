@@ -1,4 +1,12 @@
 ---------------------------------------------
+Branch: feature/ssh_config2.0
+
+Features:
+- Added a way to handle ssh config files, see: `dot ssh`
+
+- Added ssh autocompletion script for bash
+
+---------------------------------------------
 Branch: feature/multiple_machine2.0
 
 Features:
