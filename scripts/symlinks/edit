@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/symlinks/lib/symlinks.sh"
+
+##?  Edit the link section of dotbot yaml file. With this you could edit a
+##? current symbolic link that is applied when you use `dot symlinks apply'
+##?  Important fact is that this command do not delete or replace any file
+##? in your DOTFILES_PATH.
+##?
+##? If not <yaml_file> is provided, then use:
+##?   - '$DOTFILES_PATH/symlinks/conf.yaml'
+##?
+##? Usage:
+##?   edit [-h | --help]
+##?   edit [-v | --version]
+##?   edit [-b | --by-value] [[-n | --no] [-y | --yes]] [<origin_link_path> [<new_origin_link_path> [<yaml_file>]]]
+##?
+##? Options:
+##?   -h --help      Show this help
+##?   -v --version   Show the program version
+##?   -b --by-value  Delete by the value of the link in the <yaml_file> instead
+##?                  of deleting by the link.
+##?   -y --yes       Apply without prompt the new symlinks file
+##?   -n --no        Exit without asking about applying the new updated symlinks file
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+##?
+docs::parse "$@"
+
+SCRIPT_NAME="dot dotfiles link"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+yaml_file="$(symlinks::get_file_path "$yaml_file")"
+
+links=("${origin_link_path:-}")
+new_links=("${new_origin_link_path:-}")
+
+preview_cmd='source "$DOTLY_PATH/scripts/core/_main.sh";'
+preview_cmd+='source "$DOTLY_PATH/scripts/core/dotbot_lib_loader.sh";'
+preview_cmd+="yaml_file=$yaml_file;"
+preview_cmd+='echo "Press Tab+Shift to select multiple options.\n'
+preview_cmd+='Press Ctrl+C to exit with no selection.\n\n'
+preview_cmd+='----\n\nLinks:\n\n'
+preview_cmd+='$(cat "$yaml_file" | dotbot::jq_yaml_file -r ".[].link | values")";'
+
+if [ -z "${links[*]}" ] && $by_value; then
+  dotfiles=($(dotbot::get_all_values_in "link" "$yaml_file" | symlinks::fzf -m --preview "${preview_cmd[*]}" --header "Select dotfile(s) to edit the link."))
+
+  for df in "${dotfiles[@]}"; do
+    links+=("$(dotbot::get_key_by_value_in "link" "$df" "$yaml_file")")
+  done
+elif [ -z "${links[*]}" ]; then
+  links=($(dotbot::get_all_keys_in "link" "$yaml_file" | symlinks::fzf -m --preview "${preview_cmd[*]}" --header "Select link(s) to edit the link."))
+fi
+
+for l in "${links[@]}"; do
+  dofile_path="" dotfile_path="$(dotbot::get_value_of_key_in "link" "$l" "$yaml_file")"
+
+  output::question_default "Write the new link for '$l'" "$l" "new_link"
+
+  [[ -n "$new_link" ]] && [[ "$new_link" != "$l" ]] && {  
+    echo "dotbot::add_or_edit_json_value_to_directive link $new_link $dotfile_path $yaml_file"
+    #dotbot::add_or_edit_json_value_to_directive "link" "$new_link" "$dotfile_path" "$yaml_file"
+    output::solution "Link '$l' changed to '$new_link' for file: $dotfile_path"
+  }
+done
+
+$no && exit 0
+
+if $yes then
+  "$DOTLY_PATH/bin/dot" symlinks apply
+else
+  output::yesno "Do you want to execute 'dot symlinks apply' to apply all your changes (this will apply all dotbot yaml files)" &&\
+  "$DOTLY_PATH/bin/dot" symlinks apply
+fi

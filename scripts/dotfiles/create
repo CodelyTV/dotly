@@ -20,7 +20,7 @@ dotfiles::apply_templating() {
   )
 
   for file in "${tpl_files[@]}"; do
-    templating::replace "$file" --dotfiles-path="$DOTFILES_PATH" 
+    templating::replace "$file" --dotfiles-path="${DOTFILES_PATH//$HOME/\~}"
   done
 }
 

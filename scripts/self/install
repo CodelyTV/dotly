@@ -2,8 +2,9 @@
 
 set -euo pipefail
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/self/utils/install.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/symlinks/lib/symlinks.sh"
+. "$DOTLY_PATH/scripts/self/utils/install.sh"
 
 export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 
@@ -25,6 +26,71 @@ installer::install_fzf() {
   fi
 }
 
+installer::install_jq() {
+  output::error "jq not installed, installing"
+
+  if ! "$DOTLY_PATH/bin/dot" package install jq | log::file "Installing jq"; then
+    output::error "Could not install jq!"
+    exit 5
+  fi
+}
+
+installer::install_sponge() {
+  output::error "sponge not installed, installing"
+
+  if ! "$DOTLY_PATH/bin/dot" package install moreutils | log::file "Installing sponge"; then
+    output::error "Could not install sponge!"
+    exit 5
+  fi
+}
+
+backup_and_warn_if_exists() {
+  local file_path bk_file_path
+  file_path="$(eval realpath -q -m "${1:-}")"
+  bk_file_path="$file_path.${2:-$(date +%s)}"
+
+  if [[ -n "$file_path" ]] && ([[ -f "$file_path" ]] || [[ -d "$file_path" ]]); then
+    eval mv "$file_path" "$bk_file_path" &&\
+      output::error "'$file_path' exists and was moved to '$bk_file_path'"
+  fi
+}
+
+check_and_backup_if_exists_symlinks_that_will_be_applied() {
+  local yaml_files rename_suffix
+  rename_suffix=$(date +%s)
+  yaml_files=("conf.yaml")
+
+  if platform::is_macos; then
+    if platform::is_macos_arm; then
+      yaml_files+=("conf.macos.yaml")
+    else
+      yaml_files+=("conf.macos-intel.yaml")
+    fi
+  else
+    yaml_files+=("conf.linux.yaml")
+  fi
+
+  for yaml_file in "${yaml_files[@]}"; do
+    links=($(dotbot::get_all_keys_in "link" "$(symlinks::get_file_path "$yaml_file")"))
+    for l in "${links[@]}"; do
+      backup_and_warn_if_exists "$l" "$rename_suffix"
+    done
+  done
+}
+
+##? Install dotly and setup dotfiles
+##?
+##? Usage:
+##?    install [[-n | --never-backup] | [-b |--always-backup]] [-s | --quiet-symlinks]
+##?
+##? Options:
+##?    -h --help            Prints this help
+##?    -n --never-backup    Never do a backup without prompt
+##?    -b --always-backup   Always do a backup without prompt
+##?    -s --quiet-symlinks  Run dotbot in super quiet mode
+##?
+docs::parse "$@"
+
 if platform::is_macos; then
   output::answer "🍎 Setting up macOS platform"
   install_macos_custom
@@ -41,22 +107,33 @@ fi
 ! platform::command_exists docpars && output::error "docpars not installed, installing" && "$DOTLY_PATH/bin/dot" package install docpars | log::file "Installing docpars"
 ! platform::command_exists delta && output::error "delta not installed, installing" && "$DOTLY_PATH/bin/dot" package install git-delta | log::file "Installing git delta"
 
-##? Install dotly and setup dotfiles
-##?
-##? Usage:
-##?    install
-docs::parse "$@"
-
 output::answer "Creating dotfiles structure"
 "$DOTLY_PATH/bin/dot" dotfiles create | log::file "Creating dotfiles structure"
 
-# @todo Backup if exists before
+# Make a backup of existing current dotfiles
+if ! ${always_backup:-} &&\
+   ! ${never_backup:-} &&\
+   output::yesno "Do you want to perform a backup of your current existing dotfiles if they exists"
+then
+  always_backup=true
+fi
+
+if $always_backup; then
+  check_and_backup_if_exists_symlinks_that_will_be_applied
+fi
+
 output::answer "Setting up symlinks"
-"$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks"
+if $quiet; then
+  "$DOTLY_PATH/bin/dot" symlinks apply --quiet | log::file "Applying symlinks"
+else
+  "$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks"
+fi
 touch "$HOME/.z"
 
 ! platform::command_exists fzf && installer::install_fzf
 ! platform::command_exists zsh && installer::install_zsh
+! platform::command_exists jq && installer::install_jq
+! platform::command_exists sponge && installer::install_sponge
 
 if ! str::contains zsh "$SHELL"; then
   output::answer "Setting zsh as the default shell"

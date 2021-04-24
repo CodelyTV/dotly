@@ -1,0 +1,243 @@
+#!/usr/bin/env bash
+
+
+set -euo pipefail
+
+##? Setups the environment
+##?
+##? Usage:
+##?    install
+
+DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
+export DOTLY_ENV=${DOTLY_ENV:-PROD}
+export DOTLY_INSTALLER=true
+
+
+red='\033[0;31m'
+green='\033[0;32m'
+purple='\033[0;35m'
+normal='\033[0m'
+
+_w() {
+  local -r text="${1:-}"
+  echo -e "$text"
+}
+_a() { _w " > $1"; }
+_e() { _a "${red}$1${normal}"; }
+_s() { _a "${green}$1${normal}"; }
+_q() { read -rp "🤔 $1: " "$2"; }
+_pk() { read -rp "Press a key to ${1}... 👇" "REPLY"; }
+
+_log() {
+  log_name="$1"
+  current_date=$(date "+%Y-%m-%d %H:%M:%S")
+
+  touch "$DOTLY_LOG_FILE"
+  echo "----- $current_date - $log_name -----" >>"$DOTLY_LOG_FILE"
+
+  while IFS= read -r log_message; do
+    echo "$log_message" >>"$DOTLY_LOG_FILE"
+  done
+
+  echo "" >>"$DOTLY_LOG_FILE"
+}
+
+current_timestamp() { date +%s; }
+
+command_exists() {
+  type "$1" >/dev/null 2>&1
+}
+
+install_brew_osx() {
+  if [[ "$OSTYPE" =~ ^[darwin] ]] && ! command_exists brew; then
+    _w "Installing brew package manager for macOS 💾"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+}
+
+package_install () {
+  install_brew_osx #Without this it will try to use apt
+  # Because apt that is not package manager exists on macOS
+  
+  if command_exists dnf; then
+    _a "Installing '${@}' using dnf"
+    sudo dnf -y install "${@}" >/dev/null 2>&1 | _log "Installing '${@}' using dnf"
+  elif command_exists yum; then
+    _a "Installing '${@}' using yum"
+    yes | sudo yum install "${@}" >/dev/null 2>&1 | _log "Installing '${@}' using yum"
+  elif command_exists brew; then
+    _a "Installing '${@}' using brew"
+    yes | brew install "${@}" 2>&1 | _log "Installign '${@}' using brew"
+  elif command_exists pacman; then
+    _a "Installing '${@}' using pacman"
+    sudo pacman -S --noconfirm "${@}" >/dev/null 2>&1 | _log "Installign '${1}' using pacman"
+  elif command_exists apt; then
+    _a "Installing '${@}' using apt"
+    sudo apt -y install "${1}" >/dev/null 2>&1 | _log "Installign '${@}' using apt"
+  else
+    _e "Could not install '${@}', no package provider found"
+    return 1
+  fi
+  
+  return 0
+}
+
+_w "  ┌────────────────────────────────────┐"
+_w "~ │ 🚀 Welcome to the ${green}dotly${normal} restorer!  │ ~"
+_w "  └────────────────────────────────────┘"
+_w
+
+# Git Install
+# In MacOS git is installed if Command Line Tools (CLT) are installed
+# and not if git command exists because it exists but ask you to
+# install CLT.
+
+_w "Checking if Git is installed"
+if [[ "$OSTYPE" =~ ^[darwin] ]] && ! ($(ls /Library/Developer/CommandLineTools > /dev/null 2>&1)); then
+  # In macOS if we do not have CLT then we do not have git. This could be wrong
+  # but we will want brew later and if we do not have CLT we can not have brew
+  # 
+  # Brew manages the installation of brew so we will intall Brew
+  _w "CLT could not be detected"
+  install_brew_osx
+fi
+
+
+if ! command_exists git; then
+  # Other OS checking if git exists...
+  package_install git
+fi
+_s "Git command exists on this system"
+
+# Files locations
+_q "Where do you want your dotfiles to be located? (default ~/.dotfiles)" "DOTFILES_PATH"
+DOTFILES_PATH="${DOTFILES_PATH:-~/.dotfiles}"
+DOTFILES_PATH="$(eval echo "$DOTFILES_PATH")"
+export DOTFILES_PATH="$DOTFILES_PATH"
+
+dotly_inner_path="modules/dotly"
+export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
+
+# Menu to select from where you want to restore your files
+PS3="From where you want to install your dotfiles: "
+options=("GitHub" "Keybase" "Other Git alternative" "Quit")
+GIT_URL=""
+select opt in "${options[@]}"
+do
+  case $opt in
+    "GitHub")
+      GITHUB_USER=""
+      while [ -z "$GITHUB_USER" ]; do
+          _q "👤 Which is your github user?" "GITHUB_USER"
+      done
+
+      GITHUB_REPOSITORY_NAME=""
+      while [ -z "$GITHUB_REPOSITORY_NAME" ]; do
+          _q "📦 Which is your github repository?" "GITHUB_REPOSITORY_NAME"
+      done
+      
+      GIT_URL="git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
+      _w "  Remember that if your dotfiles repository is private you"
+      _w "need to generate or restore the ssh key and added to your"
+      _w "github account in:"
+      _w "  - Github > Settings > SSH and GPG Keys > Add new SSH key"
+      _w
+      _pk "continue when ready"
+      break
+      ;;
+    "Keybase")
+      _w "Checking if keybase is installed"
+
+      if ! $(ls /Applications/Keybase.app > /dev/null 2>&1); then
+        _w "Keybase has not been detected. We will try to install it with the package manager."
+        _w "If the installation finish the script re run it to finish the install"
+        
+        package_install keybase
+        _pk "continue"
+
+        if ! command_exists keybase; then
+          _e "Keybase could not be installed, try by yourself, do a login and re run this script."
+          exit 1
+        fi
+      fi
+      _s "Keybase is installed"
+      
+      KEYBASE_USER=""
+      while [ -z "$KEYBASE_USER" ]; do
+          _q "👤 Which is your Keybase user?" "KEYBASE_USER"
+      done
+
+      KEYBASE_REPOSITORY_NAME=""
+      _q "📦 Which is your Keybase repository name? [dotfiles]" "KEYBASE_REPOSITORY_NAME"
+      KEYBASE_REPOSITORY_NAME="${KEYBASE_REPOSITORY_NAME:-"dotfiles"}"
+
+      GIT_URL="keybase://private/${KEYBASE_USER}/${KEYBASE_REPOSITORY_NAME}"
+      _w "  Remember that you need to start Keybase for the first time and login."
+      _w "  If you don't do this firstly, the installation will fail"
+      _w
+      _pk "continue when ready"
+      
+      break
+      ;;
+    "Other Git alternative")
+      while [ -z "$GIT_URL" ]; do
+          _q "👤 Which is your git repo url?" "GIT_URL"
+      done
+      break
+      ;;
+    "Quit")
+      _w "Bye!"
+      exit 0
+      ;;
+    *)
+      echo "invalid option $REPLY"
+      ;;
+  esac
+done
+
+# Allow submodules that use keybase protocol
+git config --global --add protocol.keybase.allow always
+
+# Recovering your files
+_w "Installing your dotfiles"
+_a "git clone ${GIT_URL} ${DOTFILES_PATH}"
+git clone "${GIT_URL}" "${DOTFILES_PATH}"
+cd "${DOTFILES_PATH}"
+git submodule update --init --recursive
+
+[ "$(git config -f .gitmodules submodule."modules/secrets".path)" == "modules/secrets" ] &&\
+  "$DOTLY_PATH/bin/dot" secrets apply
+
+_w "Installing dotly default tools"
+_w "Please be patient this could take some time...🙏"
+# Installing default dotly tools
+PATH="$PATH:/usr/local/bin:$HOME/.cargo/bin"
+"$DOTLY_PATH/bin/dot" self install --always-backup > /dev/null 2>&1 | _log "Installing dotly default tools"
+_a "🎉 dotfiles restored! 🎉"
+
+# Installing packages
+_q "📦 Do you want to import previous installed packages? [Y/n]" "USER_IMPORT_PACKAGES"
+USER_IMPORT_PACKAGES=${USER_IMPORT_PACKAGES:-'Y'}
+if [[ "$USER_IMPORT_PACKAGES" =~ ^[Yy] ]]; then
+  _w "Importing your packages"
+  _w "This can take a very long time, be patient...🙏"
+  "$DOTLY_PATH/bin/dot" package import >/dev/null 2>&1 | _log "Importing user packages"
+  _a "Packages imported 👏"
+fi
+
+# Importing defaults on macOS
+if [[ "$OSTYPE" =~ ^[darwin] ]]; then
+  _w
+  _w "If you want to import your previous macOS settings, if would be done from the"
+  _w "default directory $DOTFILES_PATH/os/mac/settings, if you want to restore it"
+  _w "from another path, do it manually executing 'dot mac defaults import /path/to'"
+  _w
+  _w "IMPORTANT! This overwrite all your current configuration if you answer with 'y'"
+  _w
+  _q "⚙️ Do you want to import stored macOS configuration? [y/N]" "USER_OSX_SETTINGS"
+  [[ "$USER_OSX_SETTINGS" =~ ^[Yy] ]] && "$DOTLY_PATH/bin/dot" mac defaults import >/dev/null 2>&1 | _log "Importing macOS user defaults"
+fi
+_a "🎉 dotfiles restored! 🎉"
+_a "Please, restart your terminal to see the changes."
+_pk "exit terminal"
+exit

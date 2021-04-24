@@ -146,5 +146,4 @@ case "${1:-}" in
   # Gives help
   "$DOTLY_PATH/bin/dot" self init -h
   ;;
-
 esac
