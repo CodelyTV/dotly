@@ -13,14 +13,16 @@
     <a href="http://pro.codely.tv"><img src="https://img.shields.io/badge/CodelyTV-PRO-black.svg?style=flat-square" alt="CodelyTV Courses"/></a>
 </p>
 
+This is a fork and personall repository.
+
 ## Installation
 
 Using curl
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/master/installer)
+DOTLY_REPOSITORY=gtrabanco/dotly DOTLY_BRANCH=beta bash <(curl -s https://raw.githubusercontent.com/gtrabanco/dotly/master/installer)
 ```
 
 Using wget
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/master/installer)
+DOTLY_REPOSITORY=gtrabanco/dotly DOTLY_BRANCH=beta  bash <(wget -qO- https://raw.githubusercontent.com/gtrabanco/dotly/master/installer)
 ```
