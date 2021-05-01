@@ -49,7 +49,9 @@ backup_and_warn_if_exists() {
   file_path="$(eval realpath -q -m "${1:-}")"
   bk_file_path="$file_path.${2:-$(date +%s)}"
 
-  if [[ -n "$file_path" ]] && ([[ -f "$file_path" ]] || [[ -d "$file_path" ]]); then
+  if [[ -n "$file_path" ]] &&\
+    { [[ -f "$file_path" ]] || [[ -d "$file_path" ]]; }
+  then
     eval mv "$file_path" "$bk_file_path" &&\
       output::error "'$file_path' exists and was moved to '$bk_file_path'"
   fi
@@ -118,12 +120,12 @@ then
   always_backup=true
 fi
 
-if $always_backup; then
+if ${always_backup:-false}; then
   check_and_backup_if_exists_symlinks_that_will_be_applied
 fi
 
 output::answer "Setting up symlinks"
-if $quiet; then
+if ${quiet:-false}; then
   "$DOTLY_PATH/bin/dot" symlinks apply --quiet | log::file "Applying symlinks"
 else
   "$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks"
@@ -134,6 +136,16 @@ touch "$HOME/.z"
 ! platform::command_exists zsh && installer::install_zsh
 ! platform::command_exists jq && installer::install_jq
 ! platform::command_exists sponge && installer::install_sponge
+
+output::answer "Executing self install scripts for custom installings"
+install_scripts_path="$DOTFILES_PATH/self-install-scripts"
+if [ -d "$install_scripts_path" ]; then
+  find "$install_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*.sh' |\
+    sort |\
+    while read -r install_script; do
+      [[ -x "$install_script" ]] && . "$install_script"
+    done
+fi
 
 if ! str::contains zsh "$SHELL"; then
   output::answer "Setting zsh as the default shell"

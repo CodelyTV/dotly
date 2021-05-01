@@ -1,3 +1,25 @@
+Branch: feature/afterinstall
+
+Features:
+- Added folder `self-install-scripts` in dotfiles. Scripts there with execution permission will be executed after `dot symlinks apply` in the `dot self install` script.
+
+---------------------------------------------
+Branch: feature/move_files
+
+Features:
+- Added core libraries to handle dotbot yaml files
+- Added scripts in symlinks context to move files to DOTFILES_PATH see `dot symlinks link --help`, `dot symlinks edit --help`, `dot symlinks delete --help` y `dot symlinks restore --help`.
+- Merged `feature/dotfiles_install` because needs this branch.
+
+Fix:
+- [Issue #76](https://github.com/CodelyTV/dotly/issues/76): Replacing files without asking
+
+---------------------------------------------
+Branch: feature/dotfiles_install
+
+Features:
+- Added a script to restore your dotfiles
+
 ---------------------------------------------
 Branch: feature/ssh_config2.0
 

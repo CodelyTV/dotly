@@ -26,8 +26,8 @@ prompt_dotly_autoupdate() {
 
 prompt_codely_setup() {
   local UPDATE_MESSAGE prompt_codely_status
-  
-  prompt_codely_status='%(?:%F{green}{%F{white}▸%F{green}}:%F{red}{%F{white}▸%F{red}})'
+
+  prompt_codely_status='%(?:%F{green}{%F{white}▸%F{green}}:%F{red}{%F{white}▪%F{red}})'
 
   autoload -Uz add-zsh-hook && add-zsh-hook precmd prompt_codely_precmd
 
