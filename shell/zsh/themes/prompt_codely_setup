@@ -25,7 +25,7 @@ prompt_dotly_autoupdate() {
 }
 
 prompt_codely_setup() {
-  local UPDATE_MESSAGE prompt_codely_status
+  local prompt_codely_status
 
   prompt_codely_status='%(?:%F{green}{%F{white}▸%F{green}}:%F{red}{%F{white}▪%F{red}})'
 
