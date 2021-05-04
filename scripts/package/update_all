@@ -34,6 +34,7 @@ platform::command_exists pip3 && output::header '🐍 Updating pip' && pip3 free
 platform::command_exists gem && output::header '♦️ Updating gem' && gem update
 platform::command_exists npm && output::header '🌈 Updating npm' && npm install -g npm && npm update -g
 platform::command_exists cargo && output::header '📦 Updating cargo' && cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' | xargs -n1 cargo install
+platform::command_exists rustup && output::header '📦 Updating Rust compiler' && rustup update
 platform::command_exists deno && output::header '🦕 Updating deno' && deno upgrade
 
 output::empty_line
