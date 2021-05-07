@@ -25,23 +25,18 @@ installer::install_fzf() {
   fi
 }
 
-installer::install_rust() {
-  output::error "rust not installed, installing" 
-  
-  if ! "$DOTLY_PATH/bin/dot" package install rust | log::file "Installing rust"; then
-    output::error "Could not install rust from package manager. Installing from sources"
-
-    curl https://sh.rustup.rs -sSf | sh -s -- -y | log::file "Installing rust from sources"
-    source "$HOME/.cargo/env"
-  fi
-}
-
 if platform::is_macos; then
   output::answer "🍎 Setting up macOS platform"
   install_macos_custom
 fi
 
-! platform::command_exists cargo && installer::install_rust
+! platform::command_exists cargo && output::error "rust not installed, installing" && "$DOTLY_PATH/bin/dot" package install rust | log::file "Installing rust"
+
+if ! platform::command_exists cargo; then
+  output::error "rust not installed, installing"
+  curl https://sh.rustup.rs -sSf | sh -s -- -y | log::file "Installing rust from sources"
+  source "$HOME/.cargo/env"
+fi
 
 ! platform::command_exists docpars && output::error "docpars not installed, installing" && "$DOTLY_PATH/bin/dot" package install docpars | log::file "Installing docpars"
 ! platform::command_exists delta && output::error "delta not installed, installing" && "$DOTLY_PATH/bin/dot" package install git-delta | log::file "Installing git delta"
