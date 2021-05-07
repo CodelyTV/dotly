@@ -5,6 +5,8 @@ source "$DOTLY_PATH/scripts/package/utils/dump.sh"
 
 ##? Dump all installed packages from:
 ##?  * Brew
+##?  * Apt
+##?  * Snap
 ##?  * Python
 ##?  * Volta.sh or NPM
 ##?
@@ -13,6 +15,8 @@ source "$DOTLY_PATH/scripts/package/utils/dump.sh"
 docs::parse "$@"
 
 platform::is_macos && package::brew_dump && output::answer "Brew apps dumped on $HOMEBREW_DUMP_FILE_PATH"
+
+platform::command_exists apt-mark && package::apt_dump && output::answer "Apt apps dumped on $APT_DUMP_FILE_PATH"
 
 platform::command_exists snap && package::snap_dump && output::answer "Snap apps dumped on $SNAP_DUMP_FILE_PATH"
 
