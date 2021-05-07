@@ -5,6 +5,8 @@ source "$DOTLY_PATH/scripts/package/utils/dump.sh"
 
 ##? Dump all installed packages from:
 ##?  * Brew
+##?  * Apt
+##?  * Snap
 ##?  * Python
 ##?  * Volta.sh or NPM
 ##?
