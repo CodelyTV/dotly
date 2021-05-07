@@ -16,6 +16,8 @@ output::write "🎩 Let's import your packages (this could take a while)"
 
 platform::is_macos && output::header "Importing Brew apps from $HOMEBREW_DUMP_FILE_PATH" && package::brew_import
 
+platform::command_exists snap && output::header "Importing Snap apps from $SNAP_DUMP_FILE_PATH" && package::snap_import
+
 platform::command_exists pip3 && output::header "Importing Python apps from $PYTHON_DUMP_FILE_PATH" && package::python_import
 
 if platform::command_exists volta; then
