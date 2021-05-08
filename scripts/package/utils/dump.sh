@@ -144,7 +144,7 @@ package::npm_dump() {
   NPM_DUMP_FILE_PATH="${1:-$NPM_DUMP_FILE_PATH}"
 
   if platform::command_exists npm; then
-    mkdir -p "$(dirname $NPM_DUMP_FILE_PATH)"
+    mkdir -p "$(dirname "$NPM_DUMP_FILE_PATH")"
     output::write "🚀 Starting NPM dump to '$PYTHON_DUMP_FILE_PATH'"
     ls -1 /usr/local/lib/node_modules | grep -v npm >"$NPM_DUMP_FILE_PATH"
 

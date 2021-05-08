@@ -49,28 +49,36 @@ fi
 
 output::write "🎩 Let's import your packages (this could take a while)" && output::empty_line
 
-{ platform::command_exists brew && [[ -n "$HOMEBREW_DUMP_FILE_PATH" ]] &&\
+{
+  platform::command_exists brew && [[ -n "$HOMEBREW_DUMP_FILE_PATH" ]] &&\
   output::header "Importing Brew apps from $HOMEBREW_DUMP_FILE_PATH" &&\
   package::brew_import &&\
-  output::empty_line; } ||\
+  output::empty_line
+} ||\
     output::answer "Ignoring Brew"
 
-{ platform::command_exists apt-mark &&\
+{
+  platform::command_exists apt-mark &&\
   output::header "Importing Apt apps from $APT_DUMP_FILE_PATH" &&\
   package::apt_import &&\
-  output::empty_line; } ||\
+  output::empty_line
+} ||\
     output::answer "Ignoring APT"
 
-{ platform::command_exists snap &&\
+{
+  platform::command_exists snap &&\
   output::header "Importing Snap apps from $SNAP_DUMP_FILE_PATH" &&\
   package::snap_import &&\
-  output::empty_line; } ||\
+  output::empty_line
+} ||\
     output::answer "Ignoring SNAP"
 
-{ platform::command_exists pip3 && [[ -n "$PYTHON_DUMP_FILE_PATH" ]] &&\
+{
+  platform::command_exists pip3 && [[ -n "$PYTHON_DUMP_FILE_PATH" ]] &&\
   output::empty_line &&\
   output::header "Importing Python apps from $PYTHON_DUMP_FILE_PATH" &&\
-  package::python_import; } ||\
+  package::python_import
+} ||\
     output::empty_line && output::answer "Ignoring the import of python packages"
 
 if platform::command_exists volta && [[ -n "$VOLTA_DUMP_FILE_PATH" ]]; then
