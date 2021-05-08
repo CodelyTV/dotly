@@ -50,7 +50,7 @@ github::get_api_url() {
   
   [[ $# -gt 0 ]] && arguments="/$(str::join '/' "$*")"
 
-  echo "$GITHUB_API_URL/$user/$repository${branch:-}${arguments:-}"
+  echo "$GITHUB_API_URL/$user/$repository${branch:-}${arguments:-}" | sed 's/\/$//'
 }
 
 github::branch_raw_url() {
@@ -93,7 +93,7 @@ github::branch_raw_url() {
   [[ $# -gt 1 ]] && branch="$1" && shift
   [[ $# -gt 0 ]] && file="/$(str::join '/' "$*")"
 
-  echo "$GITHUB_RAW_FILES_URL/$user/$repository/${branch:-master}${file:-}"
+  echo "$GITHUB_RAW_FILES_URL/$user/$repository/${branch:-master}${file:-}" | sed 's/\/$//'
 }
 
 github::clean_cache() {
