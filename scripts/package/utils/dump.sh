@@ -1,14 +1,16 @@
 #!/bin/user/env bash
 
 package::exists_dump_current_machine_file() {
-  local FILES_PATH="$(realpath -sm $1)"
+  local FILES_PATH
+  FILES_PATH="$(realpath -sm "$1")"
 
   ls -1 -d "$FILES_PATH"/* 2>/dev/null | grep -v ".lock.json$" | grep "$(hostname -s)"
 }
 
 package::preview() {
   local filename="$1"
-  local FILES_PATH="$(realpath -sm $2)"
+  local FILES_PATH
+  FILES_PATH="$(realpath -sm $2)"
 
   if [ "$filename" == "No import" ]; then
     echo "No import any file for this package manager"
