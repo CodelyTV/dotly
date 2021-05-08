@@ -17,7 +17,7 @@ github::get_api_url() {
   local user repository branch arguments
 
   while [ $# -gt 0 ]; do
-    case $1 in
+    case ${1:-} in
       --user|-u|--organization|-o)
         user="$2"
         shift 2
@@ -36,8 +36,8 @@ github::get_api_url() {
     esac
   done
 
-  if [[ -z "$user" ]] && [[ -z "$repository" ]]; then
-    if [[ "$1" =~ [\/] ]]; then
+  if [[ -z "${user:-}" ]] && [[ -z "${repository:-}" ]]; then
+    if [[ "${1:-}" =~ [\/] ]]; then
       user="$(echo "$1" | awk -F '/' '{print $1}')"
       repository="$(echo "$1" | awk -F '/' '{print $2}')"
       shift
@@ -78,7 +78,7 @@ github::branch_raw_url() {
     esac
   done
 
-  if [[ -z "$user" ]] && [[ -z "$repository" ]]; then
+  if [[ -z "${user:-}" ]] && [[ -z "${repository:-}" ]]; then
     if [[ "$1" =~ [\/] ]]; then
       user="$(echo "$1" | awk -F '/' '{print $1}')"
       repository="$(echo "$1" | awk -F '/' '{print $2}')"
