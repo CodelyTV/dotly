@@ -22,12 +22,29 @@ case $1 in
   git diff -w --no-index "$DOTLY_PATH/scripts/mac/utils/macos-11.0-defaults" "$current_defaults_path" | delta --side-by-side
   ;;
 "export")
-  export_plist_path="${DOTLY_SETTINGS_PATH}"
+  if [[ -z "$export_name" ]] || ($prompt && ! $never_prompt); then
+    output::question_default "Write the subfolder do you want to export" "$(hostname -s)" "export_name"
+  elif $never_prompt; then
+    import_name="$(hostname -s)"
+  fi
+
+  export_plist_path="${DOTLY_SETTINGS_PATH}/${export_name}"
   [[ -d "$export_plist_path" ]] || mkdir -p "$export_plist_path"
   defaults domains | tr ", " "\n" | sed -r '/^\s*$/d' | xargs -I_ defaults export _ "$export_plist_path/_.plist"
   ;;
 "import")
-  import_plist_path="${DOTLY_SETTINGS_PATH}"
+  if [[ -z "$impot_name" ]] || ($prompt && ! $never_prompt); then
+    import_name=$(find $DOTLY_SETTINGS_PATH/* -not -iname ".*" -not -path "$DOTLY_SETTINGS_PATH" -type d | xargs -I _ basename _ | fzf --header "Select settings name to import")
+  elif $never_prompt; then
+    import_name="$(hostname -s)"
+  fi
+
+  import_plist_path="${DOTLY_SETTINGS_PATH}/$import_name"
+
+  if [[ -z "$import_name" ]] || [[ ! -d "$import_plist_path" ]]; then
+    output::error "No import defaults name selected or settings name does not exits."
+    exit
+  fi
 
   killall System\ Preferences
   sudo -v
