@@ -5,6 +5,7 @@ FIRST_CHARACTER_KO="▶"
 DIRTY="✗"
 NONE="✓"
 
+
 prompt_codely_pwd() {
   local -r prompt_short_dir=$("$DOTLY_PATH/bin/dot" core short_pwd)
   print -n "%F{yellow}${prompt_short_dir}"
@@ -39,7 +40,12 @@ prompt_codely_setup() {
   zstyle ':zim:git-info:dirty' format '%F{yellow}$DIRTY'
   zstyle ':zim:git-info:keys' format 'prompt' ' %F{cyan}%b%c %C%D'
 
-  PS1="\$(prompt_dotly_autoupdate)${prompt_codely_status} \$(prompt_codely_pwd)\$(prompt_codely_git)%f "
+  if [ -z "$CODELY_THEME_MINIMAL" ]; then
+    PS1="\$(prompt_dotly_update)${prompt_codely_status} \$(prompt_codely_pwd)\$(prompt_codely_git)%f "
+  else
+    PS1="\$(prompt_dotly_update)${prompt_codely_status} "
+  fi
+
   RPS1=''
 }
 
