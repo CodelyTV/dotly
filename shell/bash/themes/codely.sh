@@ -14,7 +14,6 @@ codely_theme() {
   LAST_CODE="$?"
   current_dir=$(dot core short_pwd)
   STATUS_COLOR=$GREEN_COLOR
-  UPDATE_MESSAGE=""
 
   if [ $LAST_CODE -ne 0 ]; then
     STATUS_COLOR=$RED_COLOR
