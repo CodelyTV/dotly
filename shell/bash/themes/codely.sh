@@ -11,7 +11,12 @@ codely_theme() {
 
   if [ $LAST_CODE -ne 0 ]; then
     STATUS_COLOR=$RED_COLOR
+    MIDDLE_CHARACTER="▪"
   fi
 
-  export PS1="\[\e[${STATUS_COLOR}m\]{\[\e[m\]${MIDDLE_CHARACTER}\[\e[${STATUS_COLOR}m\]}\[\e[m\] \[\e[33m\]${current_dir}\[\e[m\] "
+  if [ -z "$CODELY_THEME_MINIMAL" ]; then
+    export PS1="\[\e[${STATUS_COLOR}m\]{\[\e[m\]${MIDDLE_CHARACTER}\[\e[${STATUS_COLOR}m\]}\[\e[m\] \[\e[33m\]${current_dir}\[\e[m\] "
+  else
+    export PS1="\[\e[${STATUS_COLOR}m\]{\[\e[m\]${MIDDLE_CHARACTER}\[\e[${STATUS_COLOR}m\]}\[\e[m\] "
+  fi
 }
