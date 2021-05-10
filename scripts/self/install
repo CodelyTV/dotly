@@ -29,7 +29,7 @@ installer::install_rust() {
   output::error "rust not installed, installing"
 
   if platform::command_exists apt; then
-    sudo apt -y build-essential 2>&1 | log::file "Installing build-essential"
+    sudo apt install -y build-essential 2>&1 | log::file "Installing build-essential"
   fi
 
   curl https://sh.rustup.rs -sSf | sh -s -- -y | log::file "Installing rust from sources"
