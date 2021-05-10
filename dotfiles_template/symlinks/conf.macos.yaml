@@ -6,7 +6,7 @@
       force: true
 
 - create:
-      - ~/.hushlogin
+    - ~/.hushlogin
 
 - link:
     ~/.dotly: os/mac/.dotly
@@ -17,4 +17,3 @@
     ~/bin/sed: /opt/homebrew/bin/gsed
     ~/bin/touch: /opt/homebrew/bin/gtouch
     ~/bin/zsh: /opt/homebrew/bin/zsh
-
