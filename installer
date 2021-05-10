@@ -99,7 +99,7 @@ if ! command_exists git; then
       case "$OSTYPE" in
         darwin*)
           _a "Checking if Command Line Tools are installed 🕵️‍♂️"
-          
+
           xcode-select --install 2>&1 | grep installed > /dev/null
           if [[ $? ]]; then
             _a "Installing Command Line Tools 📺"
@@ -112,6 +112,30 @@ if ! command_exists git; then
           exit 1
           ;;
       esac
+  fi
+fi
+
+if ! command_exists curl; then
+  _e "curl not installed, trying to install"
+
+  if command_exists apt; then
+    _a "Installing using apt"
+    sudo apt -y install curl 2>&1 | _log "Installing curl"
+  elif command_exists dnf; then
+    _a "Installing using dnf"
+    sudo dnf -y install curl 2>&1 | _log "Installing curl"
+  elif command_exists yum; then
+    _a "Installing using yum"
+    yes | sudo yum install curl 2>&1 | _log "Installing curl"
+  elif command_exists brew; then
+    _a "Installing using brew"
+    yes | brew install curl 2>&1 | _log "Installing curl"
+  elif command_exists pacman; then
+    _a "Installing using pacman"
+    sudo pacman -S --noconfirm curl 2>&1 | _log "Installing curl"
+  else
+    _e "Could not install curl, no package provider found"
+    exit 1
   fi
 fi
 
