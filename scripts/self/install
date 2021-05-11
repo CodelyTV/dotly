@@ -3,7 +3,7 @@
 set -euo pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/self/utils/install.sh"
+source "$DOTLY_PATH/scripts/self/src/install.sh"
 
 export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 

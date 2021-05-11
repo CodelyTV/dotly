@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-. "$DOTLY_PATH/scripts/self/utils/init.sh"
+. "$DOTLY_PATH/scripts/self/src/init.sh"
 
 ##? Enable/Disable init scripts
 ##? 
