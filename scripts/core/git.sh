@@ -53,12 +53,14 @@ git::get_commit_tag() {
   fi
 }
 
-git::get_current_latest_tag() {
-  git tag -l --sort="-version:refname" "$@" | head -n1
+# shellcheck disable=SC2120
+git::get_all_local_tags() {
+  #git tag -l --sort="-version:refname" "$@"
+  git show-ref --tags | sort --reverse | awk '{print $2}' | sed 's#refs/tags/##'
 }
 
-git::get_all_local_tags() {
-  git tag -l --sort="-version:refname" "$@"
+git::get_current_latest_tag() {
+  git::get_all_local_tags | head -n1
 }
 
 git::get_all_remote_tags() {

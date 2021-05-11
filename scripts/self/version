@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+# . "$DOTLY_PATH/self/src/.sh"
+
+##? Select a specific dotly version from local dotly module
+##? 
+##?
+##? Usage:
+##?   version [-h | --help]
+##?   version [-v | --version]
+##?   version [-r | --view-remote]
+##?   version
+##?
+##? Options:
+##?   -h --help         Show this help
+##?   -v --version      Show the program version
+##?   -r --view-remote  View remote versions (only view)
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+docs::parse "$@"
+
+SCRIPT_NAME="dot self version"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+if ${view_remote:-false}; then
+  git::get_all_remote_tags_version_only
+  exit 0
+fi
+
+selected_tag="$(git::get_all_local_tags | fzf --header "Select a dotly version")"
+
+if [ -n "$selected_tag" ]; then
+  git::dotly_repository_exec git checkout -q "$selected_tag"
+  output::solution "Switched to DOTLY version $selected_tag"
+  touch "$DOTFILES_PATH/.dotly_force_current_version"
+fi
