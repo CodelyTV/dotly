@@ -2,28 +2,28 @@
 
 set -euo pipefail
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/self/src/update.sh"
 
 ##? Update dotly to the latest stable release
 ##?
 ##? Usage:
-##?    update
+##?    update [--disable | --enable]
+##?
+##? Options:
+##?    --disable  Deactivate the dotly update command
+##?    --enable   Activate the dotly update command
+##?
 docs::parse "$@"
 
-current_dir="$(pwd)"
+if ${disable:-enable}; then
+  touch "$DOTFILES_PATH/.dotly_force_current_version"
+  exit 0
+elif ${enable:-false}; then
+  rm -f "$DOTFILES_PATH/.dotly_force_current_version"
+  exit 0
+fi
 
-cd "$DOTFILES_PATH"
-branch=$(git config -f .gitmodules submodule.modules/dotly.branch)
-
-cd "$DOTLY_PATH"
-git discard >/dev/null 2>&1
-git checkout "$branch" >/dev/null 2>&1
-git pull >/dev/null 2>&1
-git submodule update --init --recursive > /dev/null 2>&1
+update::update_local_dotly_module
 
 output::answer '✅ dotly updated to the latest version'
-
-rm -f "$DOTFILES_PATH/.dotly_update_available"
-[ "$DOTLY_AUTO_UPDATE_MODE" != "silent" ] && touch "$DOTFILES_PATH/.dotly_updated"
-
-cd "$current_dir"

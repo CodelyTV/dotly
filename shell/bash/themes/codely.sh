@@ -5,7 +5,15 @@ GREEN_COLOR="32"
 RED_COLOR="31"
 
 prompt_dotly_update() {
-  if [ -f "$DOTFILES_PATH/.dotly_update_available" ]; then
+  if [ -f "$DOTFILES_PATH/.dotly_update_available" ] &&\
+     { 
+        [ "$(echo "$DOTLY_AUTO_UPDATE_MODE" | tr '[:upper:]' '[:lower:]')" != "minor" ] ||\
+        {
+          [ "$(echo "$DOTLY_AUTO_UPDATE_MODE" | tr '[:upper:]' '[:lower:]')" == "minor" ] &&\
+          [ ! -f "$DOTFILES_PATH/.dotly_update_available_is_major" ]
+        }
+     }
+  then
     print -n "📥  | "
   fi
 }

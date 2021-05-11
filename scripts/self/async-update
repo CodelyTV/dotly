@@ -3,7 +3,7 @@
 set -euo pipefail
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-. "$DOTLY_PATH/scripts/self/src/autoupdate.sh"
+. "$DOTLY_PATH/scripts/self/src/dotly_autoupdate.sh"
 
 ##? Async autoupdate dotly to avoid load all core functions in default bash
 ##?
@@ -12,4 +12,4 @@ set -euo pipefail
 docs::parse "$@"
 
 set +eu # Needed to use async
-async autoupdate::updater autoupdate::success autoupdate::reject
+async autoupdate::dotly_updater autoupdate::dotly_success autoupdate::dotly_reject

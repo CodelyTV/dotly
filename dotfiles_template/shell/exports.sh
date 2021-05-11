@@ -1,5 +1,6 @@
 export DOTLY_AUTO_UPDATE_PERIOD_IN_DAYS=7
-export DOTLY_AUTO_UPDATE_MODE="minor" # silent, auto, minor*, info, prompt
+export DOTLY_AUTO_UPDATE_MODE="auto" # silent, auto, info, prompt
+export DOTLY_UPDATE_VERSION="stable" # latest, stable, minor
 
 export JAVA_HOME='/Library/Java/JavaVirtualMachines/amazon-corretto-15.jdk/Contents/Home'
 export GEM_HOME="$HOME/.gem"

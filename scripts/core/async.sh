@@ -69,6 +69,7 @@ killJob() {
 
 async() {
   local cmdToExec resolve reject _c __temp status
+  set +e # Avoid crash if any function fail
 
   cmdToExec="$1"
   resolve="$2"

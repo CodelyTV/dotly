@@ -71,7 +71,7 @@ case "${1:-}" in
   # If there is nothing that can be enabled or not select scripts to
   # be enabled, exit
   not_enabled_scripts=("$(array::disjunction "${init_scripts[@]}" "${enabled_scripts[@]}")")
-  if [[ -n "${not_enabled_scripts:-}" ]]; then
+  if [[ -n "${not_enabled_scripts[*]:-}" ]]; then
     to_enable=$(array::disjunction "${init_scripts[@]}" "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to enable when init terminal")
   else
     output::answer "Nothing can be enabled"
@@ -110,7 +110,7 @@ case "${1:-}" in
 
   # If there is no script_name
   # If there are no enabled scripts or nothing to be disabled, exit
-  if [[ -n "${enabled_scripts:-}" ]]; then
+  if [[ -n "${enabled_scripts[*]:-}" ]]; then
     to_disable=$(echo "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to disable from init terminal")
   else
     output::answer "Nothing to be disabled"
