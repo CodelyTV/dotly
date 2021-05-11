@@ -3,6 +3,7 @@
 set -euo pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/package/src/package_managers/brew.sh"
 
 ##? Update all packages
 ##?
@@ -17,15 +18,7 @@ if platform::is_macos; then
   platform::command_exists mas && mas upgrade
 
   output::header '🍺 Updating Brew and Brew apps (this could take a while)'
-  brew update 2>&1 | log::file "Updating brew"
-  brew outdated | xargs -n1 brew upgrade
-
-  output::header '🍻 Updating Brew Cask apps (this could take a while)'
-  OUTDATED_CASKS=$(brew outdated --cask)
-
-  if [ -n "$OUTDATED_CASKS" ]; then
-    echo "$OUTDATED_CASKS" | grep -v real-vnc | xargs -n1 brew cask install --force
-  fi
+  brew::update_all
 fi
 
 platform::command_exists tldr && output::header '📜 Updating tldr database' && tldr --update
