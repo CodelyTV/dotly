@@ -1,11 +1,41 @@
 #!/usr/bin/env bash
 
-echo "You have selected ${to_version:-No version}"
+DOTFILES_TEMPLATE_PATH="$DOTLY_PATH/dotfiles_template"
 
-# .bashrc file backup
-# .zshrc file backup
+files_to_backup=(
+  "$DOTFILES_PATH/shell/bash/.bashrc"
+  "$DOTFILES_PATH/shell/zsh/.zshrc"
+  "$DOTFILES_PATH/shell/paths.sh"
+)
 
-# Copy new .bashrc file from dotfiles_template
-# Copy new .zshrc file from dotfiles_template
+for item in "${files_to_backup[@]}"; do
+  bk_path=""
 
-# TODO
+  if [ -f "$item" ] && [ ! -L "$HOME/bin/script" ]; then
+    bk_path="$(files::backup_if_file_exists "$item")"
+    [[ -z "$bk_path" ]] && continue
+    output::write "File '$bk_path' exits and was moved as backup to:"
+    output::answer "$bk_path"
+  fi
+done
+
+# Always copy using interactive mode: cp -i
+output::answer "Copying .bashrc and .zshrc files"
+cp -i "$DOTFILES_TEMPLATE_PATH/shell/bash/.bashrc" "$DOTFILES_PATH/shell/bash/"
+cp -i "$DOTFILES_TEMPLATE_PATH/shell/zsh/.zshrc" "$DOTFILES_PATH/shell/zsh/.zshrc"
+output::solution ".bashrc and .zshrc copied"
+output::empty_line
+
+output::answer "Creating paths.sh file with your current values"
+# Create new paths.sh file
+if [ -n "${path[*]:-}" ]; then
+  printf "export path=(" > "$DOTFILES_PATH/shell/paths.sh"
+  printf "  \"%s\"\n" "${path[@]}" | sort | uniq >> "$DOTFILES_PATH/shell/paths.sh"
+  printf ")\n" >> "$DOTFILES_PATH/shell/paths.sh"
+else
+  # Copy paths from dotfiles_template
+  cp -i "$DOTFILES_TEMPLATE_PATH/shell/paths.sh" "$DOTFILES_PATH/shell/"
+fi
+output::solution "paths.sh file created"
+output::answer "Remember to delete your current paths if you have it in your exports.sh"
+output::empty_line

@@ -40,8 +40,17 @@ output::header "DOTLY migration wizard"
 
 if ! ${to_version:-false} || [[ ! -x "$DOTLY_PATH/migration/$to_version" ]]; then
   to_version="$(find "$DOTLY_PATH/migration/" -name "*" -type f,l -executable -print0 -exec echo {} \; | xargs -I _ basename _ | sort --reverse | fzf --header "Select migration script version")"
-  . "$DOTLY_PATH/migration/$to_version"
-else
+fi
+
+if [[ -n "$to_version" ]]; then
+  output::answer "You will execute migration script for '$to_version' this could"
+  output::write "result in a damage of your current dotfiles if they are not"
+  output::write "organized as expected."
+  output::empty_line
+  
+  ! output::yesno "Sure you want to continue" && exit 1
+  output::empty_line
+
   . "$DOTLY_PATH/migration/$to_version"
 fi
 
