@@ -7,6 +7,7 @@ set +e # Avoid crash if any function return false
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
 . "$DOTLY_PATH/scripts/core/templating.sh"
+. "$DOTLY_PATH/scripts/self/src/update.sh"
 
 ##?   Select a specific dotly version from local dotly module. If you select
 ##? any of: latest, stable, minor, it also modifies you 'exports.sh' file
@@ -46,7 +47,6 @@ selected_tag="$(printf "%s\n" "${local_tags[@]}" | fzf --header "Select a dotly 
 case "$selected_tag" in
   "minor")
     current_tag_version="$(update::get_latest_minor_local_head)" # Current HEAD tag or stable
-
     if [[ -n "$current_tag_version" ]]; then
       git::dotly_repository_exec git checkout -q "$current_tag_version"
       output::solution "Switched to latest DOTLY stable version $current_tag_version"
