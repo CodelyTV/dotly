@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/core/templating.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/core/templating.sh"
 
 ##? Create the dotfiles structure
 ##?
@@ -20,7 +20,7 @@ dotfiles::apply_templating() {
   )
 
   for file in "${tpl_files[@]}"; do
-    templating::replace "$file" --dotfiles-path="$DOTFILES_PATH" 
+    templating::replace "$file" --dotfiles-path="${DOTFILES_PATH//$HOME/\$HOME}" 
   done
 }
 
