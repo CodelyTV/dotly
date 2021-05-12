@@ -44,3 +44,10 @@ fi
 output::solution "paths.sh file created"
 output::answer "Remember to delete your current paths if you have it in your exports.sh"
 output::empty_line
+
+# Gitignore
+if [ ! -f "$DOTFILES_PATH/.gitignore" ]; then
+  cp -i "$DOTFILES_TEMPLATE_PATH/.gitignore" "$DOTFILES_PATH/"
+else
+  cat "$DOTFILES_TEMPLATE_PATH/.gitignore" >> "$DOTFILES_PATH/.gitignore"
+fi
