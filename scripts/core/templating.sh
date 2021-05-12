@@ -27,10 +27,8 @@ templating::replace_var () {
 
   # Replacer
   if [[ -f $any ]]; then
-    echo "Using sed: $var_name = $value"
     sed -i -e "s|${var_name}|${value}|g" "$any"
   else
-    echo "Using var"
     echo "${any//$var_name/$value}"
   fi
 }
@@ -73,7 +71,7 @@ templating::replace_var_join() {
 #
 templating::replace() {
   local var_name var_value output
-  case "$1" in
+  case "${1:-}" in
     --*=*|--*)
       output=$(</dev/stdin)
       ;;
@@ -84,18 +82,18 @@ templating::replace() {
   esac
 
   while [ $# -gt 0 ]; do
-    case $1 in
+    case ${1:-} in
       --*=*)
-        var_name="$(echo $1 | awk -F '=' '{print $1}' | sed 's/^\-\-//')";
-        var_value="$(echo $1 | awk -F '=' '{print $2}')";
+        var_name="$(echo "$1" | awk -F '=' '{print $1}' | sed 's/^\-\-//')";
+        var_value="$(echo "$1" | awk -F '=' '{print $2}')";
         shift
         ;;
       --*)
-        var_name="$(echo $1 | sed 's/\-\-//')"; shift
+        var_name="$(echo "$1" | sed 's/\-\-//')"; shift
         var_value="${1:-}"; shift
         ;;
       *)
-        var_name="$1"; shift
+        var_name="${1:-}"; shift
         var_value="${1:-}"; shift
         ;;
     esac
@@ -107,9 +105,7 @@ templating::replace() {
     fi
   done
 
-  if [[ -f "$output" ]]; then
-    cat "$output"
-  else
+  if [[ ! -f "$output" ]]; then
     echo "$output"
   fi
 }
