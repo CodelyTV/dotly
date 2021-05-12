@@ -4,7 +4,7 @@ MIDDLE_CHARACTER="◂"
 GREEN_COLOR="32"
 RED_COLOR="31"
 
-prompt_dotly_update() {
+prompt_dotly_autoupdate() {
   if [ -f "$DOTFILES_PATH/.dotly_update_available" ] &&\
      { 
         [ "$(echo "$DOTLY_AUTO_UPDATE_MODE" | tr '[:upper:]' '[:lower:]')" != "minor" ] ||\
@@ -29,8 +29,8 @@ codely_theme() {
   fi
 
   if [ -z "$CODELY_THEME_MINIMAL" ]; then
-    export PS1="\$(prompt_dotly_update)\[\e[${STATUS_COLOR}m\]{\[\e[m\]${MIDDLE_CHARACTER}\[\e[${STATUS_COLOR}m\]}\[\e[m\] \[\e[33m\]${current_dir}\[\e[m\] "
+    export PS1="\$(prompt_dotly_autoupdate)\[\e[${STATUS_COLOR}m\]{\[\e[m\]${MIDDLE_CHARACTER}\[\e[${STATUS_COLOR}m\]}\[\e[m\] \[\e[33m\]${current_dir}\[\e[m\] "
   else
-    export PS1="\$(prompt_dotly_update)\[\e[${STATUS_COLOR}m\]{\[\e[m\]${MIDDLE_CHARACTER}\[\e[${STATUS_COLOR}m\]}\[\e[m\] "
+    export PS1="\$(prompt_dotly_autoupdate)\[\e[${STATUS_COLOR}m\]{\[\e[m\]${MIDDLE_CHARACTER}\[\e[${STATUS_COLOR}m\]}\[\e[m\] "
   fi
 }
