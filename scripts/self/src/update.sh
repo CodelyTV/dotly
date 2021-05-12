@@ -117,19 +117,20 @@ update::check_consistency_with_dotly_version() {
 }
 
 update::update_local_dotly_module() {
-  local local_dotly_version remote_dotly_minor remote_dotly_tag
+  local current_dotly_hash local_dotly_version remote_dotly_minor remote_dotly_tag
   set +e # Avoid crash if any function fail
 
+  current_dotly_hash="$(git::get_local_HEAD_hash)"
   local_dotly_version="$(git::dotly_repository_exec git::get_commit_tag)"
   remote_dotly_minor="$(update::check_minor_update)"
   remote_dotly_tag="$(update::check_if_is_stable_update)"
 
   # No update
   if [ ! -f "$DOTFILES_PATH/.dotly_force_current_version" ]; then
-    return
+    return 1
   fi
 
-  # Consistency
+  # Version consistency
   if ! update::check_consistency_with_dotly_version >/dev/null; then
     return 1
   fi
@@ -156,5 +157,27 @@ update::update_local_dotly_module() {
   rm -f "$DOTFILES_PATH/.dotly_force_current_version"
   rm -f "$DOTFILES_PATH/.dotly_update_available"
   rm -f "$DOTFILES_PATH/.dotly_update_available_is_major"
-  touch "$DOTFILES_PATH/.dotly_updated"
+  echo "$current_dotly_hash" >| "$DOTFILES_PATH/.dotly_updated"
+}
+
+uptate::migration_script_exits() {
+  local latest_migration_script update_previous_commit
+  latest_migration_script="$(find "$DOTLY_PATH/migration/" -name "*" -type f,l -executable -print0 -exec echo {} \; | sort --reverse | head -n 1 | xargs)"
+
+  # No update no migration necessary
+  if [[ ! -f "$DOTFILES_PATH/.dotly_updated" ]] || [[ -z "$latest_migration_script" ]]; then
+    return 1
+  fi
+
+  # If was added in previous commit
+  if ! git::check_file_exists_in_previous_commit "$latest_migration_script"; then
+    echo "$latest_migration_script"
+    return 0
+  fi
+
+  # Get previous commit and check if was added after
+  update_previous_commit="$(cat "$DOTFILES_PATH/.dotly_updated")"
+  [[ -z "$update_previous_commit" ]] && return 1 # Could not be checked if migration script should be executed
+  
+  git::check_file_is_modified_after_commit "$latest_migration_script" "$update_previous_commit" && echo "$latest_migration_script"
 }

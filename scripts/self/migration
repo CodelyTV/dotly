@@ -8,7 +8,9 @@ set -uo pipefail
 . "$DOTLY_PATH/scripts/core/_main.sh"
 . "$DOTLY_PATH/scripts/core/templating.sh"
 
-##? Executes migration scripts for dotfiles
+##?  Executes migration scripts for dotfiles. If your dotly is updated and no
+##? script version is provided then try to guess the latest necessary migration
+##? script.
 ##?
 ##? Usage:
 ##?   migration [-h | --help]
@@ -33,6 +35,8 @@ if ${version:-}; then
 fi
 
 output::header "DOTLY migration wizard"
+
+[[ -f "$DOTFILES_PATH/.dotly_updated" ]] && [[ -z "$to_version" ]] && to_version="$(uptate::migration_script_exits)"
 
 if ! ${to_version:-false} || [[ ! -x "$DOTLY_PATH/migration/$to_version" ]]; then
   to_version="$(find "$DOTLY_PATH/migration/" -name "*" -type f,l -executable -print0 -exec echo {} \; | xargs -I _ basename _ | sort --reverse | fzf --header "Select migration script version")"

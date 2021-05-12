@@ -26,4 +26,8 @@ fi
 
 update::update_local_dotly_module
 
-output::answer '✅ dotly updated to the latest version'
+if [[ -f "$DOTFILES_PATH/.dotly_updated" ]]; then
+  output::answer '✅ dotly updated to the latest version'
+else
+  output::answer '👌 You already have latest dotly version'
+fi

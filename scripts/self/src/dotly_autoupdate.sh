@@ -17,7 +17,14 @@ autoupdate::dotly_updater() {
     output::empty_line
     output::write "     🥳 🎉 🍾      DOTLY UPDATED     🥳 🎉 🍾  "
     output::empty_line
-    rm "$DOTFILES_PATH/.dotly_updated"
+    migration_script="$(uptate::migration_script_exits)"
+    if [[ -n "$migration_script" ]]; then
+      output::write "Migration script is neccesary to be executed and must be done syncronously by executing:"
+      output::answer "dot self migration $migration_script"
+      output::empty_line
+    fi
+
+    [[ -z "$migration_script" ]] && rm "$DOTFILES_PATH/.dotly_updated"
   }
 
   [[ -f "$DOTFILES_PATH/.dotly_update_available" ]] && return 0
