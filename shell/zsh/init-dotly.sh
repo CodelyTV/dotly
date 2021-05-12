@@ -27,6 +27,8 @@ autoload -Uz promptinit && promptinit
 prompt ${DOTLY_THEME:-codely}
 
 #shellcheck source=/dev/null
+. "$DOTLY_PATH/shell/zsh/bindings/dot.zsh"
+#shellcheck source=/dev/null
 . "$DOTLY_PATH/shell/zsh/bindings/reverse_search.zsh"
 #shellcheck source=/dev/null
 . "$DOTFILES_PATH/shell/zsh/key-bindings.zsh"
