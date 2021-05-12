@@ -14,20 +14,25 @@ for item in "${files_to_backup[@]}"; do
   if [ -f "$item" ] && [ ! -L "$HOME/bin/script" ]; then
     bk_path="$(files::backup_if_file_exists "$item")"
     [[ -z "$bk_path" ]] && continue
-    output::write "File '$bk_path' exits and was moved as backup to:"
-    output::answer "$bk_path"
+    output::write "File '$item' exits and was moved as backup to:"
+    output::write "  $bk_path"
+    output::empty_line
   fi
 done
 
 # Always copy using interactive mode: cp -i
 output::answer "Copying .bashrc and .zshrc files"
+rm -f "$DOTFILES_PATH/shell/bash/.bashrc"
 cp -i "$DOTFILES_TEMPLATE_PATH/shell/bash/.bashrc" "$DOTFILES_PATH/shell/bash/"
-cp -i "$DOTFILES_TEMPLATE_PATH/shell/zsh/.zshrc" "$DOTFILES_PATH/shell/zsh/.zshrc"
+cp -i "$DOTFILES_TEMPLATE_PATH/shell/zsh/.zshrc" "$DOTFILES_PATH/shell/zsh/"
 output::solution ".bashrc and .zshrc copied"
 output::empty_line
 
-output::answer "Creating paths.sh file with your current values"
+# Edit .bashrc file templating
+templating::replace "$DOTFILES_PATH/shell/bash/.bashrc" --dotfiles-path="${DOTFILES_PATH//$HOME/\$HOME}"
+
 # Create new paths.sh file
+output::answer "Creating paths.sh file with your current values"
 if [ -n "${path[*]:-}" ]; then
   printf "export path=(" > "$DOTFILES_PATH/shell/paths.sh"
   printf "  \"%s\"\n" "${path[@]}" | sort | uniq >> "$DOTFILES_PATH/shell/paths.sh"
