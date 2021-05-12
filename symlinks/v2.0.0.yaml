@@ -8,6 +8,8 @@
     - $DOTFILES_PATH/shell/init-scripts.enabled
 
 - shell:
+# TODO
+# If no .gitignore copy from dotfiles_path, if exists append the content
     - [echo ".dotly_update_available" >> $DOTFILES_PATH/.gitignore, Add to gitignore autoupdate files and github api cache path 1/3]
     - [echo ".dotly_updated" >> $DOTFILES_PATH/.gitignore, Add to gitignore autoupdate files and github api cache path 2/3]
     - [echo ".cached_github_api_calls" >> $DOTFILES_PATH/.gitignore, Add to gitignore autoupdate files and github api cache path 3/3]

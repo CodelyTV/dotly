@@ -32,3 +32,24 @@ dot::list_scripts_path() {
 
   printf "%s\n%s" "$dotly_contexts" "$dotfiles_contexts" | sort -u
 }
+
+dot::get_script_path() {
+  echo "$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+}
+
+dot::get_full_script_path() {
+  echo "$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )/$(basename "$0")"
+}
+
+dot::get_script_src_path() {
+  local lib lib_full_path
+  lib="${1:-}"
+  lib_full_path="$(dot::get_script_path)/src/$lib"
+
+  # Library loading
+  { 
+    [ -n "$lib" ] && [ -f "$lib_full_path" ] && . "$lib_full_path"
+  } || {
+    output::error "🚨 Library loading error with: \"${lib:-No library provided}\"" && exit 1
+  }
+}

@@ -16,20 +16,20 @@ init::get_scripts() {
   [[ -d "$DOTLY_INIT_SCRIPTS_PATH" ]] &&\
     [[ -d "$DOTFILES_INIT_SCRIPTS_PATH" ]] &&\
     find "$DOTLY_INIT_SCRIPTS_PATH" \
-        "$DOTFILES_INIT_SCRIPTS_PATH" -name "*" -type f,l |\
+        "$DOTFILES_INIT_SCRIPTS_PATH" -name "*" -type f,l -print0 -exec echo {} \; |\
     xargs -I _ basename _ | sort | uniq
 }
 
 init::get_enabled() {
   [[ -d "$ENABLED_INIT_SCRIPTS_PATH" ]] &&\
-    find "$ENABLED_INIT_SCRIPTS_PATH" -name "*" -type l |\
+    find "$ENABLED_INIT_SCRIPTS_PATH" -name "*" -type l -print0 -exec echo {} \; |\
     xargs -I _ basename _ | sort | uniq
 }
 
 init::fzf() {
   local piped_values="$(</dev/stdin)"
 
-  printf "%s\n" ${piped_values[@]} | fzf -m --extended \
+  printf "%s\n" "${piped_values[@]}" | fzf -m --extended \
     --header "$1"\
     --preview "echo 'Press Tab+Shift to select multiple options.\nPress Ctrl+C to exit with no selection.'"
 }

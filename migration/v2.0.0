@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+echo "You have selected ${to_version:-No version}"
+
+# .bashrc file backup
+# .zshrc file backup
+
+# Copy new .bashrc file from dotfiles_template
+# Copy new .zshrc file from dotfiles_template
+
+# TODO

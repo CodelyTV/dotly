@@ -3,7 +3,7 @@
 set -euo pipefail
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-. "$DOTLY_PATH/scripts/self/src/update.sh"
+dot::get_script_src_path "update.sh"
 
 ##? Update dotly to the latest stable release
 ##?
