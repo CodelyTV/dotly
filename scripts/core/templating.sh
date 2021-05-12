@@ -113,3 +113,21 @@ templating::replace() {
     echo "$output"
   fi
 }
+
+# Modify from current bash file like exports.sh a given varible by the value
+# if the variable does not exists add it at the first line of the file
+# Example:
+#    templating::modify_bash_file_variable "$DOTFILES_PATH/shell/exports.sh" "DOTFILES_PATH" "~/.new-dotfiles"
+templating::modify_bash_file_variable() {
+  local var_name file_line file_path
+  file_path="${1:-}"
+  var_name="${2:-}"
+  shift 2
+  value="${*:-}"
+
+  if [[ -n "$file_path" ]] && [[ -f "$file_path" ]] && [[ -n "$var_name" ]]; then
+    file_line="$(grep --line-number "\s*export\s*$var_name\s*=." "$file_path" | awk -F ':' '{print $1}' | head -n 1)"
+    [[ -n "$file_line" ]] && sed -i "${file_line:-1}d" "$file_path"
+    sed -i "${file_line:-1}i export $var_name=\"$value\"" "$file_path"
+  fi
+}

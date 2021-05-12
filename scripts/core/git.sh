@@ -73,7 +73,7 @@ git::get_all_remote_tags_version_only() {
   local repository
   repository="${1:-}"
   { [[ -n "$repository" ]] && shift; } || repository="origin"
-  git::get_all_remote_tags "$repository" "*.*.*" 2>/dev/null | sed 's/.*\///; s/\^{}//' | uniq
+  git::get_all_remote_tags "$repository" "${@:-*.*.*}" 2>/dev/null | sed 's/.*\///; s/\^{}//' | uniq
 }
 
 git::check_local_tag_exists() {
@@ -83,7 +83,7 @@ git::check_local_tag_exists() {
 
   { [[ -z "$repository" ]] || [[ -z "$tag_version" ]]; } && return 1
 
-  [[ -n "$(git::get_all_remote_tags_version_only "$repository" "$tag_version")" ]]
+  git::get_all_remote_tags | grep -q "$tag_version"
 }
 
 git::check_remote_tag_exists() {

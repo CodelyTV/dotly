@@ -20,6 +20,36 @@ update::check_minor_update() {
   return 1
 }
 
+# Get the latest minor using the HEAD as it could be 
+update::get_latest_minor_local_head() {
+  local current_tag_version latest_local_tag latest_tags_version tag_version return_code
+  current_tag_version="$(git::dotly_repository_exec git::get_commit_tag)" # Current HEAD tag
+  latest_local_tag="$(git::get_current_latest_tag)"
+  return_code=1
+
+  if [[ -z "$current_tag_version" ]] && [[ -n "$latest_local_tag" ]]; then
+      echo "$latest_local_tag"
+      return_code=0
+      
+  elif [[ -n "$current_tag_version" ]]; then
+    latest_tags_version=($(git::get_all_local_tags))
+
+    # Select latest local minor tag taking the current HEAD tag as main
+    for tag_version in "${latest_tags_version[@]}"; do
+      [[ "$(platform::semver_compare "$current_tag_version" "$tag_version")" -le 0 ]] && break
+      if "$(platform::semver_is_minor_or_patch_update "$current_tag_version" "$tag_version")"; then
+        current_tag_version="$tag_version"
+        return_code=0
+        break
+      fi
+    done
+  fi
+
+  [[ -n "$current_tag_version" ]] && echo "$current_tag_version"
+
+  return "$return_code"
+}
+
 update::check_if_is_stable_update() {
   local local_dotly_version remote_dotly_versions tags_number
   set +e
