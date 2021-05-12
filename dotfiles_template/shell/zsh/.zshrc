@@ -1,3 +1,6 @@
+# Uncomment for debuf with `zprof`
+# zmodload zsh/zprof
+
 if [[ -f "$DOTLY_PATH/shell/bash/init-dotly.sh" ]]
 then
   . "$DOTLY_PATH/shell/bash/init-dotly.sh"
