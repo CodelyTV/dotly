@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/self/src/install.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+dot::get_script_src_path "install.sh"
 
 export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 
