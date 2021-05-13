@@ -48,9 +48,10 @@ dot::get_script_src_path() {
   if [[ -n "${lib:-}" ]]; then
     lib_paths=(
       "$DOTLY_PATH/scripts/core"
-      "${2:-$(dot::get_script_path)}/src"
-      "${2:-$(dot::get_script_path)}"
+      "$(dot::get_script_path)/src"
     )
+
+    [[ -n "${2:-}" ]] && lib_paths+=("$DOTLY_PATH/scripts/$2/src" "$2")
 
     for lib_path in "${lib_paths[@]}"; do
       [[ -f "$lib_path/$lib" ]] &&\
