@@ -48,7 +48,6 @@ output::empty_line
 yaml_file="$(symlinks::get_file_path "$yaml_file")"
 [[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
 
-
 if [[ -n "${origin_link_path:-}" ]]; then
   yaml_link_value="$(dotbot::get_value_of_key_in "link" "$origin_link_path" "$yaml_file")"
   [[ -z "${yaml_link_value:-}" ]] && output::error "Given link does not exists so it is no possible to edit." && exit 1
@@ -57,7 +56,6 @@ if [[ -n "${origin_link_path:-}" ]]; then
   [[ "$origin_link_path" == "$new_origin_link_path" ]] && output::error "Skipping, nothing to change." && exit 1
 
   symlinks::edit_link_by_link_path "$yaml_file" "$origin_link_path" "$new_origin_link_path"
-
   if $?; then
     output::error "Link could not be edited"
     exit 1
@@ -65,9 +63,6 @@ if [[ -n "${origin_link_path:-}" ]]; then
     output::solution "Link '$origin_link_path' changed to '$new_origin_link_path' for file: $yaml_link_value"
   fi
 else
-  links=("${origin_link_path:-}")
-  new_links=("${new_origin_link_path:-}")
-
   preview_cmd='. "$DOTLY_PATH/scripts/core/_main.sh";'
   preview_cmd+='dot::get_script_src_path "dotbot_yaml_edit.sh";'
   preview_cmd+="yaml_file=$yaml_file;"
@@ -80,7 +75,7 @@ else
     dotfiles=($(dotbot::get_all_values_in "link" "$yaml_file" | symlinks::fzf -m --preview "${preview_cmd[*]}" --header "Select dotfile(s) to edit the link."))
 
     for df in "${dotfiles[@]}"; do
-      links+=("$(dotbot::get_key_by_value_in "link" "$df" "$yaml_file")")
+      links=("$(dotbot::get_key_by_value_in "link" "$df" "$yaml_file")")
     done
   elif [ -z "${links[*]}" ]; then
     links=($(dotbot::get_all_keys_in "link" "$yaml_file" | symlinks::fzf -m --preview "${preview_cmd[*]}" --header "Select link(s) to edit the link."))
@@ -104,7 +99,7 @@ else
   done
 fi
 
-$no &&  exit 0
+${no:-} &&  exit 0
 
 if ${yes:-}; then
   "$DOTLY_PATH/bin/dot" symlinks apply
