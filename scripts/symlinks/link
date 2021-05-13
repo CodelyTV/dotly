@@ -19,9 +19,9 @@ edit_link_question() {
 }
 
 ##?  Create a symbolic link using dotbot with the command 'dot symlinks apply'
-##? without move files. Useful if you want to create symlinks in your machine
-##? without moving files. Create a symbolic link using 'ln -s' and append
-##? that link to <yaml_file>
+##? without manual work. Useful if you want to create symlinks in your
+##? machine without moving files manually. Create a symbolic link using 'ln -s'
+##? and append that link to default or given <yaml_file>.
 ##?
 ##? If not <yaml_file> is provided, then use:
 ##?   - '$DOTFILES_PATH/symlinks/conf.yaml'
@@ -29,15 +29,18 @@ edit_link_question() {
 ##? Usage:
 ##?   link [-h | --help]
 ##?   link [-v | --version]
-##?   link [-s | --skip] <origin_link_path> [<link_dotfile_directory> [<yaml_file>]]
+##?   link [-s | --skip] [-m | --only-move] [--yaml=<yaml_file>] <origin_link_path> [<link_dotfile_directory>]
 ##?
 ##? Options:
-##?   -h --help      Show this help
-##?   -v --version   Show the program version
-##?   -s --skip      Skip moving files to your DOTFILES_PATH. This makes
-##?                  possible to make a symbolic link from your desktop to
-##?                  iCloud folder and preserver across machines using your
-##?                  dotfiles.
+##?   -h --help           Show this help
+##?   -v --version        Show the program version
+##?   -s --skip           Skip moving files to your DOTFILES_PATH. This makes
+##?                       possible to make a symbolic link from your desktop to
+##?                       iCloud folder and preserver across machines using your
+##?                       dotfiles.
+##?   -m --only-move      Only move file but no add it to yaml file
+##?   --yaml=<yaml_file>  Use a custom yaml file instead of default one which is
+##?                       DOTFILES_PATH/symlinks/conf.yaml
 ##?
 ##? Author:
 ##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
@@ -53,23 +56,41 @@ if ${version:-}; then
   exit
 fi
 
-yaml_file="$(symlinks::get_file_path "$yaml_file")"
+if [ -z "${origin_link_path:-}" ]; then
+  output::error "Wrong call to script"
+  output::write "    See usage:"
+  output::write "        $SCRIPT_NAME --help"
+  output::empty_line
+  "$0" --help
+  exit 1
+fi
+
+yaml_file="$(symlinks::get_file_path "${yaml_file:-}")"
+
+[[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
 
 if [[ -z "$link_dotfile_directory" ]]; then
   while [ -z "$link_dotfile_directory" ]; do
     output::write "Write the relative path to your DOTFILES_PATH (path inside) for the file or"
     output::write "directory. Empty to put it inside your DOTFILES_PATH root directory."
     output::question "Write the relative path to your DOTFILES_PATH" "link_dotfile_directory"
+    output::empty_line
 
-    [[ -z "$link_dotfile_directory" ]] && output::yesno "Do you want to store the file in your DOTFILES_PATH root directory" &&\
+    [[ -z "$link_dotfile_directory" ]] &&\
+      output::yesno "Do you want to store the file in your DOTFILES_PATH root directory" &&\
+      output::empty_line &&\
+      link_dotfile_directory="$DOTFILES_PATH" &&\
       break
   done
 fi
 
-if ${skip:-false}; then
+if ${only_move:-}; then
+  symlinks::move_from_pwd_to_dotfiles "$origin_link_path" "$link_dotfile_directory"
+  exit $?
+elif ${skip:-false}; then
   dotbot::add_or_edit_json_value_to_directive "link" "$(dotbot::create_relative_link "$origin_link_path")" "$(dotbot::create_relative_link "$link_dotfile_directory")" "$yaml_file"
 else
-  symlinks::file_from_pwd_to_dotfiles "$yaml_file" "$origin_link_path" "$link_dotfile_directory"
+  symlinks::add_yaml_and_move_files "$yaml_file" "$origin_link_path" "$link_dotfile_directory"
 fi
 
 link_value="$(dotbot::get_value_of_key_in "link" "$(dotbot::create_relative_link "$origin_link_path")" "$yaml_file")"
