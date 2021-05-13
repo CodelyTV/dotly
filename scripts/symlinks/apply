@@ -9,7 +9,7 @@ symlinks::apply() {
   shift
 
   echo
-  "$DOTLY_PATH/modules/dotbot/bin/dotbot" -d "$DOTFILES_PATH" -c "$CONFIG" "$@"
+  "$DOTLY_PATH/modules/dotbot/bin/dotbot" "$@" "$CONFIG"
   echo
 }
 
