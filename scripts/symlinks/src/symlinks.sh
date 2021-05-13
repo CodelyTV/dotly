@@ -75,7 +75,7 @@ symlinks::add_yaml_and_move_files() {
   if [ -e "$yaml_file" ]; then
     # Eval to solve globbing and paths like ~/my_file
     mkdir -p "$path_to"
-    eval mv "$from" "$path_to/"
+    eval mv -i "$from" "$path_to/"
     eval ln -s "$current_link_target" "$from"
     dotbot::add_or_edit_json_value_to_directive "link" "$link_in_yaml" "$link_in_yaml_target" "$yaml_file"
   fi
@@ -84,7 +84,7 @@ symlinks::add_yaml_and_move_files() {
 symlinks::move_from_pwd_to_dotfiles() {
   local from path_to
   from="${1:-}"
-  path_to="$(realpath -sm $DOTBOT_BASE_PATH/$2//$DOTBOT_BASE_PATH/})"
+  path_to="$(realpath -sm $DOTBOT_BASE_PATH/${2//$DOTBOT_BASE_PATH/})"
 
   if [ -z "${1:-}" ]; then
     return 1
@@ -92,7 +92,7 @@ symlinks::move_from_pwd_to_dotfiles() {
 
   if [ -e "$yaml_file" ]; then
     mkdir -p "$path_to"
-    eval mv "$from" "$path_to/" # eval to solve ~/myfile resolution
+    mv -i "$from" "$path_to/" # eval to solve ~/myfile resolution
   fi
 }
 
@@ -106,7 +106,7 @@ symlinks::restore_by_link() {
   dotfiles_file_path="$(dotbot::get_value_of_key_in "link" "$link" "$yaml_file")"
 
   symlinks::exec_in_dotbot_path rm -rf "$link"
-  symlinks::exec_in_dotbot_path mv "$dotfiles_file_path" "$link"
+  symlinks::exec_in_dotbot_path mv -i "$dotfiles_file_path" "$link"
   dotbot::delete_by_key_in "link" "$link" "$yaml_file"
 }
 
@@ -122,7 +122,7 @@ symlinks::restore_by_dotfile_file_path() {
 
   if [ -n "$link" ]; then
     symlinks::exec_in_dotbot_path rm -f "$link"
-    symlinks::exec_in_dotbot_path mv "$DOTBOT_BASE_PATH/$dotfiles_file_path" "$link"
+    symlinks::exec_in_dotbot_path mv -i "$DOTBOT_BASE_PATH/$dotfiles_file_path" "$link"
     dotbot::delete_by_key_in "link" "$link" "$yaml_file"
   fi
 }
@@ -139,7 +139,7 @@ symlinks::edit_link_by_link_path() {
   # If link value has no value maybe user is given a link in working directory
   # so resolve what could be the relative to $DOTBOT_BASE_PATH directory to
   # check if the link exists
-  if [ -z "${link_value:-}"]; then
+  if [ -z "${link_value:-}" ]; then
     old_link="$(dotbot::create_relative_link "$old_link")"
     link_value=${link_value:-$(dotbot::get_value_of_key_in "link" "$old_link" "$yaml_file")}
   fi
