@@ -66,38 +66,44 @@ backup_and_warn_if_exists() {
   [[ -n "$bk_file_path" ]] && output::error "'$file_path' exists and was moved to '$bk_file_path'"
 }
 
-check_and_backup_if_exists_symlinks_that_will_be_applied() {
-  local yaml_files rename_suffix
-  rename_suffix=$(date +%s)
-  yaml_files=("conf.yaml")
+yaml_file_backup() {
+  local yaml_file links
+  yaml_file="${1:-}"
 
-  if platform::is_macos; then
-    if platform::is_macos_arm; then
-      yaml_files+=("conf.macos.yaml")
-    else
-      yaml_files+=("conf.macos-intel.yaml")
+  for link in $(dotbot::get_all_keys_in "link" "$(symlinks::get_file_path "$yaml_file")"); do
+    link="$(eval realpath -q -m -s "$link")"
+
+    if [[ -f "$link" ]]; then
+      if ! ${quiet_symlinks:-} &&
+        output::yesno "File '$link' exists. Do you want to backup it"
+      then
+        echo "$link"
+        # backup_and_warn_if_exists "$link" "$rename_suffix"
+      fi
     fi
-  else
-    yaml_files+=("conf.linux.yaml")
-  fi
-
-  for yaml_file in "${yaml_files[@]}"; do
-    links=($(dotbot::get_all_keys_in "link" "$(symlinks::get_file_path "$yaml_file")"))
-    for l in "${links[@]}"; do
-      backup_and_warn_if_exists "$l" "$rename_suffix"
-    done
   done
 }
 
-if platform::is_macos; then
-  output::answer "🍎 Setting up macOS platform"
-  install_macos_custom
-fi
+dotly_install_symlinks() {
+  local -r CONFIG="$DOTLY_PATH/scripts/self/src/symlinks/${1:-}"
+  shift
 
-! platform::command_exists cargo && installer::install_rust
+  [[ ! -f "$CONFIG" ]] && return
 
-! platform::command_exists docpars && output::error "docpars not installed, installing" && "$DOTLY_PATH/bin/dot" package install docpars | log::file "Installing docpars"
-! platform::command_exists delta && output::error "delta not installed, installing" && "$DOTLY_PATH/bin/dot" package install git-delta | log::file "Installing git delta"
+  echo
+  "$DOTLY_PATH/modules/dotbot/bin/dotbot" "$@" "$CONFIG"
+  echo
+}
+
+# if platform::is_macos; then
+#   output::answer "🍎 Setting up macOS platform"
+#   install_macos_custom
+# fi
+
+# ! platform::command_exists cargo && installer::install_rust
+
+# ! platform::command_exists docpars && output::error "docpars not installed, installing" && "$DOTLY_PATH/bin/dot" package install docpars | log::file "Installing docpars"
+# ! platform::command_exists delta && output::error "delta not installed, installing" && "$DOTLY_PATH/bin/dot" package install git-delta | log::file "Installing git delta"
 
 ##? Install dotly and setup dotfiles
 ##?
@@ -108,12 +114,44 @@ fi
 ##?    -h --help            Prints this help
 ##?    -n --never-backup    Never do a backup without prompt
 ##?    -b --always-backup   Always do a backup without prompt
-##?    -s --quiet-symlinks  Run dotbot in super quiet mode
+##?    -s --quiet-symlinks  Run dotbot in super quiet mode. If backup, do it
+##?                         without asking.
 ##?
 docs::parse "$@"
 
 output::answer "Creating dotfiles structure"
 "$DOTLY_PATH/bin/dot" dotfiles create | log::file "Creating dotfiles structure"
+
+set +e # Avoid exit if fail a script because dot symlinks apply could fail
+
+# Which yaml files
+yaml_files=("conf.yaml")
+
+if platform::is_macos; then
+  if platform::is_macos_arm; then
+    yaml_files+=("conf.macos.yaml")
+  else
+    yaml_files+=("conf.macos-intel.yaml")
+  fi
+else
+  yaml_files+=("conf.linux.yaml")
+fi
+
+_args=()
+if ${quiet_symlinks:-false}; then
+  _args+=(--super-quiet)
+fi
+
+_args+=(
+  -d
+  "$DOTFILES_PATH"
+  -c
+)
+
+# Dotly install symlinks
+for yaml_file in "${yaml_files[@]}"; do
+  dotly_install_symlinks "$yaml_file" "${_args[@]}"
+done
 
 # Make a backup of existing current dotfiles
 if ! ${always_backup:-} &&\
@@ -124,13 +162,33 @@ then
 fi
 
 if ${always_backup:-false}; then
-  check_and_backup_if_exists_symlinks_that_will_be_applied
+  rename_suffix=$(date +%s)
+
+  for yaml_file in "${yaml_files[@]}"; do
+    yaml_file="$(symlinks::get_file_path "$yaml_file")"
+
+    [[ ! -f "$yaml_file" ]] && continue
+    links=($(dotbot::get_all_keys_in "link" "$(symlinks::get_file_path "$yaml_file")"))
+
+    for link in "${links[@]}"; do
+      link="$(eval realpath -q -m -s "$link")"
+
+      if [[ -f "$link" ]]; then
+        if ! ${quiet_symlinks:-} &&
+          ! output::yesno "File '$link' exists. Do you want to backup it"
+        then
+          continue
+        fi
+
+        backup_and_warn_if_exists "$link" "$rename_suffix"
+      fi
+    done
+  done
 fi
 
-set +e # Avoid exit if fail a script because dot symlinks apply could fail
-
+# Apply user symlinks
 output::answer "Setting up symlinks"
-if ${quiet:-false}; then
+if ${quiet_symlinks:-false}; then
   "$DOTLY_PATH/bin/dot" symlinks apply --quiet | log::file "Applying symlinks"
 else
   "$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks"
@@ -138,7 +196,6 @@ fi
 touch "$HOME/.z"
 
 set -e # End of avoid exit if fail a script
-
 
 ! platform::command_exists fzf && installer::install_fzf
 ! platform::command_exists zsh && installer::install_zsh
