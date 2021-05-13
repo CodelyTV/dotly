@@ -6,7 +6,9 @@ DOTBOT_BASE_PATH="${DOTBOT_BASE_PATH:-$DOTFILES_PATH}"
 # make a generic path for the dotbot
 dotbot::create_relative_link() {
   local item
-  item="$(realpath -m -q -s "${1:-}")"
+  # realpath inception, this is the best way I promise
+  # this is to avoid possible path errors 
+  item="$(realpath -m -q -s "$(eval realpath -m -q -s --relative-to=$DOTBOT_BASE_PATH "${1:-.}")")" # eval to expand ~ * in links
   item="${item//$DOTBOT_BASE_PATH\//}"
   echo "${item//$HOME/\~}"
 }
@@ -34,24 +36,6 @@ dotbot::jq_yaml_file() {
     yaml::to_json </dev/stdin | jq "$@"
   fi
 }
-
-# For debug not save in files :)
-# delete in production
-# dotbot::jq_yaml_file_save() {
-#   echo
-#   echo "You are using fake dotbot::jq_yaml_file_save, remember to enable it back when finish your tests"
-#   echo
-#   local _args file
-#   _args=( "$@" )
-
-#   if [ -t 0 ]; then
-#     file="${_args[$#]}"
-#     unset "_args[$#]"
-#     yaml::to_json "$file" | jq ${_args[@]}
-#   else
-#     yaml::to_json </dev/stdin | jq $@
-#   fi
-# }
 
 # Use jq with yaml file and save. Last argument is
 # the file where to save (and read if not stdin)
@@ -166,7 +150,6 @@ dotbot::add_or_edit_json_value_to_directive() {
     fi
 
     [ ! -e "$file" ] && return 1
-
     input="$(cat "$file")"
   else
     if [ $# -gt 2 ]; then

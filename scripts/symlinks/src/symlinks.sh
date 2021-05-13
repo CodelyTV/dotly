@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+symlinks::exec_in_dotbot_path() {
+  local start_dir return_code
+  start_dir="$(pwd)"
+  [[ -z "$DOTBOT_BASE_PATH" ]] && [[ -d "$DOTBOT_BASE_PATH" ]] && output::error "Fatal error $DOTBOT_BASE_PATH not found" && exit 1
+  cd "$DOTBOT_BASE_PATH"
+  eval "$@"
+  return_code=$?
+  cd "$start_dir"
+  return ${return_code:-0}
+}
+
 symlinks::get_file_path() {
   local yaml_file_posibilities yaml_file
   yaml_file="${1:-conf}"
@@ -27,8 +38,8 @@ symlinks::get_file_path() {
 
 symlinks::link_exists() {
   local link_or_dotfile_path yaml_file link_check_value
-  link_or_dotfile_path="${1:-}"
-  yaml_file="${2:-}"
+  yaml_file="${1:-}"
+  link_or_dotfile_path="${2:-}"
 
   if [ -z "$link_or_dotfile_path" ] || [ -z "$yaml_file" ]; then
     return 1
@@ -50,7 +61,7 @@ symlinks::link_exists() {
 }
 
 # From can be the current path, to should be the path inside your dotfiles
-symlinks::file_from_pwd_to_dotfiles() {
+symlinks::add_yaml_and_move_files() {
   local yaml_file from link_in_yaml link_in_yaml_target path_to current_link_target
   yaml_file="${1:-}"
   from="${2:-}"
@@ -64,69 +75,84 @@ symlinks::file_from_pwd_to_dotfiles() {
   if [ -e "$yaml_file" ]; then
     # Eval to solve globbing and paths like ~/my_file
     mkdir -p "$path_to"
-    mv "$from" "$path_to/"
+    eval mv "$from" "$path_to/"
     eval ln -s "$current_link_target" "$from"
     dotbot::add_or_edit_json_value_to_directive "link" "$link_in_yaml" "$link_in_yaml_target" "$yaml_file"
   fi
 }
 
+symlinks::move_from_pwd_to_dotfiles() {
+  local from path_to
+  from="${1:-}"
+  path_to="$(realpath -sm $DOTBOT_BASE_PATH/$2//$DOTBOT_BASE_PATH/})"
+
+  if [ -z "${1:-}" ]; then
+    return 1
+  fi
+
+  if [ -e "$yaml_file" ]; then
+    mkdir -p "$path_to"
+    eval mv "$from" "$path_to/" # eval to solve ~/myfile resolution
+  fi
+}
+
 symlinks::restore_by_link() {
-  local yaml_file link dotfiles_file_path start_dir
+  local yaml_file link dotfiles_file_path
   yaml_file="${1:-}"
-  start_dir="$(pwd)"
 
   [ ! -e "$yaml_file" ] && return 1
-
-  cd "$DOTBOT_BASE_PATH" || return 1
 
   link="$(dotbot::create_relative_link "${2:-}")"
   dotfiles_file_path="$(dotbot::get_value_of_key_in "link" "$link" "$yaml_file")"
 
-  eval rm -rf "$link"
-  eval mv "$dotfiles_file_path" "$link"
+  symlinks::exec_in_dotbot_path rm -rf "$link"
+  symlinks::exec_in_dotbot_path mv "$dotfiles_file_path" "$link"
   dotbot::delete_by_key_in "link" "$link" "$yaml_file"
-
-  cd "$start_dir" || return
 }
 
 # Not used but it worked
 symlinks::restore_by_dotfile_file_path() {
-  local yaml_file link dotfiles_file_path start_dir
+  local yaml_file link dotfiles_file_path
   yaml_file="${1:-}"
-  start_dir="$(pwd)"
 
   [ ! -e "$yaml_file" ] && return 1
-
-  cd "$DOTBOT_BASE_PATH" || return 1
 
   dotfiles_file_path="$(dotbot::create_relative_link "${2:-}")"
   link="$(dotbot::get_key_by_value_in "link" "$dotfiles_file_path" "$yaml_file")"
 
   if [ -n "$link" ]; then
-    eval rm -f "$link"
-    eval mv "$DOTBOT_BASE_PATH/$dotfiles_file_path" "$link"
+    symlinks::exec_in_dotbot_path rm -f "$link"
+    symlinks::exec_in_dotbot_path mv "$DOTBOT_BASE_PATH/$dotfiles_file_path" "$link"
     dotbot::delete_by_key_in "link" "$link" "$yaml_file"
   fi
-
-  cd "$start_dir" || return
 }
 
 symlinks::edit_link_by_link_path() {
   local yaml_file old_link new_link link_value
   yaml_file="${1:-}"
-  old_link="$(dotbot::create_relative_link "${2:-}")"
+  old_link="${2:-}"
   new_link="$(dotbot::create_relative_link "${3:-}")"
 
   [ ! -e "$yaml_file" ] && return 1
 
-  dotfiles_file_path="$(dotbot::get_value_of_key_in "link" "$old_link" "$yaml_file")"
-
-  if [ -n "$dotfiles_file_path" ]; then
-    dotbot::delete_by_key_in "link" "$old_link" "$yaml_file"
-    dotbot::add_or_edit_json_value_to_directive "link" "$new_link" "$dotfiles_file_path" "$yaml_file"
-    eval rm -rf "$old_link"
-    eval ln -s "$DOTBOT_BASE_PATH/$dotfiles_file_path" "$new_link"
+  link_value="$(dotbot::get_value_of_key_in "link" "$old_link" "$yaml_file")"
+  # If link value has no value maybe user is given a link in working directory
+  # so resolve what could be the relative to $DOTBOT_BASE_PATH directory to
+  # check if the link exists
+  if [ -z "${link_value:-}"]; then
+    old_link="$(dotbot::create_relative_link "$old_link")"
+    link_value=${link_value:-$(dotbot::get_value_of_key_in "link" "$old_link" "$yaml_file")}
   fi
+
+  if [ -n "$link_value" ]; then
+    dotbot::delete_by_key_in "link" "$old_link" "$yaml_file"
+    dotbot::add_or_edit_json_value_to_directive "link" "$new_link" "$link_value" "$yaml_file"
+    symlinks::exec_in_dotbot_path rm -rf "$old_link"
+    symlinks::exec_in_dotbot_path ln -s "$link_value" "$new_link"
+    return 0
+  fi
+
+  return 1
 }
 
 symlinks::edit_link_by_dotfile_file_path() {
@@ -159,8 +185,8 @@ symlinks::delete_by_link() {
   [ ! -e "$yaml_file" ] && return 1
 
   dotbot::delete_by_key_in "link" "$link" "$yaml_file"
-  eval rm -rf "$link"
-  eval "$delete_cmd $DOTBOT_BASE_PATH/$dotbot_file_path"
+  symlinks::exec_in_dotbot_path rm -rf "$link"
+  symlinks::exec_in_dotbot_path "$delete_cmd $dotbot_file_path"
 }
 
 # Same as symlinks::delete_by_link but with the value of the link
