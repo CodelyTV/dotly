@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
+set +e
 
 [[ -z "$DOTLY_PATH" ]] && exit 1
 
@@ -22,11 +23,13 @@ dot::get_script_src_path "symlinks.sh"
 ##? Usage:
 ##?   restore [-h | --help]
 ##?   restore [-v | --version]
-##?   restore [<link_or_dotfile_path> [<yaml_file>]]
+##?   restore [--yaml=<yaml_file>] [<link_or_dotfile_path>]
 ##?
 ##? Options:
-##?   -h --help     Show this help
-##?   -v --version  Show the program version
+##?   -h --help           Show this help
+##?   -v --version        Show the program version
+##?   --yaml=<yaml_file>  Use a custom yaml file instead of default one which is
+##?                       DOTFILES_PATH/symlinks/conf.yaml
 ##?
 ##? Author:
 ##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
@@ -41,13 +44,15 @@ if ${version:-}; then
   exit
 fi
 
-yaml_file="$(symlinks::get_file_path "$yaml_file")"
+yaml_file="$(symlinks::get_file_path "${yaml_file:-}")"
+[[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
 
 if [ -n "${link_or_dotfile_path:-}" ]; then
-    restore_links=("$(symlinks::link_exists "$link_or_dotfile_path" "$yaml_file")")
-    [ -z "${restore_links[*]}" ] &&\
-      output::error "Nothing to be restored" &&\
-      exit 1
+  restore_links=("$(symlinks::link_exists "$yaml_file" "$link_or_dotfile_path")")
+
+  [ -z "${restore_links[*]:-}" ] &&\
+    output::error "Nothing to be restored" &&\
+    exit 1
 else
   preview_cmd='source "$DOTLY_PATH/scripts/core/_main.sh";'
   preview_cmd+='dot::get_script_src_path "dotbot_yaml_edit.sh"";'
