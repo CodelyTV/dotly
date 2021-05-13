@@ -2,8 +2,10 @@
 
 set -euo pipefail
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/self/utils/install.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+dot::get_script_src_path "install.sh"
+dot::get_script_src_path "dotbot_yaml_edit.sh" "symlinks"
+dot::get_script_src_path "symlinks.sh" "symlinks"
 
 export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 
@@ -25,6 +27,24 @@ installer::install_fzf() {
   fi
 }
 
+installer::install_jq() {
+  output::error "jq not installed, installing"
+
+  if ! "$DOTLY_PATH/bin/dot" package install jq | log::file "Installing jq"; then
+    output::error "Could not install jq!"
+    exit 5
+  fi
+}
+
+installer::install_moreutils() {
+  output::error "Moreutils not installed, installing"
+
+  if ! "$DOTLY_PATH/bin/dot" package install moreutils | log::file "Installing moreutils"; then
+    output::error "Could not install moreutils!"
+    exit 5
+  fi
+}
+
 installer::install_rust() {
   output::error "rust not installed, installing"
 
@@ -35,6 +55,38 @@ installer::install_rust() {
   curl https://sh.rustup.rs -sSf | sh -s -- -y | log::file "Installing rust from sources"
 
   export PATH="$HOME/.cargo/bin:$PATH"
+}
+
+backup_and_warn_if_exists() {
+  local file_path suffix bk_file_path
+  file_path="${1:-}"
+  suffix="${2:-}"
+
+  [[ -n "$file_path" ]] && bk_file_path="$(files::backup_if_file_exists "$file_path" "$suffix")"
+  [[ -n "$bk_file_path" ]] && output::error "'$file_path' exists and was moved to '$bk_file_path'"
+}
+
+check_and_backup_if_exists_symlinks_that_will_be_applied() {
+  local yaml_files rename_suffix
+  rename_suffix=$(date +%s)
+  yaml_files=("conf.yaml")
+
+  if platform::is_macos; then
+    if platform::is_macos_arm; then
+      yaml_files+=("conf.macos.yaml")
+    else
+      yaml_files+=("conf.macos-intel.yaml")
+    fi
+  else
+    yaml_files+=("conf.linux.yaml")
+  fi
+
+  for yaml_file in "${yaml_files[@]}"; do
+    links=($(dotbot::get_all_keys_in "link" "$(symlinks::get_file_path "$yaml_file")"))
+    for l in "${links[@]}"; do
+      backup_and_warn_if_exists "$l" "$rename_suffix"
+    done
+  done
 }
 
 if platform::is_macos; then
@@ -50,19 +102,48 @@ fi
 ##? Install dotly and setup dotfiles
 ##?
 ##? Usage:
-##?    install
+##?    install [[-n | --never-backup] | [-b |--always-backup]] [-s | --quiet-symlinks]
+##?
+##? Options:
+##?    -h --help            Prints this help
+##?    -n --never-backup    Never do a backup without prompt
+##?    -b --always-backup   Always do a backup without prompt
+##?    -s --quiet-symlinks  Run dotbot in super quiet mode
+##?
 docs::parse "$@"
 
 output::answer "Creating dotfiles structure"
 "$DOTLY_PATH/bin/dot" dotfiles create | log::file "Creating dotfiles structure"
 
-# @todo Backup if exists before
+# Make a backup of existing current dotfiles
+if ! ${always_backup:-} &&\
+   ! ${never_backup:-} &&\
+   output::yesno "Do you want to perform a backup of your current existing dotfiles if they exists"
+then
+  always_backup=true
+fi
+
+if ${always_backup:-false}; then
+  check_and_backup_if_exists_symlinks_that_will_be_applied
+fi
+
+set +e # Avoid exit if fail a script because dot symlinks apply could fail
+
 output::answer "Setting up symlinks"
-"$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks"
+if ${quiet:-false}; then
+  "$DOTLY_PATH/bin/dot" symlinks apply --quiet | log::file "Applying symlinks"
+else
+  "$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks"
+fi
 touch "$HOME/.z"
+
+set -e # End of avoid exit if fail a script
+
 
 ! platform::command_exists fzf && installer::install_fzf
 ! platform::command_exists zsh && installer::install_zsh
+! platform::command_exists jq && installer::install_jq
+! platform::command_exists sponge && installer::install_moreutils
 
 if ! str::contains zsh "$SHELL"; then
   output::answer "Setting zsh as the default shell"
@@ -74,4 +155,3 @@ zsh "$ZIM_HOME/zimfw.zsh" install | log::file "Installing zim"
 
 output::answer "Installing completions"
 "$DOTLY_PATH/bin/dot" shell zsh reload_completions
-
