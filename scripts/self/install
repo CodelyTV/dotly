@@ -95,15 +95,15 @@ dotly_install_symlinks() {
   echo
 }
 
-# if platform::is_macos; then
-#   output::answer "🍎 Setting up macOS platform"
-#   install_macos_custom
-# fi
+if platform::is_macos; then
+  output::answer "🍎 Setting up macOS platform"
+  install_macos_custom
+fi
 
-# ! platform::command_exists cargo && installer::install_rust
+! platform::command_exists cargo && installer::install_rust
 
-# ! platform::command_exists docpars && output::error "docpars not installed, installing" && "$DOTLY_PATH/bin/dot" package install docpars | log::file "Installing docpars"
-# ! platform::command_exists delta && output::error "delta not installed, installing" && "$DOTLY_PATH/bin/dot" package install git-delta | log::file "Installing git delta"
+! platform::command_exists docpars && output::error "docpars not installed, installing" && "$DOTLY_PATH/bin/dot" package install docpars | log::file "Installing docpars"
+! platform::command_exists delta && output::error "delta not installed, installing" && "$DOTLY_PATH/bin/dot" package install git-delta | log::file "Installing git delta"
 
 ##? Install dotly and setup dotfiles
 ##?
