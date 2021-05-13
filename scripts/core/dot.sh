@@ -42,14 +42,32 @@ dot::get_full_script_path() {
 }
 
 dot::get_script_src_path() {
-  local lib lib_full_path
+  local lib lib_path lib_paths lib_full_path
   lib="${1:-}"
-  lib_full_path="$(dot::get_script_path)/src/$lib"
+
+  if [[ -n "${lib:-}" ]]; then
+    lib_paths=(
+      "$DOTLY_PATH/scripts/core"
+      "${2:-$(dot::get_script_path)}/src"
+      "${2:-$(dot::get_script_path)}"
+    )
+
+    for lib_path in "${lib_paths[@]}"; do
+      [[ -f "$lib_path/$lib" ]] &&\
+        lib_full_path="$lib_path/$lib" &&\
+        break
+
+      [[ -f "$lib_path/$lib.sh" ]] &&\
+        lib_full_path="$lib_path/$lib" &&\
+        break
+    done
+  fi
 
   # Library loading
-  { 
-    [ -n "$lib" ] && [ -f "$lib_full_path" ] && . "$lib_full_path"
-  } || {
-    output::error "🚨 Library loading error with: \"${lib:-No library provided}\"" && exit 1
-  }
+  if [[ -n "$lib" ]] && [[ -f "$lib_full_path" ]]; then
+    . "$lib_full_path"
+  else
+    output::error "🚨 Library loading error with: \"${lib:-No library provided}\""
+    exit 1
+  fi
 }
