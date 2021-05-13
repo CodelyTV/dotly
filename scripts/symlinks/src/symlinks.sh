@@ -1,16 +1,5 @@
 #!/usr/bin/env bash
 
-symlinks::exec_in_dotbot_path() {
-  local start_dir return_code
-  start_dir="$(pwd)"
-  [[ -z "$DOTBOT_BASE_PATH" ]] && [[ -d "$DOTBOT_BASE_PATH" ]] && output::error "Fatal error $DOTBOT_BASE_PATH not found" && exit 1
-  cd "$DOTBOT_BASE_PATH"
-  eval "$@"
-  return_code=$?
-  cd "$start_dir"
-  return ${return_code:-0}
-}
-
 symlinks::get_file_path() {
   local yaml_file_posibilities yaml_file
   yaml_file="${1:-conf}"
@@ -48,13 +37,13 @@ symlinks::link_exists() {
   link_check_value="$(dotbot::get_value_of_key_in "link" "$link_or_dotfile_path" "$yaml_file")"
   [ -n "$link_check_value" ] && echo "$link_or_dotfile_path" && return 0
 
-  link_check_value="$(dotbot::get_value_of_key_in "link" "$(dotbot::create_relative_link $link_or_dotfile_path)" "$yaml_file")"
-  [ -n "$link_check_value" ] && echo "$(dotbot::create_relative_link $link_or_dotfile_path)" && return 0
+  link_check_value="$(dotbot::get_value_of_key_in "link" "$(dotbot::create_relative_link "$link_or_dotfile_path")" "$yaml_file")"
+  [ -n "$link_check_value" ] && echo "$(dotbot::create_relative_link "$link_or_dotfile_path")" && return 0
 
   link_check_value="$(dotbot::get_key_by_value_in "link" "$link_or_dotfile_path" "$yaml_file")"
   [ -n "$link_check_value" ] && echo "$link_check_value" && return 0
 
-  link_check_value="$(dotbot::get_key_by_value_in "link" "$(dotbot::create_relative_link $link_or_dotfile_path)" "$yaml_file")"
+  link_check_value="$(dotbot::get_key_by_value_in "link" "$(dotbot::create_relative_link "$link_or_dotfile_path")" "$yaml_file")"
   [ -n "$link_check_value" ] && echo "$link_check_value" && return 0
 
   return 1
@@ -105,8 +94,8 @@ symlinks::restore_by_link() {
   link="$(dotbot::create_relative_link "${2:-}")"
   dotfiles_file_path="$(dotbot::get_value_of_key_in "link" "$link" "$yaml_file")"
 
-  symlinks::exec_in_dotbot_path rm -i -rf "$link"
-  symlinks::exec_in_dotbot_path mv -i "$dotfiles_file_path" "$link"
+  dotbot::exec_in_dotbot_path rm -i -rf "$link"
+  dotbot::exec_in_dotbot_path mv -i "$dotfiles_file_path" "$link"
   dotbot::delete_by_key_in "link" "$link" "$yaml_file"
 }
 
@@ -121,8 +110,8 @@ symlinks::restore_by_dotfile_file_path() {
   link="$(dotbot::get_key_by_value_in "link" "$dotfiles_file_path" "$yaml_file")"
 
   if [ -n "$link" ]; then
-    symlinks::exec_in_dotbot_path rm -i -f "$link"
-    symlinks::exec_in_dotbot_path mv -i "$DOTBOT_BASE_PATH/$dotfiles_file_path" "$link"
+    dotbot::exec_in_dotbot_path rm -i -f "$link"
+    dotbot::exec_in_dotbot_path mv -i "$DOTBOT_BASE_PATH/$dotfiles_file_path" "$link"
     dotbot::delete_by_key_in "link" "$link" "$yaml_file"
   fi
 }
@@ -147,8 +136,8 @@ symlinks::edit_link_by_link_path() {
   if [ -n "$link_value" ]; then
     dotbot::delete_by_key_in "link" "$old_link" "$yaml_file"
     dotbot::add_or_edit_json_value_to_directive "link" "$new_link" "$link_value" "$yaml_file"
-    symlinks::exec_in_dotbot_path rm -i -rf "$old_link"
-    symlinks::exec_in_dotbot_path ln -s "$link_value" "$new_link"
+    dotbot::exec_in_dotbot_path rm -i -rf "$old_link"
+    dotbot::exec_in_dotbot_path ln -s "$link_value" "$new_link"
     return 0
   fi
 
@@ -185,8 +174,8 @@ symlinks::delete_by_link() {
   [ ! -e "$yaml_file" ] && return 1
 
   dotbot::delete_by_key_in "link" "$link" "$yaml_file"
-  symlinks::exec_in_dotbot_path rm -i -rf "$link" # Link
-  symlinks::exec_in_dotbot_path "$delete_cmd $dotbot_file_path" # The file
+  dotbot::exec_in_dotbot_path rm -i -rf "$link" # Link
+  dotbot::exec_in_dotbot_path "$delete_cmd $dotbot_file_path" # The file
 }
 
 # Same as symlinks::delete_by_link but with the value of the link

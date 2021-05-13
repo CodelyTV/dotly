@@ -2,13 +2,24 @@
 
 DOTBOT_BASE_PATH="${DOTBOT_BASE_PATH:-$DOTFILES_PATH}"
 
+dotbot::exec_in_dotbot_path() {
+  local start_dir return_code
+  start_dir="$(pwd)"
+  [[ -z "$DOTBOT_BASE_PATH" ]] && [[ -d "$DOTBOT_BASE_PATH" ]] && output::error "Fatal error $DOTBOT_BASE_PATH not found" && exit 1
+  cd "$DOTBOT_BASE_PATH" || return 1
+  eval "$@"
+  return_code=$?
+  cd "$start_dir" || /dev/null
+  return ${return_code:-0}
+}
+
 # Create a relative path to DOTBOT_BASE_PATH and if not, replace $HOME by ~ to
 # make a generic path for the dotbot
 dotbot::create_relative_link() {
   local item
   # realpath inception, this is the best way I promise
   # this is to avoid possible path errors 
-  item="$(realpath -m -q -s "$(eval realpath -m -q -s --relative-to=$DOTBOT_BASE_PATH "${1:-.}")")" # eval to expand ~ * in links
+  item="$(dotbot::exec_in_dotbot_path realpath -m -q -s "$(eval realpath -m -q -s --relative-to=$DOTBOT_BASE_PATH "${1:-.}")")" # eval to expand ~ * in links
   item="${item//$DOTBOT_BASE_PATH\//}"
   echo "${item//$HOME/\~}"
 }
