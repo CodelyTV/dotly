@@ -195,9 +195,6 @@ do
   esac
 done
 
-# Allow submodules that use keybase protocol
-git config --global --add protocol.keybase.allow always
-
 # Recovering your files
 _w "Installing your dotfiles"
 _a "git clone ${GIT_URL} ${DOTFILES_PATH}"
