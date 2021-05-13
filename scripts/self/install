@@ -50,7 +50,12 @@ fi
 ##? Install dotly and setup dotfiles
 ##?
 ##? Usage:
-##?    install
+##?    install [-s | --quiet-symlinks]
+##?
+##? Options:
+##?    -h --help            Prints this help
+##?    -s --quiet-symlinks  Run dotbot in super quiet mode
+##?
 docs::parse "$@"
 
 output::answer "Creating dotfiles structure"
@@ -60,7 +65,11 @@ set +e # Avoid exit if fail a script because dot symlinks apply could fail
 
 # @todo Backup if exists before
 output::answer "Setting up symlinks"
-"$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks"
+if ${quiet:-false}; then
+  "$DOTLY_PATH/bin/dot" symlinks apply --quiet | log::file "Applying symlinks"
+else
+  "$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks"
+fi
 touch "$HOME/.z"
 
 set -e # End of avoid exit if fail a script

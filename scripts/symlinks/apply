@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+#!/usr/bin/env bash
+
 set -euo pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
@@ -16,20 +18,49 @@ symlinks::apply() {
 ##? Apply all symlinks
 ##?
 ##? Usage:
-##?    apply
+##?    apply [-h | --help]
+##?    apply [-v | --version]
+##?    apply [-q | --quiet]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?   -q --quiet    Run dotbot in super quiet mode
 ##?
 docs::parse "$@"
 
-symlinks::apply "conf.yaml"
+SCRIPT_NAME="dot symlinks apply"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-false}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Dotbot args
+_args=()
+if ${quiet:-false}; then
+  _args+=(--super-quiet)
+fi
+
+_args+=(
+  -d
+  "$DOTFILES_PATH"
+  -c
+)
+
+symlinks::apply "conf.yaml" "${_args[@]}"
+
 
 if platform::is_macos; then
   if platform::is_macos_arm; then
-    symlinks::apply "conf.macos.yaml"
+    symlinks::apply "conf.macos.yaml" "${_args[@]}"
   else
-    symlinks::apply "conf.macos-intel.yaml"
+    symlinks::apply "conf.macos-intel.yaml" "${_args[@]}"
   fi
 else
-  symlinks::apply "conf.linux.yaml"
+  symlinks::apply "conf.linux.yaml" "${_args[@]}"
 fi
 
 log::success "Done!"

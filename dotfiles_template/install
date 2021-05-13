@@ -211,7 +211,7 @@ _w "Installing dotly default tools"
 _w "Please be patient this could take some time...🙏"
 # Installing default dotly tools
 PATH="$PATH:/usr/local/bin:$HOME/.cargo/bin"
-"$DOTLY_PATH/bin/dot" self install > /dev/null 2>&1 | _log "Installing dotly default tools"
+"$DOTLY_PATH/bin/dot" self install --quiet-symlinks > /dev/null 2>&1 | _log "Installing dotly default tools"
 _a "🎉 dotfiles restored! 🎉"
 
 set -e # End of avoid exit if fail a script
