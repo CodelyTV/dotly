@@ -54,7 +54,7 @@ if [ -n "${link_or_dotfile_path:-}" ]; then
     output::error "Nothing to be restored" &&\
     exit 1
 else
-  preview_cmd='source "$DOTLY_PATH/scripts/core/_main.sh";'
+  preview_cmd='. "$DOTLY_PATH/scripts/core/_main.sh";'
   preview_cmd+='dot::get_script_src_path "dotbot_yaml_edit.sh"";'
   preview_cmd+="yaml_file=$yaml_file;"
   preview_cmd+='echo "Press Tab+Shift to select multiple options.\n'
