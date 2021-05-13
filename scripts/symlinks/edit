@@ -19,15 +19,17 @@ dot::get_script_src_path "symlinks.sh"
 ##? Usage:
 ##?   edit [-h | --help]
 ##?   edit [-v | --version]
-##?   edit [-b | --by-value] [[-n | --no] [-y | --yes]] [<origin_link_path> [<new_origin_link_path> [<yaml_file>]]]
+##?   edit [-b | --by-value] [[-n | --no] [-y | --yes]] [--yaml=<yaml_file>] [<origin_link_path> [<new_origin_link_path>]]
 ##?
 ##? Options:
-##?   -h --help      Show this help
-##?   -v --version   Show the program version
-##?   -b --by-value  Delete by the value of the link in the <yaml_file> instead
-##?                  of deleting by the link.
-##?   -y --yes       Apply without prompt the new symlinks file
-##?   -n --no        Exit without asking about applying the new updated symlinks file
+##?   -h --help           Show this help
+##?   -v --version        Show the program version
+##?   -b --by-value       Delete by the value of the link in the <yaml_file> instead
+##?                       of deleting by the link.
+##?   -y --yes            Apply without prompt the new symlinks file
+##?   -n --no             Exit without asking about applying the new updated symlinks file
+##?   --yaml=<yaml_file>  Use a custom yaml file instead of default one which is
+##?                       DOTFILES_PATH/symlinks/conf.yaml
 ##?
 ##? Author:
 ##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
