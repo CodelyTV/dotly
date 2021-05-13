@@ -17,15 +17,17 @@ dot::get_script_src_path "symlinks.sh"
 ##? Usage:
 ##?   delete [-h | --help]
 ##?   delete [-v | --version]
-##?   delete [-b | --by-value] [-s | --skip] [<origin_link_path> [<yaml_file>]]
+##?   delete [-b | --by-value] [-s | --skip] [--yaml=<yaml_file>] [<origin_link_path>]
 ##?
 ##? Options:
-##?   -h --help      Show this help
-##?   -v --version   Show the program version
-##?   -b --by-value  Delete by the value of the link in the <yaml_file> instead
-##?                  of deleting by the link.
-##?   -s --skip      Skip the deletion of the file in DOTFILES and delete only
-##?                  the value in the symlink yaml file.
+##?   -h --help           Show this help
+##?   -v --version        Show the program version
+##?   -b --by-value       Delete by the value of the link in the <yaml_file> instead
+##?                       of deleting by the link.
+##?   -s --skip           Skip the deletion of the file in DOTFILES and delete only
+##?                       the value in the symlink yaml file.
+##?   --yaml=<yaml_file>  Use a custom yaml file instead of default one which is
+##?                       DOTFILES_PATH/symlinks/conf.yaml
 ##?
 ##? Author:
 ##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
@@ -40,26 +42,27 @@ if ${version:-}; then
   output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
   exit
 fi
+output::empty_line
 
-yaml_file="$(symlinks::get_file_path "$yaml_file")"
-
+yaml_file="$(symlinks::get_file_path "${yaml_file:-}")"
+[[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
 
 links=("${origin_link_path:-}")
 
 preview_cmd='. "$DOTLY_PATH/scripts/core/_main.sh";'
-preview_cmd+='dot::get_script_src_path "dotbot_yaml_edit.sh";'
+preview_cmd+='dot::get_script_src_path "dotbot_yaml_edit.sh" "symlinks";'
 preview_cmd+="yaml_file=$yaml_file;"
 preview_cmd+='echo "Press Tab+Shift to select multiple options.\n'
 preview_cmd+='Press Ctrl+C to exit with no selection.\n\n'
 
 
-if [ -z "${links[*]}" ] && $by_value; then
+if [ -z "${links[*]}" ] && ${by_value:-false}; then
   preview_cmd+='Linked in:\n'
   preview_cmd+='\t$(cat "$yaml_file" | dotbot::get_key_by_value_in "link" {};)";'
   dotfiles=($(dotbot::get_all_values_in "link" "$yaml_file" | symlinks::fzf -m --preview "${preview_cmd[*]}" --header "Select dotfile(s) link to delete."))
 
   for df in "${dotfiles[@]}"; do
-    if $skip; then
+    if ${skip:-false}; then
       dotbot::delete_by_value_in "link" "$df" "$yaml_file"
       output::solution "Link for '$df' deleted from yaml file."
     else
@@ -67,18 +70,21 @@ if [ -z "${links[*]}" ] && $by_value; then
       output::solution "'$df' deleted."
     fi
   done
-elif [ -z "${links[*]}" ]; then
-  preview_cmd+='Point to file in \"DOTFILES_PATH\":\n'
-  preview_cmd+='\t$(cat "$yaml_file" | dotbot::get_value_of_key_in "link" {})";'
-  links=($(dotbot::get_all_keys_in "link" "$yaml_file" | symlinks::fzf -m --preview "${preview_cmd[*]}" --header "Select link(s) to delete and it 'dotfile' file."))
+else
+  if [ -z "${links[*]}" ]; then
+    preview_cmd+='Point to file in \"DOTFILES_PATH\":\n'
+    preview_cmd+='\t$(cat "$yaml_file" | dotbot::get_value_of_key_in "link" {})";'
+    links=($(dotbot::get_all_keys_in "link" "$yaml_file" | symlinks::fzf -m --preview "${preview_cmd[*]}" --header "Select link(s) to delete and it 'dotfile' file."))
+  fi
 
-  for l in "${links[@]}"; do
-    if $skip; then
-      dotbot::delete_by_key_in "link" "$l" "$yaml_file"
-      output::solution "'$l' link deleted from yaml file."
+  for link in "${links[@]}"; do
+    if ${skip:-false}; then
+      dotbot::delete_by_key_in "link" "$link" "$yaml_file"
+      output::solution "'$link' link deleted from yaml file."
     else
-      symlinks::delete_by_link "$yaml_file" "$l"
-      output::solution "'$l' deleted."
+      symlinks::delete_by_link "$yaml_file" "$link"
+      output::solution "'$link' deleted."
     fi
   done
 fi
+output::empty_line

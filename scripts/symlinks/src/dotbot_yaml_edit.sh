@@ -224,7 +224,8 @@ dotbot::delete_by_key_in() {
     # Fire to read is also to write
     [[ -e "$file_to_write" ]] && dotbot::jq_yaml_file_save "${_jq_args[@]}" "$file_to_write"
   else
-    { [ -n "$file_to_read" ] &&\ # File to write
+    # File to write
+    { [ -n "$file_to_read" ] &&\
       dotbot::jq_yaml_file_save "${_jq_args[@]}" "$file_to_write" < /dev/stdin; } ||\
       dotbot::jq_yaml_file "${_jq_args[@]}" < /dev/stdin
   fi
