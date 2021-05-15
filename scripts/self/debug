@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Debug dotly
+##?
+##? Usage:
+##?   debug
+docs::parse "$@"
+
+file=${DOTLY_LOG_FILE:-$HOME/dotly.log}
+
+tail -f "$file"
