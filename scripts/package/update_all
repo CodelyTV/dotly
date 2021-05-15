@@ -5,6 +5,7 @@ set -euo pipefail
 source "$DOTLY_PATH/scripts/core/_main.sh"
 source "$DOTLY_PATH/scripts/package/src/package_managers/brew.sh"
 source "$DOTLY_PATH/scripts/package/src/package_managers/mas.sh"
+source "$DOTLY_PATH/scripts/package/src/package_managers/pip.sh"
 
 ##? Update all packages
 ##?
@@ -18,7 +19,7 @@ output::clarification "If you want to debug what's happening behind the scenes, 
 
 platform::command_exists mas && output::h2 '🍎 App Store apps' && mas::update_all
 platform::command_exists brew && output::h2 '🍺 Brew formulas' && brew::update_all
-platform::command_exists pip3 && output::h2 '🐍 pip' && pip3 freeze --local | grep -v '^\-e' || [[ $? == 1 ]] | cut -d = -f 1 | xargs -n1 pip3 install -U
+platform::command_exists pip3 && output::h2 '🐍 pip' && pip::update_all
 platform::command_exists composer && output::h2 '🐘 Composer' && composer self-update && composer global update
 platform::command_exists gem && output::h2 '♦️ gem' && gem update
 platform::command_exists npm && output::h2 '🌈 npm' && npm install -g npm && npm update -g

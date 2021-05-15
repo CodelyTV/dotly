@@ -31,7 +31,7 @@ brew::update_apps() {
       app_info=$(echo "$outdated_app_info"| head -2 | tail -1)
       app_url=$(echo "$outdated_app_info"| head -3 | tail -1 | head -1)
 
-      output::write "🍄 $outdated_app"
+      output::write "🍺 $outdated_app"
       output::write "├ $app_old_version -> $app_new_version"
       output::write "├ $app_info"
       output::write "└ $app_url"
