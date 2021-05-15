@@ -11,7 +11,7 @@ output::write() {
   echo -e "$text"
 }
 output::answer() { output::write " > $1"; }
-output::clarification() { output::write " ${gray}$1${normal}"; }
+output::clarification() { output::write "${gray}$1${normal}"; }
 output::error() { output::answer "${red}$1${normal}"; }
 output::solution() { output::answer "${green}$1${normal}"; }
 output::question() {
