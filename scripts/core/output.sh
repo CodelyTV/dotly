@@ -11,7 +11,10 @@ output::write() {
   echo -e "$text"
 }
 output::answer() { output::write " > $1"; }
-output::clarification() { output::write "${gray}$1${normal}"; }
+output::clarification() {
+  with_code_parsed=$(echo "$1" | awk "{ORS=(NR+1)%2==0?\"${green}\":RS}1" RS="\`" | awk "{ORS=NR%1==0?\"${normal}\":RS}1" RS="\`"| tr -d '\n')
+  output::write "$with_code_parsed";
+}
 output::error() { output::answer "${red}$1${normal}"; }
 output::solution() { output::answer "${green}$1${normal}"; }
 output::question() {
@@ -19,7 +22,7 @@ output::question() {
     output::answer "🤔 $1: ";
     read -r "$2";
   else
-    read -rp " $1: " "$2"
+    read -rp "🤔 $1: " "$2"
   fi
 }
 

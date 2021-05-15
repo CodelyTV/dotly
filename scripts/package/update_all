@@ -15,7 +15,7 @@ source "$DOTLY_PATH/scripts/package/src/package_managers/pip.sh"
 ##?   update_all
 docs::parse "$@"
 
-output::h1_without_margin "♻️  Updating all the apps in your system"
+output::h1_without_margin "♻️  Updating all the apps on your system"
 output::clarification "If you want to debug what's happening behind the scenes, you can execute \`dot self debug\` in parallel."
 
 platform::command_exists mas && output::h2 '🍎 App Store' && mas::update_all
