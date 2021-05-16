@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+dot::get_script_src_path "templating.sh"
+
+##? Dotly script creator
+##? 
+##?
+##? Usage:
+##?   create [-h | --help]
+##?   create [-v | --version]
+##?   create [-c | --core] [-s | --sample] [--author <author>] [--email <email] <context> <script_name> [<script_description>...]
+##?
+##? Options:
+##?   -h --help          Show this help
+##?   -v --version       Show the program version
+##?   -s --sample        Create a script using more complete example with some comments.
+##?                      useful if it is your first script. Anyway you can see more help
+##?                      in the docopt website: http://docopt.org
+##?   -c --core          Create the context and script in "$DOTLY_PATH/scripts" instead of
+##?                      your "$DOTFILES_PATH/scripts" folder
+##?   --author <author>  Provide who is the author, if none the default git author will
+##?                      be used
+##?   --email <email>    Provide author email, if none the default git author email will
+##?                      be used
+##?
+##? Author:
+##?   Gabriel Trabanco <gtrabanco@users.noreply.github.com>
+##?
+docs::parse "$@"
+
+SCRIPT_NAME="dot dotly create"
+SCRIPT_VERSION="1.1.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+if [[ -z "${context:-}" ]] || [[ -z "${script_name:-}" ]]; then
+  output::error "You should provide a context and script name"
+  output::write "Use: $0 -h"
+  exit 1
+fi
+
+SCRIPT_TEMPLATE_PATH="$(dot::get_full_script_path)/src/templates/script"
+
+# Path variables
+if ${core:-}; then
+  output::empty_line
+  output::write "\033[0;31m\033[1m  ALERT!!!!!"
+  output::write "Create this script in your DOTLY scripts folder could be very dangerous."
+  output::write "This is an option thinked only for DOTLY devs.\033[0m"
+  output::empty_line
+  output::yesno "Are you sure you still want to coninue" "N" || { output::answer "User aborted" && exit 1; }
+
+  script_path="$DOTLY_PATH/scripts/$context"
+else
+  script_path="$DOTFILES_PATH/scripts/$context"
+fi
+
+script_filepath="$script_path/$script_name"
+
+# Which template to use
+if ${sample:-}; then
+  SCRIPT_TEMPLATE_PATH="${SCRIPT_TEMPLATE_PATH}-more"
+fi
+
+# Create the script context (folder)
+mkdir -p "$script_path"
+
+if [[ -d "$DOTFILES_PATH/scripts/$context" ]]; then
+  output::solution "$script_path were created or exists previously"
+fi
+
+# If script exits ask user to overwrite
+if [[ -f $script_filepath ]]; then
+  output::yesno "The script exists, do you want to delete it and create a empty script" "N" ||\
+    {
+      output::error "The script name \"$script_name\" exists in context \"$context\" and user refuse to recreate the script" &&\
+      output::write "Provide a different name for the script or context." &&\
+      exit 1
+    }
+fi
+
+# Variables for the script
+author="${author:-$(git config --global --get user.name)}"
+email="${email:-$(git config --global --get user.email)}"
+description="${script_description[*]:-}"
+
+# Description can not be empty
+[[ -z "$description" ]] && output::question "Description can not be empty, describe your script" "description"
+
+cp "${SCRIPT_TEMPLATE_PATH}" "$script_filepath"
+templating::replace "$script_filepath" --script-name="$script_name" --script-context="$context" --script-author="$author" --script-author-email="$email" --script-description="$description" > /dev/null
+chmod u+x "$script_filepath"
+
+output::empty_line
+output::solution "The script '$script_name' where successfully created."
+output::write ""
+output::write "You can access the scipt with your favorite editor by executing:"
+output::write "\$EDITOR \"\$DOTFILES_PATH/scripts/$context/$script_name\""
+output::empty_line
