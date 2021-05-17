@@ -6,7 +6,51 @@ set -euo pipefail
 ##? Setups the environment
 ##?
 ##? Usage:
-##?    install
+##?    install [-c | --continue]
+##?
+##? Options:
+##?    -h --help      Prints this help
+##?    -v --version   Prints this script version
+##?    -c --continue  Continue previous install withour cloning again your
+##?                   dotfiles if they exists. Useful if previous restore fails.
+##?
+
+# Script variables
+SCRIPT_NAME="Dotly dotfiles recovery"
+SCRIPT_VERSION="v1.0.0"
+
+# Default values
+continue=false
+
+# Arguments
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --help|-h)
+      cat <<EOF
+Usage:
+   install [-c | --continue]
+
+Options:
+   -h --help      Prints this help
+   -v --version   Prints this script version
+   -c --continue  Continue previous install withour cloning again your
+                  dotfiles if they exists. Useful if previous restore fails.
+
+EOF
+      exit 0
+      ;;
+    --version|-v)      
+      echo "$SCRIPT_NAME $SCRIPT_VERSION"
+      echo
+      exit 0
+      ;;
+    --continue|-c)
+      continue=true
+      ;;
+    *)
+    ;;
+  esac
+done
 
 DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
 export DOTLY_ENV=${DOTLY_ENV:-PROD}
@@ -44,6 +88,21 @@ _log() {
 
 current_timestamp() { date +%s; }
 
+backup_dotfiles_dir() {
+  if [ -d "${1:-}" ]; then
+    local -r backup_path="$1.$(current_timestamp).back"
+
+    _e "The path '$1' already exist"
+    _s "Creating a backup in '$backup_path'"
+
+    mv "$1" "$backup_path"
+  else
+    _a "Ok! dotfiles will be located in: ${purple}$DOTFILES_PATH${normal}"
+  fi
+
+  [[ -n "${1:-}" ]] && mkdir -p "$(dirname "${1:-}")"
+}
+
 command_exists() {
   type "$1" >/dev/null 2>&1
 }
@@ -75,7 +134,7 @@ package_install () {
     _a "Installing '${@}' using apt"
     sudo apt -y install "${1}" >/dev/null 2>&1 | _log "Installign '${@}' using apt"
   else
-    _e "Could not install '${@}', no package provider found"
+    _e "Could not install '${*}', no package provider found"
     return 1
   fi
   
@@ -111,119 +170,135 @@ _s "Git command exists on this system"
 
 # Files locations
 _q "Where do you want your dotfiles to be located? (default ~/.dotfiles)" "DOTFILES_PATH"
-DOTFILES_PATH="${DOTFILES_PATH:-~/.dotfiles}"
-DOTFILES_PATH="$(eval echo "$DOTFILES_PATH")"
-export DOTFILES_PATH="$DOTFILES_PATH"
+DOTFILES_PATH="$(eval echo "${DOTFILES_PATH:-$HOME/.dotfiles}")"
+export DOTFILES_PATH
 
 dotly_inner_path="modules/dotly"
 export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 
-# Menu to select from where you want to restore your files
-PS3="From where you want to install your dotfiles: "
-options=("GitHub" "Keybase" "Other Git alternative" "Quit")
-GIT_URL=""
-select opt in "${options[@]}"
-do
-  case $opt in
-    "GitHub")
-      GITHUB_USER=""
-      while [ -z "$GITHUB_USER" ]; do
-          _q "👤 Which is your github user?" "GITHUB_USER"
-      done
+# Backup if currently there are any dotfiles and prepare parent directory
+if [[ -d "$DOTFILES_PATH" ]] && ! ${continue:-}; then
+  _q "🗂 Your DOTFILES_PATH is not empty. Do you want to do a backup first? [Y/n]" "PROMPT_REPLY"
+  [[ "${PROMPT_REPLY:-Y}" =~ ^[Yy] ]] && create_dotfiles_dir "$DOTFILES_PATH"
+fi
 
-      GITHUB_REPOSITORY_NAME=""
-      while [ -z "$GITHUB_REPOSITORY_NAME" ]; do
-          _q "📦 Which is your github repository?" "GITHUB_REPOSITORY_NAME"
-      done
-      
-      GIT_URL="git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
-      _w "  Remember that if your dotfiles repository is private you"
-      _w "need to generate or restore the ssh key and added to your"
-      _w "github account in:"
-      _w "  - Github > Settings > SSH and GPG Keys > Add new SSH key"
-      _w
-      _pk "continue when ready"
-      break
-      ;;
-    "Keybase")
-      _w "Checking if keybase is installed"
+if [[ ! -d "$DOTFILES_PATH" ]]; then
+  # Menu to select from where you want to restore your files
+  PS3="From where you want to install your dotfiles: "
+  options=("GitHub" "Keybase" "Other Git alternative" "Quit")
+  GIT_URL=""
+  select opt in "${options[@]}"
+  do
+    case $opt in
+      "GitHub")
+        GITHUB_USER=""
+        while [ -z "$GITHUB_USER" ]; do
+            _q "👤 Which is your github user?" "GITHUB_USER"
+        done
 
-      if ! $(ls /Applications/Keybase.app > /dev/null 2>&1); then
-        _w "Keybase has not been detected. We will try to install it with the package manager."
-        _w "If the installation finish the script re run it to finish the install"
+        GITHUB_REPOSITORY_NAME=""
+        while [ -z "$GITHUB_REPOSITORY_NAME" ]; do
+            _q "📦 Which is your github repository?" "GITHUB_REPOSITORY_NAME"
+        done
         
-        package_install keybase
-        _pk "continue"
+        GIT_URL="git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
+        _w "  Remember that if your dotfiles repository is private you"
+        _w "need to generate or restore the ssh key and added to your"
+        _w "github account in:"
+        _w "  - Github > Settings > SSH and GPG Keys > Add new SSH key"
+        _w
+        _pk "continue when ready"
+        break
+        ;;
+      "Keybase")
+        _w "Checking if keybase is installed"
 
-        if ! command_exists keybase; then
-          _e "Keybase could not be installed, try by yourself, do a login and re run this script."
-          exit 1
+        if ! ls /Applications/Keybase.app > /dev/null 2>&1; then
+          _w "Keybase has not been detected. We will try to install it with the package manager."
+          _w "If the installation finish the script re run it to finish the install"
+          
+          package_install keybase || { _e "Keybase could not be installed, try by yourself, do a login and re run this script." && exit 1;  }
+          _s "Keybase is installed"
+          _pk "continue"
         fi
-      fi
-      _s "Keybase is installed"
-      
-      KEYBASE_USER=""
-      while [ -z "$KEYBASE_USER" ]; do
-          _q "👤 Which is your Keybase user?" "KEYBASE_USER"
-      done
+        
+        KEYBASE_USER=""
+        while [ -z "$KEYBASE_USER" ]; do
+            _q "👤 Which is your Keybase user?" "KEYBASE_USER"
+        done
 
-      KEYBASE_REPOSITORY_NAME=""
-      _q "📦 Which is your Keybase repository name? [dotfiles]" "KEYBASE_REPOSITORY_NAME"
-      KEYBASE_REPOSITORY_NAME="${KEYBASE_REPOSITORY_NAME:-"dotfiles"}"
+        KEYBASE_REPOSITORY_NAME=""
+        _q "📦 Which is your Keybase repository name? [dotfiles]" "KEYBASE_REPOSITORY_NAME"
+        KEYBASE_REPOSITORY_NAME="${KEYBASE_REPOSITORY_NAME:-"dotfiles"}"
 
-      GIT_URL="keybase://private/${KEYBASE_USER}/${KEYBASE_REPOSITORY_NAME}"
-      _w "  Remember that you need to start Keybase for the first time and login."
-      _w "  If you don't do this firstly, the installation will fail"
-      _w
-      _pk "continue when ready"
-      
-      break
-      ;;
-    "Other Git alternative")
-      while [ -z "$GIT_URL" ]; do
-          _q "👤 Which is your git repo url?" "GIT_URL"
-      done
-      break
-      ;;
-    "Quit")
-      _w "Bye!"
-      exit 0
-      ;;
-    *)
-      echo "invalid option $REPLY"
-      ;;
-  esac
-done
+        GIT_URL="keybase://private/${KEYBASE_USER}/${KEYBASE_REPOSITORY_NAME}"
+        _w "  Remember that you need to start Keybase for the first time and login."
+        _w "  If you don't do this firstly, the installation will fail"
+        _w
+        _pk "continue when ready"
+        
+        break
+        ;;
+      "Other Git alternative")
+        while [ -z "$GIT_URL" ]; do
+            _q "👤 Which is your git repo url?" "GIT_URL"
+        done
+        break
+        ;;
+      "Quit")
+        _w "Bye!"
+        exit 0
+        ;;
+      *)
+        echo "invalid option $REPLY"
+        ;;
+    esac
+  done
 
-# Recovering your files
-_w "Installing your dotfiles"
-_a "git clone ${GIT_URL} ${DOTFILES_PATH}"
-git clone "${GIT_URL}" "${DOTFILES_PATH}"
+  # Recovering your files
+  _w "Installing your dotfiles"
+  _a "git clone ${GIT_URL} ${DOTFILES_PATH}"
+  git clone "${GIT_URL}" "${DOTFILES_PATH}"
+fi
+
+# Update DOTLY submodule
 cd "${DOTFILES_PATH}"
-git submodule update --init --recursive modules/dotly # Only dotly submodule must be
-# updated recursively because we do not know if user has added any other submodules
-# that are privated and maybe the user needs to configure something to access those
-# repositories
-
-set +e # Avoid exit if fail a script because dot symlinks apply could fail
+# Only dotly submodule must be updated recursively because we do not know if
+# user has added any other submodules that are privated and maybe the user
+# needs to configure something to access those repositories
+git submodule update --init --recursive modules/dotly | _log "Downloading dotly and submodules" || {
+  _e "Downloading dotly failed. See for more details:"
+  _e "  tail -f $HOME/dotly.log"
+  echo
+  exit 1
+}
 
 _w "Installing dotly default tools"
 _w "Please be patient this could take some time...🙏"
 # Installing default dotly tools
 PATH="$PATH:/usr/local/bin:$HOME/.cargo/bin"
-"$DOTLY_PATH/bin/dot" self install --quiet-symlinks > /dev/null 2>&1 | _log "Installing dotly default tools"
+"$DOTLY_PATH/bin/dot" self install > /dev/null 2>&1 | _log "Installing dotly default tools" || {
+  _e "Dotly Could not be installed but your dotfiles are restored. Use:"
+  _e "  tail -f $HOME/dotly.log"
+  _e "To know what happened and where is the point of failure"
+  echo
+}
 _a "🎉 dotfiles restored! 🎉"
 
-set -e # End of avoid exit if fail a script
 
 # Installing packages
 _q "📦 Do you want to import previous installed packages? [Y/n]" "USER_IMPORT_PACKAGES"
-USER_IMPORT_PACKAGES=${USER_IMPORT_PACKAGES:-'Y'}
-if [[ "$USER_IMPORT_PACKAGES" =~ ^[Yy] ]]; then
+if [[ "${USER_IMPORT_PACKAGES:-Y}" =~ ^[Yy] ]]; then
   _w "Importing your packages"
   _w "This can take a very long time, be patient...🙏"
-  "$DOTLY_PATH/bin/dot" package import >/dev/null 2>&1 | _log "Importing user packages"
-  _a "Packages imported 👏"
+  { 
+    "$DOTLY_PATH/bin/dot" package import >/dev/null 2>&1 | _log "Importing user packages" &&\
+      _a "Packages imported 👏" &&\
+      echo
+  } || {
+    _e "📦 Packages import fail"
+    echo
+  }
 fi
 
 # Importing defaults on macOS
@@ -236,9 +311,16 @@ if [[ "$OSTYPE" =~ ^[darwin] ]]; then
   _w "IMPORTANT! This overwrite all your current configuration if you answer with 'y'"
   _w
   _q "⚙️ Do you want to import stored macOS configuration? [y/N]" "USER_OSX_SETTINGS"
-  [[ "$USER_OSX_SETTINGS" =~ ^[Yy] ]] && "$DOTLY_PATH/bin/dot" mac defaults import >/dev/null 2>&1 | _log "Importing macOS user defaults"
+  { 
+    [[ "${USER_OSX_SETTINGS:-N}" =~ ^[Yy] ]] &&\
+      "$DOTLY_PATH/bin/dot" mac defaults import >/dev/null 2>&1 | _log "Importing macOS user defaults" &&\
+      _w "⚙️ Mac defaults imported 🤙" &&\
+      echo
+  } || {
+    _e "⚙️ Mac defaults could not be imported"
+    echo
+  }
 fi
+
 _a "🎉 dotfiles restored! 🎉"
 _a "Please, restart your terminal to see the changes."
-_pk "exit terminal"
-exit
