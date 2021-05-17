@@ -10,13 +10,15 @@ platform::is_macos() {
 }
 
 output::write() {
-  local -r text="${1:-}"
+  local -r text="${*:-}"
   echo -e "$text"
 }
-output::answer() { output::write " > $@"; }
-output::error() { output::answer "${red}$@${normal}"; }
-output::solution() { output::answer "${green}$@${normal}"; }
+output::answer() { output::write " > ${*:-}"; }
+output::error() { output::answer "${red}${*:-}${normal}"; }
+output::solution() { output::answer "${green}${*:-}${normal}"; }
 output::question() {
+  [[ $# -ne 2 ]] && return 1
+
   if [ platform::is_macos ]; then
     echo -n " > 🤔 $1: ";
     read -r "$2";
@@ -26,15 +28,21 @@ output::question() {
 }
 output::question_default() {
   local question default_value var_name
-  question="$1"
-  default_value="$2"
-  var_name="$3"
+
+  [[ $# -ne 3 ]] && return 1
+
+  question="${1:-}"
+  default_value="${2:-}"
+  var_name="${3:-}"
 
   output::question "$question? [$default_value]" "$var_name"
   eval "$var_name=\"\${$var_name:-$default_value}\""
 }
 output::yesno() {
   local question default PROMPT_REPLY values
+
+  [[ $# -eq 0 ]] && return 1
+
   question="$1"
   default="${2:-Y}"
 
@@ -48,4 +56,4 @@ output::yesno() {
   [[ "${PROMPT_REPLY:-$default}" =~ ^[Yy] ]]
 }
 output::empty_line() { echo ''; }
-output::header() { output::empty_line; output::write "${bold_blue}---- $1 ----${normal}"; }
+output::header() { output::empty_line; output::write "${bold_blue}---- ${1:-} ----${normal}"; }
