@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-. "$DOTLY_PATH/scripts/package/utils/dump.sh"
+dot::get_script_src_path "dump.sh"
 
 ##? Import previously dumped packages from:
 ##?  * Brew
@@ -41,10 +41,12 @@ NPM_DUMP_FILE_PATH="$(package::exists_dump_current_machine_file "$NPM_PATH")"
 VOLTA_DUMP_FILE_PATH="$(package::exists_dump_current_machine_file "$VOLTA_PATH")"
 
 if ! ${never_prompt:-false}; then
-  [[ -z "$HOMEBREW_DUMP_FILE_PATH" ]] || ${prompt:-false} && package::which_file "$BREW_PATH" "Select Brewfile to import" "HOMEBREW_DUMP_FILE_PATH"
-  [[ -z "$PYTHON_DUMP_FILE_PATH" ]]   || ${prompt:-false} && package::which_file "$PYTHON_PATH" "Select Python requirements file to import" "PYTHON_DUMP_FILE_PATH"
-  [[ -z "$NPM_DUMP_FILE_PATH" ]]      || ${prompt:-false} && package::which_file "$NPM_PATH" "Select npm file of modules to import" "NPM_DUMP_FILE_PATH"
-  [[ -z "$VOLTA_DUMP_FILE_PATH" ]]    || ${prompt:-false} && package::which_file "$VOLTA_PATH" "Select volta file to import" "VOLTA_DUMP_FILE_PATH"
+  platform::command_exists brew  && [[ -z "$HOMEBREW_DUMP_FILE_PATH" ]] || ${prompt:-false} && package::which_file "$BREW_PATH" "Select ${brew_title:-Brew} file to import" "HOMEBREW_DUMP_FILE_PATH"
+  platform::command_exists apt   && [[ -z "$APT_DUMP_FILE_PATH" ]]      || ${prompt:-false} && package::which_file "$APT_PATH" "Select ${apt_title:-APT} file of modules to import" "APT_DUMP_FILE_PATH"
+  platform::command_exists snap  && [[ -z "$SNAP_DUMP_FILE_PATH" ]]     || ${prompt:-false} && package::which_file "$SNAP_PATH" "Select ${snap_title:-SNAP} file of modules to import" "SNAP_DUMP_FILE_PATH"
+  platform::command_exists pip3  && [[ -z "$PYTHON_DUMP_FILE_PATH" ]]   || ${prompt:-false} && package::which_file "$PYTHON_PATH" "Select ${pip_title:-Python} requirements file to import" "PYTHON_DUMP_FILE_PATH"
+  platform::command_exists volta && [[ -z "$VOLTA_DUMP_FILE_PATH" ]]    || ${prompt:-false} && package::which_file "$VOLTA_PATH" "Select ${volta_title:-volta} file to import" "VOLTA_DUMP_FILE_PATH"
+  platform::command_exists npm   && [[ -z "$NPM_DUMP_FILE_PATH" ]]      || ${prompt:-false} && package::which_file "$NPM_PATH" "Select ${npm_title:-NPM} file of modules to import" "NPM_DUMP_FILE_PATH"
 fi
 
 output::write "🎩 Let's import your packages (this could take a while)" && output::empty_line
