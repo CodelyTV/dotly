@@ -77,8 +77,7 @@ yaml_file_backup() {
       if ! ${quiet_symlinks:-} &&
         output::yesno "File '$link' exists. Do you want to backup it"
       then
-        echo "$link"
-        # backup_and_warn_if_exists "$link" "$rename_suffix"
+        backup_and_warn_if_exists "$link" "$rename_suffix"
       fi
     fi
   done
@@ -189,13 +188,11 @@ fi
 # Apply user symlinks
 output::answer "Setting up symlinks"
 if ${quiet_symlinks:-false}; then
-  "$DOTLY_PATH/bin/dot" symlinks apply --quiet | log::file "Applying symlinks"
+  "$DOTLY_PATH/bin/dot" symlinks apply --quiet | log::file "Applying symlinks" || true
 else
-  "$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks"
+  "$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks" || output::clarification "Error applying symlinks, see `dot self backup`"
 fi
 touch "$HOME/.z"
-
-set -e # End of avoid exit if fail a script
 
 ! platform::command_exists fzf && installer::install_fzf
 ! platform::command_exists zsh && installer::install_zsh
@@ -207,8 +204,20 @@ if ! str::contains zsh "$SHELL"; then
   sudo chsh -s "$(command -v zsh)" | log::file "Setting zsh as default shell"
 fi
 
+output::empty_line
 output::answer "Installing zim"
-zsh "$ZIM_HOME/zimfw.zsh" install | log::file "Installing zim"
+if zsh "$ZIM_HOME/zimfw.zsh" install | log::file "Installing zim"; then
+  output::solution "ZIM Framework Installed"
+else
+  output::error "ZIM Framework could not be installed"
+  output::clarification "Use `dot self debug` to view what happened"
+  output::write "You will need to run manually the ZIM Framework install command"
+  output::write "  zsh \"$ZIM_HOME/zimfw.zsh\" install"
+fi
 
+output::empty_line
 output::answer "Installing completions"
-"$DOTLY_PATH/bin/dot" shell zsh reload_completions
+"$DOTLY_PATH/bin/dot" shell zsh reload_completions || output::error "Error reloading completions"
+
+output::empty_line
+output::solution "🏁 Now restart your terminal to finish the installation"
