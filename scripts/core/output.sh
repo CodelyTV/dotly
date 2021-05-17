@@ -5,10 +5,6 @@ green='\033[0;32m'
 bold_blue='\033[1m\033[34m'
 normal='\033[0m'
 
-platform::is_macos() {
-  [[ $(uname -s) == "Darwin" ]]
-}
-
 output::write() {
   local -r text="${*:-}"
   echo -e "$text"
