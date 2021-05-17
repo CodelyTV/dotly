@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -uo pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/package/src/package_managers/brew.sh"
+source "$DOTLY_PATH/scripts/package/src/package_managers/composer.sh"
+source "$DOTLY_PATH/scripts/package/src/package_managers/gem.sh"
+source "$DOTLY_PATH/scripts/package/src/package_managers/mas.sh"
+source "$DOTLY_PATH/scripts/package/src/package_managers/npm.sh"
+source "$DOTLY_PATH/scripts/package/src/package_managers/pip.sh"
 
 ##? Update all packages
 ##?
@@ -10,31 +16,20 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?   update_all
 docs::parse "$@"
 
-output::write "🎩 Let's update all your packages"
+output::h1_without_margin "♻️  Updating all the apps on your system"
+output::clarification "If you want to debug what's happening behind the scenes, you can execute \`dot self debug\` in parallel."
 
-if platform::is_macos; then
-  output::header '🍎 Updating App Store apps'
-  platform::command_exists mas && mas upgrade
+platform::command_exists mas && output::h2 '🍎 App Store' && mas::update_all
+platform::command_exists brew && output::h2 '🍺 Brew' && brew::update_all
+platform::command_exists pip3 && output::h2 '🐍 pip' && pip::update_all
+platform::command_exists composer && output::h2 '🐘 Composer' && composer::update_all
+platform::command_exists gem && output::h2 '♦️  gem' && gem::update_all
+platform::command_exists npm && output::h2 '🌈 npm' && npm::update_all
+platform::command_exists cargo && output::h2 '📦 cargo' && cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' | xargs -n1 cargo install
 
-  output::header '🍺 Updating Brew and Brew apps (this could take a while)'
-  brew update 2>&1 | log::file "Updating brew"
-  brew outdated | xargs -n1 brew upgrade
-
-  output::header '🍻 Updating Brew Cask apps (this could take a while)'
-  OUTDATED_CASKS=$(brew outdated --cask)
-
-  if [ -n "$OUTDATED_CASKS" ]; then
-    echo "$OUTDATED_CASKS" | grep -v real-vnc | xargs -n1 brew cask install --force
-  fi
-fi
-
-platform::command_exists tldr && output::header '📜 Updating tldr database' && tldr --update
-platform::command_exists composer && output::header '🐘 Updating Composer' && composer self-update && composer global update
-platform::command_exists pip3 && output::header '🐍 Updating pip' && pip3 freeze --local | grep -v '^\-e' || [[ $? == 1 ]] | cut -d = -f 1 | xargs -n1 pip3 install -U
-platform::command_exists gem && output::header '♦️ Updating gem' && gem update
-platform::command_exists npm && output::header '🌈 Updating npm' && npm install -g npm && npm update -g
-platform::command_exists cargo && output::header '📦 Updating cargo' && cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' | xargs -n1 cargo install
-platform::command_exists deno && output::header '🦕 Updating deno' && deno upgrade
+platform::command_exists rustup && output::h2 '☢️ Rust compiler' && rustup update
+platform::command_exists deno && output::h2 '🦕 deno' && deno upgrade
+platform::command_exists tldr && output::h2 '📜 tldr database' && tldr --update
 
 output::empty_line
 output::solution '👌 All your packages have been successfully updated'
