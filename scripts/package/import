@@ -28,6 +28,7 @@ docs::parse "$@"
 BREW_PATH="${BREW_PATH:-$DOTFILES_PATH/os/mac/brew}"
 APT_PATH="${APT_PATH:-$DOTFILES_PATH/os/linux/apt}"
 SNAP_PATH="${SNAP_PATH:-$DOTFILES_PATH/os/linux/snap}"
+CARGO_PATH="${CARGO_PATH:-$DOTFILES_PATH/langs/rust/cargo/}"
 PYTHON_PATH="${PYTHON_PATH:-$DOTFILES_PATH/langs/python}"
 NPM_PATH="${NPM_PATH:-$DOTFILES_PATH/langs/js/npm}"
 VOLTA_PATH="${VOLTA_PATH:-$DOTFILES_PATH/langs/js/volta}"
@@ -36,6 +37,7 @@ VOLTA_PATH="${VOLTA_PATH:-$DOTFILES_PATH/langs/js/volta}"
 HOMEBREW_DUMP_FILE_PATH="$(package::exists_dump_current_machine_file "$BREW_PATH")"
 APT_DUMP_FILE_PATH="$(package::exists_dump_current_machine_file "$APT_PATH")"
 SNAP_DUMP_FILE_PATH="$(package::exists_dump_current_machine_file "$SNAP_PATH")"
+CARGO_DUMP_FILE_PATH="$(package::exists_dump_current_machine_file "$CARGO_PATH")"
 PYTHON_DUMP_FILE_PATH="$(package::exists_dump_current_machine_file "$PYTHON_PATH")"
 NPM_DUMP_FILE_PATH="$(package::exists_dump_current_machine_file "$NPM_PATH")"
 VOLTA_DUMP_FILE_PATH="$(package::exists_dump_current_machine_file "$VOLTA_PATH")"
@@ -44,6 +46,7 @@ if ! ${never_prompt:-false}; then
   platform::command_exists brew  && [[ -z "$HOMEBREW_DUMP_FILE_PATH" ]] || ${prompt:-false} && package::which_file "$BREW_PATH" "Select ${brew_title:-Brew} file to import" "HOMEBREW_DUMP_FILE_PATH"
   platform::command_exists apt   && [[ -z "$APT_DUMP_FILE_PATH" ]]      || ${prompt:-false} && package::which_file "$APT_PATH" "Select ${apt_title:-APT} file of modules to import" "APT_DUMP_FILE_PATH"
   platform::command_exists snap  && [[ -z "$SNAP_DUMP_FILE_PATH" ]]     || ${prompt:-false} && package::which_file "$SNAP_PATH" "Select ${snap_title:-SNAP} file of modules to import" "SNAP_DUMP_FILE_PATH"
+  platform::command_exists cargo && [[ -z "$CARGO_DUMP_FILE_PATH" ]]    || ${prompt:-false} && package::which_file "$CARGO_PATH" "Select ${cargo_title:-Cargo} file to import" "CARGO_DUMP_FILE_PATH"
   platform::command_exists pip3  && [[ -z "$PYTHON_DUMP_FILE_PATH" ]]   || ${prompt:-false} && package::which_file "$PYTHON_PATH" "Select ${pip_title:-Python} requirements file to import" "PYTHON_DUMP_FILE_PATH"
   platform::command_exists volta && [[ -z "$VOLTA_DUMP_FILE_PATH" ]]    || ${prompt:-false} && package::which_file "$VOLTA_PATH" "Select ${volta_title:-volta} file to import" "VOLTA_DUMP_FILE_PATH"
   platform::command_exists npm   && [[ -z "$NPM_DUMP_FILE_PATH" ]]      || ${prompt:-false} && package::which_file "$NPM_PATH" "Select ${npm_title:-NPM} file of modules to import" "NPM_DUMP_FILE_PATH"
@@ -74,6 +77,14 @@ output::write "🎩 Let's import your packages (this could take a while)" && out
   output::empty_line
 } ||\
     output::answer "Ignoring SNAP"
+
+{
+  platform::command_exists cargo &&\
+  output::header "Importing Cargo apps from $CARGO_DUMP_FILE_PATH" &&\
+  package::cargo_import &&\
+  output::empty_line
+} ||\
+    output::answer "Ignoring Cargo"
 
 {
   platform::command_exists pip3 && [[ -n "$PYTHON_DUMP_FILE_PATH" ]] &&\

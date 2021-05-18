@@ -26,6 +26,7 @@ fi
 HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/mac/brew/${HOSTNAME}"
 APT_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/apt/${HOSTNAME}.txt"
 SNAP_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/snap/${HOSTNAME}.txt"
+CARGO_DUMP_FILE_PATH="$DOTFILES_PATH/langs/rust/cargo/${HOSTNAME}.txt"
 PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/${HOSTNAME}.txt"
 NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/npm/${HOSTNAME}.txt"
 VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta/${HOSTNAME}.txt"
@@ -51,6 +52,13 @@ VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta/${HOSTNAME}.txt"
     output::answer "${snap_title:-SNAP} apps dumped on $SNAP_DUMP_FILE_PATH" &&\
     output::empty_line
 } || package::clarification "${snap_title:-SNAP}"
+
+{
+  platform::command_exists cargo &&\
+    package::cargo_dump "$CARGO_DUMP_FILE_PATH" &&\
+    output::answer "${cargo_title:-Cargo} apps dumped on $CARGO_DUMP_FILE_PATH" &&\
+    output::empty_line
+} || package::clarification "${cargo_title:-Cargo}"
 
 {
   platform::command_exists pip3 && \

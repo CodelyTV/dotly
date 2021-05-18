@@ -218,3 +218,27 @@ package::volta_import() {
 
   return 1
 }
+
+package::cargo_dump() {
+  CARGO_DUMP_FILE_PATH="${1:-$CARGO_DUMP_FILE_PATH}"
+
+  if package::common_dump_check cargo "$CARGO_DUMP_FILE_PATH"; then
+    cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' >|"$CARGO_DUMP_FILE_PATH"
+
+    return 0
+  fi
+
+  return 1
+}
+
+package::cargo_import() {
+  CARGO_DUMP_FILE_PATH="${1:-$VOLTA_DUMP_FILE_PATH}"
+
+  if package::common_import_check cargo "$CARGO_DUMP_FILE_PATH"; then
+    xargs -I_ cargo install < "$CARGO_DUMP_FILE_PATH"
+
+    return 0
+  fi
+
+  return 1
+}
