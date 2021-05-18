@@ -229,10 +229,12 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
         KEYBASE_REPOSITORY_NAME="${KEYBASE_REPOSITORY_NAME:-"dotfiles"}"
 
         GIT_URL="keybase://private/${KEYBASE_USER}/${KEYBASE_REPOSITORY_NAME}"
+        _w
         _w "  Remember that you need to start Keybase for the first time and login."
         _w "  If you don't do this firstly, the installation will fail"
         _w
         _pk "continue when ready"
+        _w
         
         break
         ;;
@@ -267,9 +269,9 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
     
     if $is_cloned; then
       _s "Dotfiles restored."
-      echo
+      _w
       _w "Your dotfiles could not be downloaded using ssh. Were downloaded using https."
-      echo
+      _w
       _q "Do you want to setup remote SSH origin url? [Y/n]" "SSH_REPLY"
       [[ "${SSH_REPLY:-Y}" =~ ^[Yy] ]] &&\
         cd "${DOTFILES_PATH}" &&\
@@ -285,7 +287,7 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
   fi
 
   _s "Dotfiles cloned successfully."
-  echo
+  _w
 fi
 
 # Update DOTLY submodule
@@ -296,7 +298,7 @@ cd "${DOTFILES_PATH}"
 git submodule update --init --recursive modules/dotly 2>&1 | _log "Downloading dotly and submodules" || {
   _e "Downloading dotly failed. See for more details:"
   _e "  tail -f $HOME/dotly.log"
-  echo
+  _w
   exit 1
 }
 
@@ -304,11 +306,12 @@ _w "Installing dotly default tools"
 _w "Please be patient this could take some time...🙏"
 # Installing default dotly tools
 PATH="$PATH:/usr/local/bin:$HOME/.cargo/bin"
-"$DOTLY_PATH/bin/dot" self install > /dev/null 2>&1 | _log "Installing dotly default tools" || {
+sudo -v
+"$DOTLY_PATH/bin/dot" self install || {
   _e "Dotly Could not be installed but your dotfiles are restored. Use:"
   _e "  tail -f $HOME/dotly.log"
   _e "To know what happened and where is the point of failure"
-  echo
+  _w
 }
 _a "🎉 dotfiles restored! 🎉"
 
@@ -321,10 +324,10 @@ if [[ "${USER_IMPORT_PACKAGES:-Y}" =~ ^[Yy] ]]; then
   { 
     "$DOTLY_PATH/bin/dot" package import >/dev/null 2>&1 | _log "Importing user packages" &&\
       _a "Packages imported 👏" &&\
-      echo
+      _w
   } || {
     _e "📦 Packages import fail"
-    echo
+    _w
   }
 fi
 
@@ -342,10 +345,10 @@ if [[ "$OSTYPE" =~ ^[darwin] ]]; then
     [[ "${USER_OSX_SETTINGS:-N}" =~ ^[Yy] ]] &&\
       "$DOTLY_PATH/bin/dot" mac defaults import >/dev/null 2>&1 | _log "Importing macOS user defaults" &&\
       _w "⚙️ Mac defaults imported 🤙" &&\
-      echo
+      _w
   } || {
     _e "⚙️ Mac defaults could not be imported"
-    echo
+    _w
   }
 fi
 
