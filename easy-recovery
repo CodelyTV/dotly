@@ -193,15 +193,11 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
   do
     case $opt in
       "GitHub")
-        GITHUB_USER=""
-        while [ -z "$GITHUB_USER" ]; do
-            _q "👤 Which is your github user?" "GITHUB_USER"
-        done
+        _q "👤 Which is your github user? [$USER]" "GITHUB_USER"
+        GITHUB_USER="${GITHUB_USER:-$USER}"
 
-        GITHUB_REPOSITORY_NAME=""
-        while [ -z "$GITHUB_REPOSITORY_NAME" ]; do
-            _q "📦 Which is your github repository?" "GITHUB_REPOSITORY_NAME"
-        done
+        _q "📦 Which is your github repository? [dotfiles]" "GITHUB_REPOSITORY_NAME"
+        GITHUB_REPOSITORY_NAME="${GITHUB_REPOSITORY_NAME:-dotfiles}"
         
         GIT_URL="git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
         GIT_URL_MIRROR="https://github.com/$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
@@ -225,10 +221,8 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
           _pk "continue"
         fi
         
-        KEYBASE_USER=""
-        while [ -z "$KEYBASE_USER" ]; do
-            _q "👤 Which is your Keybase user?" "KEYBASE_USER"
-        done
+        _q "👤 Which is your Keybase user? [$USER]" "KEYBASE_USER"
+        KEYBASE_USER="${KEYBASE_USER:-$USER}"
 
         KEYBASE_REPOSITORY_NAME=""
         _q "📦 Which is your Keybase repository name? [dotfiles]" "KEYBASE_REPOSITORY_NAME"
