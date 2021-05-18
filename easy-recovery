@@ -259,18 +259,17 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
   done
 
   # Recovering your files
-  _w "Installing your dotfiles"
-  _a "git clone ${GIT_URL} ${DOTFILES_PATH}"
+  _w "Installing your dotfiles from $opt"
+  _a "Attemping: git clone ${GIT_URL} ${DOTFILES_PATH}"
   is_cloned=false
-  git clone "${GIT_URL}" "${DOTFILES_PATH}" 2>&1 | _log "Cloning $GIT_URL" && is_cloned=true
-
-  echo "Tried using $opt"
+  git clone "${GIT_URL}" "${DOTFILES_PATH}" 2>&1 | _log "Cloning from $GIT_URL" && is_cloned=true
 
   # This because maybe you do not have yet your ssh-keys because you did not download
   # your dotfiles. And SSH URL for repository would be the default method using a
   # repository that you can write.
-  if ! $is_cloned && [[ "$opt" == "GitHub" ]]; then
-    git clone "$GIT_URL_MIRROR" 2>&1 | _log "Cloning $GIT_URL_MIRROR" && is_cloned=true
+  if ! $is_cloned && [[ ! -d "$DOTFILES_PATH" ]] && [[ "$opt" == "GitHub" ]]; then
+    _a "Attemping: git clone ${GIT_URL_MIRROR} ${DOTFILES_PATH}"
+    git clone "$GIT_URL_MIRROR" "$DOTFILES_PATH" 2>&1 | _log "Cloning from $GIT_URL_MIRROR" && is_cloned=true
     
     if $is_cloned; then
       _s "Dotfiles restored."
@@ -286,7 +285,7 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
       _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
       exit 1
     fi
-  elif ! $is_cloned; then
+  elif ! $is_cloned || [[ ! -d "$DOTFILES_PATH" ]]; then
     _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
     exit 1
   fi
