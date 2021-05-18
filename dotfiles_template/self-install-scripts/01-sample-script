@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+echo "418 - I'm a teapot!"
+echo
+echo "Self install scripts must have chmod u+x to run"
+echo
