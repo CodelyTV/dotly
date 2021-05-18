@@ -16,9 +16,13 @@
 
 1. Execute
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/gtrabanco/dotly/beta/dotfiles_template/install)
+bash <(curl -s https://raw.githubusercontent.com/gtrabanco/dotly/feature/recover_dotfiles/easy-recovery)
 ```
-
+<!-- Replace in Pull Request
+```bash
+bash <(curl -s https://raw.githubusercontent.com/codelytv/dotly/master/easy-recovery)
+```
+-->
 2. Follow the steps.
 3. You need to know your github username, repository and install ssh key if your repository is private.
 

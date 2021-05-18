@@ -69,7 +69,7 @@ _w() {
 _a() { _w " > $1"; }
 _e() { _a "${red}$1${normal}"; }
 _s() { _a "${green}$1${normal}"; }
-_q() { read -rp "🤔 $1: " "$2"; }
+_q() { read -rp "🤔 $1 : " "$2"; }
 _pk() { read -rp "Press a key to ${1}... 👇" "REPLY"; }
 
 _log() {
@@ -119,20 +119,20 @@ package_install () {
   # Because apt that is not package manager exists on macOS
   
   if command_exists dnf; then
-    _a "Installing '${@}' using dnf"
-    sudo dnf -y install "${@}" >/dev/null 2>&1 | _log "Installing '${@}' using dnf"
+    _a "Installing '${*}' using dnf"
+    sudo dnf -y install "${*}" >/dev/null 2>&1 | _log "Installing '${*}' using dnf"
   elif command_exists yum; then
-    _a "Installing '${@}' using yum"
-    yes | sudo yum install "${@}" >/dev/null 2>&1 | _log "Installing '${@}' using yum"
+    _a "Installing '${*}' using yum"
+    yes | sudo yum install "${*}" >/dev/null 2>&1 | _log "Installing '${*}' using yum"
   elif command_exists brew; then
-    _a "Installing '${@}' using brew"
-    yes | brew install "${@}" 2>&1 | _log "Installign '${@}' using brew"
+    _a "Installing '${*}' using brew"
+    yes | brew install "${*}" 2>&1 | _log "Installign '${*}' using brew"
   elif command_exists pacman; then
-    _a "Installing '${@}' using pacman"
-    sudo pacman -S --noconfirm "${@}" >/dev/null 2>&1 | _log "Installign '${1}' using pacman"
+    _a "Installing '${*}' using pacman"
+    sudo pacman -S --noconfirm "${*}" >/dev/null 2>&1 | _log "Installign '${*}' using pacman"
   elif command_exists apt; then
-    _a "Installing '${@}' using apt"
-    sudo apt -y install "${1}" >/dev/null 2>&1 | _log "Installign '${@}' using apt"
+    _a "Installing '${*}' using apt"
+    sudo apt -y install "${*}" >/dev/null 2>&1 | _log "Installign '${*}' using apt"
   else
     _e "Could not install '${*}', no package provider found"
     return 1
@@ -152,19 +152,21 @@ _w
 # install CLT.
 
 _w "Checking if Git is installed"
-if [[ "$OSTYPE" =~ ^[darwin] ]] && ! ($(ls /Library/Developer/CommandLineTools > /dev/null 2>&1)); then
+if [[ "$OSTYPE" =~ ^[darwin] ]] && ! ls /Library/Developer/CommandLineTools > /dev/null 2>&1; then
   # In macOS if we do not have CLT then we do not have git. This could be wrong
   # but we will want brew later and if we do not have CLT we can not have brew
-  # 
+  #
   # Brew manages the installation of brew so we will intall Brew
   _w "CLT could not be detected"
   install_brew_osx
+  echo
 fi
 
 
 if ! command_exists git; then
   # Other OS checking if git exists...
-  package_install git
+  # package_install git
+  echo
 fi
 _s "Git command exists on this system"
 
@@ -202,6 +204,7 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
         done
         
         GIT_URL="git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
+        GIT_URL_MIRROR="https://github.com/$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
         _w "  Remember that if your dotfiles repository is private you"
         _w "need to generate or restore the ssh key and added to your"
         _w "github account in:"
@@ -258,7 +261,38 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
   # Recovering your files
   _w "Installing your dotfiles"
   _a "git clone ${GIT_URL} ${DOTFILES_PATH}"
-  git clone "${GIT_URL}" "${DOTFILES_PATH}"
+  is_cloned=false
+  git clone "${GIT_URL}" "${DOTFILES_PATH}" 2>&1 | _log "Cloning $GIT_URL" && is_cloned=true
+
+  echo "Tried using $opt"
+
+  # This because maybe you do not have yet your ssh-keys because you did not download
+  # your dotfiles. And SSH URL for repository would be the default method using a
+  # repository that you can write.
+  if ! $is_cloned && [[ "$opt" == "GitHub" ]]; then
+    git clone "$GIT_URL_MIRROR" 2>&1 | _log "Cloning $GIT_URL_MIRROR" && is_cloned=true
+    
+    if $is_cloned; then
+      _s "Dotfiles restored."
+      echo
+      _w "Your dotfiles could not be downloaded using ssh. Were downloaded using https."
+      echo
+      _q "Do you want to setup remote SSH origin url? [Y/n]" "SSH_REPLY"
+      [[ "${SSH_REPLY:-Y}" =~ ^[Yy] ]] &&\
+        cd "${DOTFILES_PATH}" &&\
+        git remote set-url origin "${GIT_URL}" 2>&1 &&\
+        _s "SSH Remote was set."
+    else
+      _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
+      exit 1
+    fi
+  elif ! $is_cloned; then
+    _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
+    exit 1
+  fi
+
+  _s "Dotfiles cloned successfully."
+  echo
 fi
 
 # Update DOTLY submodule
@@ -266,7 +300,7 @@ cd "${DOTFILES_PATH}"
 # Only dotly submodule must be updated recursively because we do not know if
 # user has added any other submodules that are privated and maybe the user
 # needs to configure something to access those repositories
-git submodule update --init --recursive modules/dotly | _log "Downloading dotly and submodules" || {
+git submodule update --init --recursive modules/dotly 2>&1 | _log "Downloading dotly and submodules" || {
   _e "Downloading dotly failed. See for more details:"
   _e "  tail -f $HOME/dotly.log"
   echo
