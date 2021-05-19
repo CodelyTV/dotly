@@ -3,13 +3,11 @@
 DOTBOT_BASE_PATH="${DOTBOT_BASE_PATH:-$DOTFILES_PATH}"
 
 dotbot::exec_in_dotbot_path() {
-  local start_dir return_code
-  start_dir="$(pwd)"
+  local return_code
   [[ -z "$DOTBOT_BASE_PATH" ]] && [[ -d "$DOTBOT_BASE_PATH" ]] && output::error "Fatal error $DOTBOT_BASE_PATH not found" && exit 1
   cd "$DOTBOT_BASE_PATH" || return 1
   eval "$@"
   return_code=$?
-  cd "$start_dir" || /dev/null
   return ${return_code:-0}
 }
 
