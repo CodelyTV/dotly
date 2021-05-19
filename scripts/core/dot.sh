@@ -44,6 +44,7 @@ dot::get_full_script_path() {
 dot::get_script_src_path() {
   local lib lib_path lib_paths lib_full_path
   lib="${1:-}"
+  lib_full_path=""
 
   if [[ -n "${lib:-}" ]]; then
     lib_paths=(
@@ -65,7 +66,7 @@ dot::get_script_src_path() {
   fi
 
   # Library loading
-  if [[ -n "$lib" ]] && [[ -f "$lib_full_path" ]]; then
+  if [[ -n "$lib" ]] && [[ -f "${lib_full_path:-}" ]]; then
     . "$lib_full_path"
   else
     output::error "🚨 Library loading error with: \"${lib:-No library provided}\""
