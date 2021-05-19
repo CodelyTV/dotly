@@ -216,7 +216,7 @@ symlinks::find() {
 
   arguments+=("$@")
 
-  find "$find_relative_path" -not -iname ".*" "${arguments[@]}" -print | while read -r item; do
+  find "$find_relative_path" -not -iname ".*" "${arguments[@]}" -print0 -exec echo {} \; | while read -r item; do
     printf "%s\n" "${item/$find_relative_path\//}"
   done
 }
