@@ -169,9 +169,8 @@ git::check_local_repo_is_updated() {
 }
 
 git::dotly_repository_exec() {
-  local CURRENT_DIR return_code
+  local return_code
   return_code=0
-  CURRENT_DIR="$(pwd)"
   cd "$DOTLY_PATH" || return 1
 
   if git::is_in_repo; then
@@ -180,5 +179,5 @@ git::dotly_repository_exec() {
     return_code=1
   fi
 
-  cd "$CURRENT_DIR" && return "$return_code"
+  return "$return_code"
 }
