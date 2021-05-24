@@ -6,7 +6,6 @@ pip_title='🐍 pip'
 npm_title='🌈 npm'
 volta_title='⚡︎⚔️ volta'
 snap_title='Snap'
-cargo_title='📦 cargo'
 
 package::clarification() {
   output::clarification "${1:-} could not be updated. Use \`dot self debug\` to view more details."
@@ -14,9 +13,9 @@ package::clarification() {
 
 package::exists_dump_current_machine_file() {
   local FILES_PATH
-  FILES_PATH="$(realpath -sm "$1")"
+  FILES_PATH="$(realpath -sm "${1:-}")"
 
-  ls -1 -d "$FILES_PATH"/* 2>/dev/null | grep -v ".lock.json$" | grep "$(hostname -s)"
+  ls -1 -d "$FILES_PATH"/* 2>/dev/null | grep -v ".lock.json$" | grep "^$(hostname -s)$"
 }
 
 package::preview() {
