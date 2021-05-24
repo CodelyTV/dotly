@@ -157,18 +157,30 @@ if [[ "$OSTYPE" =~ ^[darwin] ]] && ! ls /Library/Developer/CommandLineTools > /d
   # but we will want brew later and if we do not have CLT we can not have brew
   #
   # Brew manages the installation of brew so we will intall Brew
-  _w "CLT could not be detected"
+  _w "Command Line Tools could not be detected"
   install_brew_osx
-  echo
+  _w
 fi
-
 
 if ! command_exists git; then
   # Other OS checking if git exists...
-  # package_install git
-  echo
+  if ! package_install git; then
+    _e "Could not continue without git"
+    exit 1
+  fi
 fi
 _s "Git command exists on this system"
+_w
+
+# Check if curl command exists and try to install it if not
+if ! command_exists curl; then
+  # Other OS checking if git exists...
+  if ! package_install curl; then
+    _e "Could not continue without git"
+    exit 1
+  fi
+fi
+_s "Curl command exists on this system"
 
 # Files locations
 _q "Where do you want your dotfiles to be located? (default ~/.dotfiles)" "DOTFILES_PATH"
