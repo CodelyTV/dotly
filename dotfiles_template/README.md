@@ -16,7 +16,7 @@
 
 1. Execute
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/gtrabanco/dotly/feature/recover_dotfiles/easy-recovery)
+bash <(curl -s https://raw.githubusercontent.com/gtrabanco/dotly/feature/easy-recovery)
 ```
 <!-- Replace in Pull Request
 ```bash
