@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+SCRIPT_LOADED_LIBS=("${LOADED_LIBS[@]}")
+
 dot::list_contexts() {
   dotly_contexts=$(ls "$DOTLY_PATH/scripts")
   dotfiles_contexts=$(ls "$DOTFILES_PATH/scripts")
@@ -44,14 +46,22 @@ dot::get_full_script_path() {
 dot::get_script_src_path() {
   local lib lib_path lib_paths lib_full_path
   lib="${1:-}"
+  lib_full_path=""
 
   if [[ -n "${lib:-}" ]]; then
-    lib_paths=(
+    lib_paths=()
+    if [[ -n "${2:-}" ]]; then
+      lib_paths+=("$DOTFILES_PATH/scripts/$2/src" "$DOTLY_PATH/scripts/$2/src" "$2")
+    else
+      lib_paths+=(
+        "$(dot::get_script_path)/src"
+      )
+    fi
+    
+    lib_paths+=(
       "$DOTLY_PATH/scripts/core"
-      "$(dot::get_script_path)/src"
+      "."
     )
-
-    [[ -n "${2:-}" ]] && lib_paths+=("$DOTLY_PATH/scripts/$2/src" "$2")
 
     for lib_path in "${lib_paths[@]}"; do
       [[ -f "$lib_path/$lib" ]] &&\
@@ -59,16 +69,20 @@ dot::get_script_src_path() {
         break
 
       [[ -f "$lib_path/$lib.sh" ]] &&\
-        lib_full_path="$lib_path/$lib" &&\
+        lib_full_path="$lib_path/$lib.sh" &&\
         break
     done
-  fi
 
-  # Library loading
-  if [[ -n "$lib" ]] && [[ -f "$lib_full_path" ]]; then
-    . "$lib_full_path"
-  else
-    output::error "🚨 Library loading error with: \"${lib:-No library provided}\""
-    exit 1
+    # Library loading
+    if [[ -n "${lib_full_path:-}" ]] && [[ -f "${lib_full_path:-}" ]]; then
+      ! [[ " ${LOADED_LIBS[@]} " =~ " ${lib_full_path:-} " ]] && . "$lib_full_path"
+      return 0
+    else
+      output::error "🚨 Library loading error with: \"${lib_full_path:-No lib path found}\""
+      exit 1
+    fi
   fi
+  
+  # No arguments
+  return 1
 }
