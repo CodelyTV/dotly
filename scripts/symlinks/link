@@ -30,6 +30,7 @@ edit_link_question() {
 ##?   link [-h | --help]
 ##?   link [-v | --version]
 ##?   link [-s | --skip] [-m | --only-move] [--yaml=<yaml_file>] <origin_link_path> [<link_dotfile_directory>]
+##?   link
 ##?
 ##? Options:
 ##?   -h --help           Show this help
@@ -64,6 +65,8 @@ if [ -z "${origin_link_path:-}" ]; then
   "$0" --help
   exit 1
 fi
+
+echo "1"
 
 yaml_file="$(symlinks::get_file_path "${yaml_file:-}")"
 

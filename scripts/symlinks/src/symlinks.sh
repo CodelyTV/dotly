@@ -96,6 +96,7 @@ symlinks::restore_by_link() {
 
   dotbot::exec_in_dotbot_path rm -i -rf "$link"
   dotbot::exec_in_dotbot_path mv -i "$dotfiles_file_path" "$link"
+  dotbot::exec_in_dotbot_path rmdir -p "$(rmdir -p "$dotfiles_file_path")"
   dotbot::delete_by_key_in "link" "$link" "$yaml_file"
 }
 

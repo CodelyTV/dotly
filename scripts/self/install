@@ -3,7 +3,8 @@
 set -euo pipefail
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "install.sh"
+dot::get_script_src_path "install.sh" "self"
+dot::get_script_src_path "yq.sh" "self"
 dot::get_script_src_path "dotbot_yaml_edit.sh" "symlinks"
 dot::get_script_src_path "symlinks.sh" "symlinks"
 
@@ -23,15 +24,6 @@ installer::install_fzf() {
 
   if ! "$DOTLY_PATH/bin/dot" package install fzf | log::file "Installing fzf"; then
     output::error "Could not install fzf!"
-    exit 5
-  fi
-}
-
-installer::install_jq() {
-  output::error "jq not installed, installing"
-
-  if ! "$DOTLY_PATH/bin/dot" package install jq | log::file "Installing jq"; then
-    output::error "Could not install jq!"
     exit 5
   fi
 }

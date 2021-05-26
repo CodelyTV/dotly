@@ -51,7 +51,7 @@ if [ -n "${link_or_dotfile_path:-}" ]; then
   restore_links=("$(symlinks::link_exists "$yaml_file" "$link_or_dotfile_path")")
 
   [ -z "${restore_links[*]:-}" ] &&\
-    output::error "Nothing to be restored" &&\
+    output::error "Nothing to be restored." &&\
     exit 1
 else
   preview_cmd='. "$DOTLY_PATH/scripts/core/_main.sh";'
