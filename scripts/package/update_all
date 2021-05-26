@@ -10,6 +10,8 @@ source "$DOTLY_PATH/scripts/package/src/package_managers/mas.sh"
 source "$DOTLY_PATH/scripts/package/src/package_managers/npm.sh"
 source "$DOTLY_PATH/scripts/package/src/package_managers/pip.sh"
 
+output::h2 "ey"
+exit
 ##? Update all packages
 ##?
 ##? Usage:
@@ -30,6 +32,7 @@ platform::command_exists cargo && output::h2 '📦 cargo' && cargo install --lis
 platform::command_exists rustup && output::h2 '☢️ Rust compiler' && rustup update
 platform::command_exists deno && output::h2 '🦕 deno' && deno upgrade
 platform::command_exists tldr && output::h2 '📜 tldr database' && tldr --update
+output::h2 "ZIMFW Updated" && zimfw upgrade
 
 output::empty_line
 output::solution '👌 All your packages have been successfully updated'
