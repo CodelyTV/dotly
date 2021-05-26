@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_LOADED_LIBS=("${LOADED_LIBS[@]}")
+SCRIPT_LOADED_LIBS=("${LOADED_LIBS[@]:-}")
 
 dot::list_contexts() {
   dotly_contexts=$(ls "$DOTLY_PATH/scripts")
