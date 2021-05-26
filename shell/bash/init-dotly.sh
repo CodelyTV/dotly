@@ -26,7 +26,7 @@ themes_paths=(
 )
 
 for THEME_PATH in ${themes_paths[@]}; do
-  THEME_PATH="${THEME_PATH}/$DOTLY_THEME.sh"
+  THEME_PATH="${THEME_PATH}/${DOTLY_THEME:-codely}.sh"
   [ -f "$THEME_PATH" ] && . "$THEME_PATH" && break
 done
 
