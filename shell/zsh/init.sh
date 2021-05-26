@@ -1,6 +1,20 @@
-# Firstly Paths
-#shellcheck source=/dev/null
-. "$DOTFILES_PATH/shell/paths.sh"
+reverse-search() {
+  local selected num
+  setopt localoptions noglobsubst noposixbuiltins pipefail HIST_FIND_NO_DUPS 2> /dev/null
+
+  selected=( $(fc -rl 1 |
+    FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} $FZF_DEFAULT_OPTS -n2..,.. --tiebreak=index --bind=ctrl-r:toggle-sort $FZF_CTRL_R_OPTS --query=${(qqq)LBUFFER} +m" fzf) )
+  local ret=$?
+  if [ -n "$selected" ]; then
+    num=$selected[1]
+    if [ -n "$num" ]; then
+      zle vi-fetch-history -n $num
+    fi
+  fi
+  zle redisplay
+  typeset -f zle-line-init >/dev/null && zle zle-line-init
+  return $ret
+}
 
 # ZSH Ops
 setopt HIST_IGNORE_ALL_DUPS
@@ -19,7 +33,8 @@ ZSH_AUTOSUGGEST_USE_ASYNC=true
 ZSH_HIGHLIGHT_MAXLENGTH=300
 
 #shellcheck source=/dev/null
-[[ -f "$DOTFILES_PATH/shell/init.sh" ]] && . "$DOTFILES_PATH/shell/init.sh"
+[[ -f "$DOTFILES_PATH/shell/aliases.sh" ]] && . "$DOTFILES_PATH/shell/aliases.sh"
+[[ -f "$DOTFILES_PATH/shell/functions.sh" ]] && . "$DOTFILES_PATH/shell/functions.sh"
 
 fpath=("$DOTFILES_PATH/shell/zsh/themes" "$DOTFILES_PATH/shell/zsh/autocompletions" "$DOTLY_PATH/shell/zsh/themes" "$DOTLY_PATH/shell/zsh/completions" $fpath)
 
@@ -32,12 +47,3 @@ prompt ${DOTLY_THEME:-codely}
 . "$DOTLY_PATH/shell/zsh/bindings/reverse_search.zsh"
 #shellcheck source=/dev/null
 . "$DOTFILES_PATH/shell/zsh/key-bindings.zsh"
-
-# Auto Init scripts at the end
-if [ -z "${DOTLY_NO_INIT_SCRIPTS:-false}" ]; then
-  init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
-  mkdir -p "$init_scripts_path"
-  find "$init_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*' | while read init_script; do
-      [[ -e "$init_script" ]] && . "$init_script"
-    done
-fi

@@ -1,10 +1,8 @@
+# JAVA_HOME, GEM_HOME and GOHOME now are loaded in init_dotly
 export path=(
   "$HOME/bin"
   "$DOTLY_PATH/bin"
   "$DOTFILES_PATH/bin"
-  "$JAVA_HOME/bin"
-  "$GEM_HOME/bin"
-  "$GOPATH/bin"
   "$HOME/.cargo/bin"
   "/usr/local/opt/ruby/bin"
   "/usr/local/opt/python/libexec/bin"

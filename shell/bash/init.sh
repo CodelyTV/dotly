@@ -10,20 +10,40 @@ if [[ "$(ps -p $$ -ocomm=)" =~ (bash$) ]]; then
   export PROMPT_COMMAND="__right_prompt"
 fi
 
-. "$DOTFILES_PATH/shell/paths.sh"
-
 PATH=$(
   IFS=":"
   echo "${path[*]}"
 )
 export PATH
 
-[[ -f "$DOTFILES_PATH/shell/init.sh" ]] && . "$DOTFILES_PATH/shell/init.sh"
+# Aliases
+[[ -f "$DOTFILES_PATH/shell/aliases.sh" ]] && . "$DOTFILES_PATH/shell/aliases.sh"
+
+# Functions
+[[ -f "$DOTFILES_PATH/shell/functions.sh" ]] && . "$DOTFILES_PATH/shell/functions.sh"
 
 themes_paths=(
   "$DOTFILES_PATH/shell/bash/themes"
   "$DOTLY_PATH/shell/bash/themes"
 )
+
+# bash completion
+export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
+if [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
+    . "/usr/local/etc/profile.d/bash_completion.sh"
+fi
+
+# brew Bash completion
+if type brew &>/dev/null; then
+  HOMEBREW_PREFIX="$(brew --prefix)"
+  if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+    . "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+  else
+    for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+      [[ -r "$COMPLETION" ]] && . "$COMPLETION"
+    done
+  fi
+fi
 
 for THEME_PATH in ${themes_paths[@]}; do
   THEME_PATH="${THEME_PATH}/${DOTLY_THEME:-codely}.sh"
@@ -38,13 +58,4 @@ if [ -n "$(ls -A "$DOTFILES_PATH/shell/bash/completions/")" ]; then
   for bash_file in "$DOTFILES_PATH"/shell/bash/completions/_*; do
     . "$bash_file"
   done
-fi
-
-# Auto Init scripts at the end
-if [ -z "${DOTLY_NO_INIT_SCRIPTS:-false}" ]; then
-  init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
-  mkdir -p "$init_scripts_path"
-  find "$init_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*' | while read init_script; do
-      [[ -e "$init_script" ]] && . "$init_script"
-    done
 fi

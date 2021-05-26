@@ -34,9 +34,12 @@ templating::replace "$DOTFILES_PATH/shell/bash/.bashrc" --dotfiles-path="${DOTFI
 # Create new paths.sh file
 output::answer "Creating paths.sh file with your current values"
 if [ -n "${path[*]:-}" ]; then
-  printf "export path=(" > "$DOTFILES_PATH/shell/paths.sh"
-  printf "  \"%s\"\n" "${path[@]}" | sort | uniq >> "$DOTFILES_PATH/shell/paths.sh"
-  printf ")\n" >> "$DOTFILES_PATH/shell/paths.sh"
+  {
+    printf "path=("
+    printf "  \"%s\"\n" "${path[@]}" | sort | uniq 
+    printf ")\n"
+    printf "export path\n"
+  } >| "$DOTFILES_PATH/shell/paths.sh"
 else
   # Copy paths from dotfiles_template
   cp -i "$DOTFILES_TEMPLATE_PATH/shell/paths.sh" "$DOTFILES_PATH/shell/"
