@@ -4,6 +4,7 @@ set -euo pipefail
 
 [[ -z "$DOTLY_PATH" ]] && exit 1
 
+#shellcheck source=/dev/null
 . "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? XXX_SCRIPT_DESCRIPTION_XXX

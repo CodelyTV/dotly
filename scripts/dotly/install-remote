@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+#shellcheck source=/dev/null
 . "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Install remote context or script in your $DOTFILES_PATH from url. It
