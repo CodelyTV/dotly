@@ -15,7 +15,7 @@ docs::parse "$@"
 git add -A
 
 if [ -z "$message" ]; then
-  git commit -S
+  git commit
 else
-  git commit -S -m"$1"
+  git commit -m"$1"
 fi
