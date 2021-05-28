@@ -2,6 +2,7 @@
 
 CODELY_THEME_MINIMAL=${CODELY_THEME_MINIMAL:-false}
 CODELY_THEME_MODE=${CODELY_THEME_MODE:-"dark"}
+CODELY_THEME_PROMPT_IN_NEW_LINE=${CODELY_THEME_PROMPT_IN_NEW_LINE:-false}
 
 status_icon_ok="▸"
 status_icon_ko="▪"
@@ -54,6 +55,10 @@ prompt_codely_setup() {
     PS1="${prompt_codely_status} "
   else
     PS1="${prompt_codely_status} \$(prompt_codely_pwd)\$(prompt_codely_git)%f "
+  fi
+
+  if [ "$CODELY_THEME_PROMPT_IN_NEW_LINE" = true ]; then
+    PS1="$PS1"$'\n'
   fi
 
   RPS1=''
