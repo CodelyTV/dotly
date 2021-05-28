@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+DOTFILES_TEMPLATE_PATH="$DOTLY_PATH/dotfiles_template"
+
+files_to_backup=(
+  "$DOTFILES_PATH/shell/bash/.bashrc"
+  "$DOTFILES_PATH/shell/zsh/.zshrc"
+  "$DOTFILES_PATH/shell/paths.sh"
+)
+
+for item in "${files_to_backup[@]}"; do
+  bk_path=""
+
+  if [ -f "$item" ] && [ ! -L "$HOME/bin/script" ]; then
+    bk_path="$(files::backup_if_file_exists "$item")"
+    [[ -z "$bk_path" ]] && continue
+    output::write "File '$item' exits and was moved as backup to:"
+    output::write "  $bk_path"
+    output::empty_line
+  fi
+done
+
+# Always copy using interactive mode: cp -i
+output::answer "Copying .bashrc and .zshrc files"
+rm -f "$DOTFILES_PATH/shell/bash/.bashrc"
+cp -i "$DOTFILES_TEMPLATE_PATH/shell/bash/.bashrc" "$DOTFILES_PATH/shell/bash/"
+cp -i "$DOTFILES_TEMPLATE_PATH/shell/zsh/.zshrc" "$DOTFILES_PATH/shell/zsh/"
+output::solution ".bashrc and .zshrc copied"
+output::empty_line
+
+# Edit .bashrc file templating
+templating::replace "$DOTFILES_PATH/shell/bash/.bashrc" --dotfiles-path="${DOTFILES_PATH//$HOME/\$HOME}"
+
+# Create new paths.sh file
+output::answer "Creating paths.sh file with your current values"
+if [ -n "${path[*]:-}" ]; then
+  {
+    printf "path=("
+    printf "  \"%s\"\n" "${path[@]}" | sort | uniq 
+    printf ")\n"
+    printf "export path\n"
+  } >| "$DOTFILES_PATH/shell/paths.sh"
+else
+  # Copy paths from dotfiles_template
+  cp -i "$DOTFILES_TEMPLATE_PATH/shell/paths.sh" "$DOTFILES_PATH/shell/"
+fi
+output::solution "paths.sh file created"
+output::answer "Remember to delete your current paths if you have it in your exports.sh"
+output::empty_line
+
+# Gitignore
+if [ ! -f "$DOTFILES_PATH/.gitignore" ]; then
+  cp -i "$DOTFILES_TEMPLATE_PATH/.gitignore" "$DOTFILES_PATH/"
+else
+  cat "$DOTFILES_TEMPLATE_PATH/.gitignore" >> "$DOTFILES_PATH/.gitignore"
+fi

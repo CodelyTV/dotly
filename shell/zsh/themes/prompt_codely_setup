@@ -19,8 +19,16 @@ prompt_codely_precmd() {
   (( ${+functions[git-info]} )) && git-info
 }
 
+prompt_dotly_autoupdate() {
+  if [ -f "$DOTFILES_PATH/.dotly_update_available" ]; then
+    print -n "📥 | "
+  fi
+}
+
 prompt_codely_setup() {
-  local prompt_codely_status='%(?:%F{green}{%F{white}▸%F{green}}:%F{red}{%F{white}▪%F{red}})'
+  local prompt_codely_status
+  
+  prompt_codely_status='%(?:%F{green}{%F{white}▸%F{green}}:%F{red}{%F{white}▪%F{red}})'
 
   autoload -Uz add-zsh-hook && add-zsh-hook precmd prompt_codely_precmd
 
@@ -33,9 +41,9 @@ prompt_codely_setup() {
   zstyle ':zim:git-info:keys' format 'prompt' ' %F{cyan}%b%c %C%D'
 
   if [ -z "$CODELY_THEME_MINIMAL" ]; then
-    PS1="${prompt_codely_status} \$(prompt_codely_pwd)\$(prompt_codely_git)%f "
+    PS1="\$(prompt_dotly_autoupdate)${prompt_codely_status} \$(prompt_codely_pwd)\$(prompt_codely_git)%f "
   else
-    PS1="${prompt_codely_status} "
+    PS1="\$(prompt_dotly_autoupdate)${prompt_codely_status} "
   fi
 
   RPS1=''
