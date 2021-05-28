@@ -111,9 +111,7 @@ symlinks::restore_by_dotfile_file_path() {
   link="$(dotbot::get_key_by_value_in "link" "$dotfiles_file_path" "$yaml_file")"
 
   if [ -n "$link" ]; then
-    dotbot::exec_in_dotbot_path rm -i -f "$link"
-    dotbot::exec_in_dotbot_path mv -i "$DOTBOT_BASE_PATH/$dotfiles_file_path" "$link"
-    dotbot::delete_by_key_in "link" "$link" "$yaml_file"
+    symlinks::restore_by_link "$yaml_file" "$link"
   fi
 }
 
@@ -169,14 +167,21 @@ symlinks::delete_by_link() {
   yaml_file="${1:-}"
   link="${2:-}"
   shift 2
-  delete_cmd="${*:-rm -i -rf}"
-  dotbot_file_path="$(dotbot::get_value_of_key_in "link" "$link" "$yaml_file")"
 
-  [ ! -e "$yaml_file" ] && return 1
+  { [[ -z "$yaml_file" ]] || [[ -z "$link" ]] || [[ ! -f "$yaml_file" ]]; } && return 1
+
+  if [[ -z "${*:-}" ]]; then
+    delete_cmd=(rm -i -rf)
+  else
+    delete_cmd=("$@")
+  fi
+
+  link="$(dotbot::create_relative_link "$link")"
+  dotbot_file_path="$(dotbot::get_value_of_key_in "link" "$link" "$yaml_file")"
 
   dotbot::delete_by_key_in "link" "$link" "$yaml_file"
   dotbot::exec_in_dotbot_path rm -i -rf "$link" # Link
-  dotbot::exec_in_dotbot_path "$delete_cmd $dotbot_file_path" # The file
+  dotbot::exec_in_dotbot_path "${delete_cmd[@]}" "$dotbot_file_path" # The file
 }
 
 # Same as symlinks::delete_by_link but with the value of the link

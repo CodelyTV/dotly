@@ -42,7 +42,6 @@ if ${version:-}; then
   output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
   exit
 fi
-output::empty_line
 
 yaml_file="$(symlinks::get_file_path "${yaml_file:-}")"
 [[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
@@ -78,6 +77,7 @@ else
   fi
 
   for link in "${links[@]}"; do
+    link="$(dotbot::create_relative_link "$link")"
     if ${skip:-false}; then
       dotbot::delete_by_key_in "link" "$link" "$yaml_file"
       output::solution "'$link' link deleted from yaml file."
@@ -87,4 +87,3 @@ else
     fi
   done
 fi
-output::empty_line
