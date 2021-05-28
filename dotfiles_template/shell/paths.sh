@@ -1,4 +1,7 @@
-# JAVA_HOME, GEM_HOME and GOHOME now are loaded in init_dotly
+# ------------------------------------------------------------------------------
+# Path - The higher it is, the more priority it has
+# ------------------------------------------------------------------------------
+# JAVA_HOME, GEM_HOME and GOHOME now are loaded in init-dotly.sh
 export path=(
   "$HOME/bin"
   "$DOTLY_PATH/bin"

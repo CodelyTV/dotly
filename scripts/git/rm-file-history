@@ -6,7 +6,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Remove completely a file from the repo with its history
 ##? so it won't be available through commits. Useful to remove
-##? files with passwords or similar. 
+##? files with passwords or similar.
 ##?
 ##? Usage:
 ##?   rm-file-history <file>
