@@ -67,14 +67,10 @@ dotbot::get_all_keys_in() {
   local _jq_query _jq_args
   _jq_query='.[] | select(has($directive)) | .[] | keys[] | values'
   _jq_args=(-r --arg directive "${1:-}" "$_jq_query")
-echo "1"
+
   if [ -t 0 ]; then
-    echo "2"
-    echo dotbot::jq_yaml_file "${_jq_args[@]}" "${2:-}"
     dotbot::jq_yaml_file "${_jq_args[@]}" "${2:-}"
   else
-    echo "3"
-    echo dotbot::jq_yaml_file "${_jq_args[@]}" "< /dev/stdin"
     dotbot::jq_yaml_file "${_jq_args[@]}" < /dev/stdin
   fi
 }

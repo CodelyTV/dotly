@@ -23,13 +23,16 @@ dot::get_script_src_path "symlinks.sh"
 ##? Usage:
 ##?   restore [-h | --help]
 ##?   restore [-v | --version]
+##?   restore undoln <link_file>
 ##?   restore [--yaml=<yaml_file>] [<link_or_dotfile_path>]
 ##?
 ##? Options:
 ##?   -h --help           Show this help
 ##?   -v --version        Show the program version
-##?   --yaml=<yaml_file>  Use a custom yaml file instead of default one which is
-##?                       DOTFILES_PATH/symlinks/conf.yaml
+##?   --yaml=<yaml_file>  Use a custom yaml file instead of default one which
+##?                       is: $DOTFILES_PATH/symlinks/conf.yaml
+##?   undoln              Just to undo ln links without any yaml file
+##?
 ##?
 ##? Author:
 ##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
@@ -44,27 +47,53 @@ if ${version:-}; then
   exit
 fi
 
-yaml_file="$(symlinks::get_file_path "${yaml_file:-}")"
-[[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
+case "$1" in
+  undoln)
+    if [[ -z "$link_file" ]] || [[ ! -L "$link_file" ]]; then
+      output::error "Symlink is needed"
+      exit 1
+    fi
+    link_realpath="$(eval realpath --logical --no-symlinks --quiet "$link_file")"
+    linked_realpath="$(eval realpath --logical --quiet "$link_file")"
 
-if [ -n "${link_or_dotfile_path:-}" ]; then
-  restore_links=("$(symlinks::link_exists "$yaml_file" "$link_or_dotfile_path")")
+    if [[ -z "$link_realpath" ]] || [[ -z "$linked_realpath" ]]; then
+      output::error "No link found or link could not be resolved. Maybe is pointing to a missing file path."
+      exit 1
+    fi
 
-  [ -z "${restore_links[*]:-}" ] &&\
-    output::error "Nothing to be restored." &&\
-    exit 1
-else
-  preview_cmd='. "$DOTLY_PATH/scripts/core/_main.sh";'
-  preview_cmd+='dot::get_script_src_path "dotbot_yaml_edit.sh"";'
-  preview_cmd+="yaml_file=$yaml_file;"
-  preview_cmd+='echo "Press Tab+Shift to select multiple options.\n'
-  preview_cmd+='Press Ctrl+C to exit with no selection.\n\n'
-  preview_cmd+='Point to file in \"DOTFILES_PATH\":\n'
-  preview_cmd+='\t$(cat "$yaml_file" | dotbot::get_value_of_key_in "link" {})";'
-  restore_links=($(dotbot::get_all_keys_in "link" "$yaml_file" | symlinks::fzf -m --preview "${preview_cmd[*]}" --header "Select link(s) to be restored."))
-fi
+    rm -f "$link_realpath"
+    mv -i "$linked_realpath" "$link_realpath"
+    rmdir -p "$(dirname "$linked_realpath")" >/dev/null 2>&1
+    output::solution "Link '$link_realpath' restored."
+    ;;
+  *)
+    if [[ -L "$link_or_dotfile_path" ]]; then
+      output::error "Given file is not a symbolic link"
+      exit 1
+    fi
 
-for restore_link in "${restore_links[@]}"; do
-  symlinks::restore_by_link "$yaml_file" "$restore_link"
-  output::solution "'$restore_link' restored."
-done
+    yaml_file="$(symlinks::get_file_path "${yaml_file:-}")"
+    [[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
+
+    if [ -n "${link_or_dotfile_path:-}" ]; then
+      restore_links=("$(symlinks::link_exists "$yaml_file" "$link_or_dotfile_path")")
+      [ -z "${restore_links[*]:-}" ] &&\
+        output::error "Nothing to be restored." &&\
+        exit 1
+    else
+      preview_cmd='. "$DOTLY_PATH/scripts/core/_main.sh";'
+      preview_cmd+='dot::get_script_src_path "dotbot_yaml_edit.sh"";'
+      preview_cmd+="yaml_file=$yaml_file;"
+      preview_cmd+='echo "Press Tab+Shift to select multiple options.\n'
+      preview_cmd+='Press Ctrl+C to exit with no selection.\n\n'
+      preview_cmd+='Point to file in \"DOTFILES_PATH\":\n'
+      preview_cmd+='\t$(cat "$yaml_file" | dotbot::get_value_of_key_in "link" {})";'
+      restore_links=($(dotbot::get_all_keys_in "link" "$yaml_file" | symlinks::fzf -m --preview "${preview_cmd[*]}" --header "Select link(s) to be restored."))
+    fi
+
+    for restore_link in "${restore_links[@]}"; do
+      symlinks::restore_by_link "$yaml_file" "$restore_link"
+      output::solution "'$restore_link' restored."
+    done
+    ;;
+esac

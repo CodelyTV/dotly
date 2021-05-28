@@ -66,8 +66,6 @@ if [ -z "${origin_link_path:-}" ]; then
   exit 1
 fi
 
-echo "1"
-
 yaml_file="$(symlinks::get_file_path "${yaml_file:-}")"
 
 [[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1

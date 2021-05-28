@@ -94,9 +94,9 @@ symlinks::restore_by_link() {
   link="$(dotbot::create_relative_link "${2:-}")"
   dotfiles_file_path="$(dotbot::get_value_of_key_in "link" "$link" "$yaml_file")"
 
-  dotbot::exec_in_dotbot_path rm -i -rf "$link"
+  dotbot::exec_in_dotbot_path rm -i -f "$link"
   dotbot::exec_in_dotbot_path mv -i "$dotfiles_file_path" "$link"
-  dotbot::exec_in_dotbot_path rmdir -p "$(rmdir -p "$dotfiles_file_path")"
+  dotbot::exec_in_dotbot_path rmdir -p "$(dirname "$dotfiles_file_path")" >/dev/null 2>&1
   dotbot::delete_by_key_in "link" "$link" "$yaml_file"
 }
 
