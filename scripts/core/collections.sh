@@ -18,9 +18,9 @@ coll::contains_element() {
 }
 
 coll::map() {
-   local -r fn="$1"
+  local -r fn="$1"
 
-   for x in $(cat); do
-      "$fn" "$x"
-   done
+  for x in $(cat); do
+    "$fn" "$x"
+  done
 }

@@ -9,7 +9,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##? Usage:
 ##?    short_pwd
 
-if [[ $(pwd) == "$HOME" ]] ; then
+if [[ $(pwd) == "$HOME" ]]; then
   echo "~"
 else
   echo ${${${:-/${(j:/:)${(M)${(s:/:)${(D)PWD:h}}#(|.)[^.]}}/${PWD:t}}//\/~/\~}/\/\//\/}

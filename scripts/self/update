@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+#shellcheck source=/dev/null
 . "$DOTLY_PATH/scripts/core/_main.sh"
 dot::get_script_src_path "update.sh"
 
