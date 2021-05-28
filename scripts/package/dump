@@ -67,15 +67,14 @@ VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta/${HOSTNAME}.txt"
     output::empty_line
 } || package::clarification "${pip_title:-Python}"
 
-if platform::command_exists volta
-then
+if platform::command_exists volta; then
   { 
     package::volta_dump "$VOLTA_DUMP_FILE_PATH" && \
       output::answer "${volta_title:-Volta} apps dumped on $VOLTA_DUMP_FILE_PATH" &&\
       output::empty_line
   } || package::clarification "${volta_title:-Volta}"
-elif platform::command_exists npm
-then
+
+elif platform::command_exists npm; then
   {
     package::npm_dump "$NPM_DUMP_FILE_PATH" && \
       output::answer "${npm_title:-NPM} apps dumped on $NPM_DUMP_FILE_PATH" &&\

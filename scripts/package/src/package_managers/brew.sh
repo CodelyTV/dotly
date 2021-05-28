@@ -26,10 +26,10 @@ brew::update_apps() {
     echo "$outdated_apps" | while IFS= read -r outdated_app; do
       outdated_app_info=$(brew info "$outdated_app")
 
-      app_new_version=$(echo "$outdated_app_info"| head -1 | sed "s|$outdated_app: ||g")
+      app_new_version=$(echo "$outdated_app_info" | head -1 | sed "s|$outdated_app: ||g")
       app_old_version=$(brew list "$outdated_app" --versions | sed "s|$outdated_app ||g")
-      app_info=$(echo "$outdated_app_info"| head -2 | tail -1)
-      app_url=$(echo "$outdated_app_info"| head -3 | tail -1 | head -1)
+      app_info=$(echo "$outdated_app_info" | head -2 | tail -1)
+      app_url=$(echo "$outdated_app_info" | head -3 | tail -1 | head -1)
 
       output::write "🍺 $outdated_app"
       output::write "├ $app_old_version -> $app_new_version"
