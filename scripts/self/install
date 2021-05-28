@@ -218,8 +218,8 @@ output::answer "Installing completions"
 output::answer "Executing custom restore scripts"
 install_scripts_path="$DOTFILES_PATH/restore_scripts"
 if [ -d "$install_scripts_path" ]; then
-  find "$install_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*.sh' |\
-    sort |\
+  find "$install_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*.sh' |
+    sort |
     while read -r install_script; do
       { [[ -x "$install_script" ]] && . "$install_script" | log::file "Executing afterinstall: $(basename "$install_script")"; } || {
         output::error "Install script error in $(basename "$install_script")"

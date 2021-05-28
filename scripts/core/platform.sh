@@ -17,11 +17,11 @@ platform::is_linux() {
 }
 
 platform::is_wsl() {
-  grep -qEi "(Microsoft|WSL|microsoft)" /proc/version &> /dev/null
+  grep -qEi "(Microsoft|WSL|microsoft)" /proc/version &>/dev/null
 }
 
-platform::wsl_home_path(){
-  wslpath "$(wslvar USERPROFILE 2> /dev/null)"
+platform::wsl_home_path() {
+  wslpath "$(wslvar USERPROFILE 2>/dev/null)"
 }
 
 platform::normalize_ver() {
