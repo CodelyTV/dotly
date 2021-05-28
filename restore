@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 set -euo pipefail
 
 ##? Setups the environment
@@ -25,8 +24,8 @@ continue=false
 # Arguments
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --help|-h)
-      cat <<EOF
+  --help | -h)
+    cat <<EOF
 Usage:
    install [-c | --continue]
 
@@ -37,25 +36,24 @@ Options:
                   dotfiles if they exists. Useful if previous restore fails.
 
 EOF
-      exit 0
-      ;;
-    --version|-v)      
-      echo "$SCRIPT_NAME $SCRIPT_VERSION"
-      echo
-      exit 0
-      ;;
-    --continue|-c)
-      continue=true
-      ;;
-    *)
+    exit 0
     ;;
+  --version | -v)
+    echo "$SCRIPT_NAME $SCRIPT_VERSION"
+    echo
+    exit 0
+    ;;
+  --continue | -c)
+    continue=true
+    ;;
+  *) ;;
+
   esac
 done
 
 DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
 export DOTLY_ENV=${DOTLY_ENV:-PROD}
 export DOTLY_INSTALLER=true
-
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -114,10 +112,10 @@ install_brew_osx() {
   fi
 }
 
-package_install () {
+package_install() {
   install_brew_osx #Without this it will try to use apt
   # Because apt that is not package manager exists on macOS
-  
+
   if command_exists dnf; then
     _a "Installing '${*}' using dnf"
     sudo dnf -y install "${*}" >/dev/null 2>&1 | _log "Installing '${*}' using dnf"
@@ -137,7 +135,7 @@ package_install () {
     _e "Could not install '${*}', no package provider found"
     return 1
   fi
-  
+
   return 0
 }
 
@@ -152,7 +150,7 @@ _w
 # install CLT.
 
 _w "Checking if Git is installed"
-if [[ "$OSTYPE" =~ ^[darwin] ]] && ! ls /Library/Developer/CommandLineTools > /dev/null 2>&1; then
+if [[ "$OSTYPE" =~ ^[darwin] ]] && ! ls /Library/Developer/CommandLineTools >/dev/null 2>&1; then
   # In macOS if we do not have CLT then we do not have git. This could be wrong
   # but we will want brew later and if we do not have CLT we can not have brew
   #
@@ -201,68 +199,67 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
   PS3="From where you want to install your dotfiles: "
   options=("GitHub" "Keybase" "Other Git alternative" "Quit")
   GIT_URL=""
-  select opt in "${options[@]}"
-  do
+  select opt in "${options[@]}"; do
     case $opt in
-      "GitHub")
-        _q "👤 Which is your github user? [$USER]" "GITHUB_USER"
-        GITHUB_USER="${GITHUB_USER:-$USER}"
+    "GitHub")
+      _q "👤 Which is your github user? [$USER]" "GITHUB_USER"
+      GITHUB_USER="${GITHUB_USER:-$USER}"
 
-        _q "📦 Which is your github repository? [dotfiles]" "GITHUB_REPOSITORY_NAME"
-        GITHUB_REPOSITORY_NAME="${GITHUB_REPOSITORY_NAME:-dotfiles}"
-        
-        GIT_URL="git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
-        GIT_URL_MIRROR="https://github.com/$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
-        _w "  Remember that if your dotfiles repository is private you"
-        _w "need to generate or restore the ssh key and added to your"
-        _w "github account in:"
-        _w "  - Github > Settings > SSH and GPG Keys > Add new SSH key"
-        _w
-        _pk "continue when ready"
-        break
-        ;;
-      "Keybase")
-        _w "Checking if keybase is installed"
+      _q "📦 Which is your github repository? [dotfiles]" "GITHUB_REPOSITORY_NAME"
+      GITHUB_REPOSITORY_NAME="${GITHUB_REPOSITORY_NAME:-dotfiles}"
 
-        if ! ls /Applications/Keybase.app > /dev/null 2>&1; then
-          _w "Keybase has not been detected. We will try to install it with the package manager."
-          _w "If the installation finish the script re run it to finish the install"
-          
-          package_install keybase || { _e "Keybase could not be installed, try by yourself, do a login and re run this script." && exit 1;  }
-          _s "Keybase is installed"
-          _pk "continue"
-        fi
-        
-        _q "👤 Which is your Keybase user? [$USER]" "KEYBASE_USER"
-        KEYBASE_USER="${KEYBASE_USER:-$USER}"
+      GIT_URL="git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
+      GIT_URL_MIRROR="https://github.com/$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
+      _w "  Remember that if your dotfiles repository is private you"
+      _w "need to generate or restore the ssh key and added to your"
+      _w "github account in:"
+      _w "  - Github > Settings > SSH and GPG Keys > Add new SSH key"
+      _w
+      _pk "continue when ready"
+      break
+      ;;
+    "Keybase")
+      _w "Checking if keybase is installed"
 
-        KEYBASE_REPOSITORY_NAME=""
-        _q "📦 Which is your Keybase repository name? [dotfiles]" "KEYBASE_REPOSITORY_NAME"
-        KEYBASE_REPOSITORY_NAME="${KEYBASE_REPOSITORY_NAME:-"dotfiles"}"
+      if ! ls /Applications/Keybase.app >/dev/null 2>&1; then
+        _w "Keybase has not been detected. We will try to install it with the package manager."
+        _w "If the installation finish the script re run it to finish the install"
 
-        GIT_URL="keybase://private/${KEYBASE_USER}/${KEYBASE_REPOSITORY_NAME}"
-        _w
-        _w "  Remember that you need to start Keybase for the first time and login."
-        _w "  If you don't do this firstly, the installation will fail"
-        _w
-        _pk "continue when ready"
-        _w
-        
-        break
-        ;;
-      "Other Git alternative")
-        while [ -z "$GIT_URL" ]; do
-            _q "👤 Which is your git repo url?" "GIT_URL"
-        done
-        break
-        ;;
-      "Quit")
-        _w "Bye!"
-        exit 0
-        ;;
-      *)
-        echo "invalid option $REPLY"
-        ;;
+        package_install keybase || { _e "Keybase could not be installed, try by yourself, do a login and re run this script." && exit 1; }
+        _s "Keybase is installed"
+        _pk "continue"
+      fi
+
+      _q "👤 Which is your Keybase user? [$USER]" "KEYBASE_USER"
+      KEYBASE_USER="${KEYBASE_USER:-$USER}"
+
+      KEYBASE_REPOSITORY_NAME=""
+      _q "📦 Which is your Keybase repository name? [dotfiles]" "KEYBASE_REPOSITORY_NAME"
+      KEYBASE_REPOSITORY_NAME="${KEYBASE_REPOSITORY_NAME:-"dotfiles"}"
+
+      GIT_URL="keybase://private/${KEYBASE_USER}/${KEYBASE_REPOSITORY_NAME}"
+      _w
+      _w "  Remember that you need to start Keybase for the first time and login."
+      _w "  If you don't do this firstly, the installation will fail"
+      _w
+      _pk "continue when ready"
+      _w
+
+      break
+      ;;
+    "Other Git alternative")
+      while [ -z "$GIT_URL" ]; do
+        _q "👤 Which is your git repo url?" "GIT_URL"
+      done
+      break
+      ;;
+    "Quit")
+      _w "Bye!"
+      exit 0
+      ;;
+    *)
+      echo "invalid option $REPLY"
+      ;;
     esac
   done
 
@@ -278,16 +275,16 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
   if ! $is_cloned && [[ ! -d "$DOTFILES_PATH" ]] && [[ "$opt" == "GitHub" ]]; then
     _a "Attemping: git clone ${GIT_URL_MIRROR} ${DOTFILES_PATH}"
     git clone "$GIT_URL_MIRROR" "$DOTFILES_PATH" 2>&1 | _log "Cloning from $GIT_URL_MIRROR" && is_cloned=true
-    
+
     if $is_cloned; then
       _s "Dotfiles restored."
       _w
       _w "Your dotfiles could not be downloaded using ssh. Were downloaded using https."
       _w
       _q "Do you want to setup remote SSH origin url? [Y/n]" "SSH_REPLY"
-      [[ "${SSH_REPLY:-Y}" =~ ^[Yy] ]] &&\
-        cd "${DOTFILES_PATH}" &&\
-        git remote set-url origin "${GIT_URL}" 2>&1 &&\
+      [[ "${SSH_REPLY:-Y}" =~ ^[Yy] ]] &&
+        cd "${DOTFILES_PATH}" &&
+        git remote set-url origin "${GIT_URL}" 2>&1 &&
         _s "SSH Remote was set."
     else
       _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
@@ -327,15 +324,14 @@ sudo -v
 }
 _a "🎉 dotfiles restored! 🎉"
 
-
 # Installing packages
 _q "📦 Do you want to import previous installed packages? [Y/n]" "USER_IMPORT_PACKAGES"
 if [[ "${USER_IMPORT_PACKAGES:-Y}" =~ ^[Yy] ]]; then
   _w "Importing your packages"
   _w "This can take a very long time, be patient...🙏"
-  { 
-    "$DOTLY_PATH/bin/dot" package import >/dev/null 2>&1 | _log "Importing user packages" &&\
-      _a "Packages imported 👏" &&\
+  {
+    "$DOTLY_PATH/bin/dot" package import >/dev/null 2>&1 | _log "Importing user packages" &&
+      _a "Packages imported 👏" &&
       _w
   } || {
     _e "📦 Packages import fail"
@@ -353,10 +349,10 @@ if [[ "$OSTYPE" =~ ^[darwin] ]]; then
   _w "IMPORTANT! This overwrite all your current configuration if you answer with 'y'"
   _w
   _q "⚙️ Do you want to import stored macOS configuration? [y/N]" "USER_OSX_SETTINGS"
-  { 
-    [[ "${USER_OSX_SETTINGS:-N}" =~ ^[Yy] ]] &&\
-      "$DOTLY_PATH/bin/dot" mac defaults import >/dev/null 2>&1 | _log "Importing macOS user defaults" &&\
-      _w "⚙️ Mac defaults imported 🤙" &&\
+  {
+    [[ "${USER_OSX_SETTINGS:-N}" =~ ^[Yy] ]] &&
+      "$DOTLY_PATH/bin/dot" mac defaults import >/dev/null 2>&1 | _log "Importing macOS user defaults" &&
+      _w "⚙️ Mac defaults imported 🤙" &&
       _w
   } || {
     _e "⚙️ Mac defaults could not be imported"

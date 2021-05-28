@@ -96,22 +96,22 @@ if ! command_exists git; then
     _a "Installing using pacman"
     sudo pacman -S --noconfirm git 2>&1 | _log "Installing git"
   else
-      case "$OSTYPE" in
-        darwin*)
-          _a "Checking if Command Line Tools are installed 🕵️‍♂️"
+    case "$OSTYPE" in
+    darwin*)
+      _a "Checking if Command Line Tools are installed 🕵️‍♂️"
 
-          xcode-select --install 2>&1 | grep installed > /dev/null
-          if [[ $? ]]; then
-            _a "Installing Command Line Tools 📺"
-            xcode-select --install
-            _q "Press a key after command line tools has finished to continue...👇" "CLT_INSTALLED"
-          fi
-          ;;
-        *)
-          _e "Could not install git, no package provider found"
-          exit 1
-          ;;
-      esac
+      xcode-select --install 2>&1 | grep installed >/dev/null
+      if [[ $? ]]; then
+        _a "Installing Command Line Tools 📺"
+        xcode-select --install
+        _q "Press a key after command line tools has finished to continue...👇" "CLT_INSTALLED"
+      fi
+      ;;
+    *)
+      _e "Could not install git, no package provider found"
+      exit 1
+      ;;
+    esac
   fi
 fi
 
