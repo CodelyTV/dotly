@@ -82,7 +82,7 @@ dotly_install_symlinks() {
   [[ ! -f "$CONFIG" ]] && return
 
   echo
-  "$DOTLY_PATH/modules/dotbot/bin/dotbot" "$@" "$CONFIG"
+  "$DOTLY_PATH/modules/dotbot/bin/dotbot" "$@" "$CONFIG" || true
   echo
 }
 
@@ -95,6 +95,11 @@ fi
 
 ! platform::command_exists docpars && output::error "docpars not installed, installing" && "$DOTLY_PATH/bin/dot" package install docpars | log::file "Installing docpars"
 ! platform::command_exists delta && output::error "delta not installed, installing" && "$DOTLY_PATH/bin/dot" package install git-delta | log::file "Installing git delta"
+! platform::command_exists fzf && installer::install_fzf
+! platform::command_exists zsh && installer::install_zsh
+! platform::command_exists yq && output::error "yq not installed, installing" && installer::install_yq | log::file "Installing yq"
+! platform::command_exists jq && output::error "jq not installed, installing" && "$DOTLY_PATH/bin/dot" package install jq | log::file "Installing yq"
+! platform::command_exists sponge && installer::install_moreutils
 
 ##? Install dotly and setup dotfiles
 ##?
@@ -112,8 +117,6 @@ docs::parse "$@"
 
 output::answer "Creating dotfiles structure"
 "$DOTLY_PATH/bin/dot" dotfiles create | log::file "Creating dotfiles structure" || exit 1
-
-set +e # Avoid exit if fail a script because dot symlinks apply could fail
 
 # Which yaml files
 yaml_files=("conf.yaml")
@@ -144,37 +147,43 @@ for yaml_file in "${yaml_files[@]}"; do
   dotly_install_symlinks "$yaml_file" "${_args[@]}"
 done
 
-# Make a backup of existing current dotfiles
-if ! ${always_backup:-} &&\
-   ! ${never_backup:-} &&\
-   output::yesno "Do you want to perform a backup of your current existing dotfiles if they exists"
-then
-  always_backup=true
-fi
+if platform::command_exists yq && platform::command_exists jq; then
+  # Make a backup of existing current dotfiles
+  if ! ${always_backup:-} &&\
+    ! ${never_backup:-} &&\
+    output::yesno "Do you want to perform a backup of your current existing dotfiles if they exists"
+  then
+    always_backup=true
+  fi
 
-if ${always_backup:-false}; then
-  rename_suffix=$(date +%s)
+  if ${always_backup:-false}; then
+    rename_suffix=$(date +%s)
 
-  for yaml_file in "${yaml_files[@]}"; do
-    yaml_file="$(symlinks::get_file_path "$yaml_file")"
+    for yaml_file in "${yaml_files[@]}"; do
+      yaml_file="$(symlinks::get_file_path "$yaml_file")"
 
-    [[ ! -f "$yaml_file" ]] && continue
-    links=($(dotbot::get_all_keys_in "link" "$(symlinks::get_file_path "$yaml_file")"))
+      [[ ! -f "$yaml_file" ]] && continue
+      links=($(dotbot::get_all_keys_in "link" "$(symlinks::get_file_path "$yaml_file")"))
 
-    for link in "${links[@]}"; do
-      link="$(eval realpath -q -m -s "$link")"
+      for link in "${links[@]}"; do
+        link="$(eval realpath -q -m -s "$link")"
 
-      if [[ -f "$link" ]]; then
-        if ! ${quiet_symlinks:-} &&
-          ! output::yesno "File '$link' exists. Do you want to backup it"
-        then
-          continue
+        if [[ -f "$link" ]]; then
+          if ! ${quiet_symlinks:-} &&
+            ! output::yesno "File '$link' exists. Do you want to backup it"
+          then
+            continue
+          fi
+
+          backup_and_warn_if_exists "$link" "$rename_suffix"
         fi
-
-        backup_and_warn_if_exists "$link" "$rename_suffix"
-      fi
+      done
     done
-  done
+  fi
+else
+  output::error "🚨 Backup can not be performed because \`yq\` or \`jq\` commands are not available."
+  output::error "If you continue be sure to make a backup first of you existing .bashrc, .zshrc and any other shell files."
+  output::yesno "Do you want to continue now" || exit 5
 fi
 
 # Apply user symlinks
@@ -185,11 +194,6 @@ else
   "$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks" || output::clarification "Error applying symlinks, see `dot self backup`"
 fi
 touch "$HOME/.z"
-
-! platform::command_exists fzf && installer::install_fzf
-! platform::command_exists zsh && installer::install_zsh
-! platform::command_exists jq && installer::install_jq
-! platform::command_exists sponge && installer::install_moreutils
 
 if ! str::contains zsh "$SHELL"; then
   output::answer "Setting zsh as the default shell"

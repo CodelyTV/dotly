@@ -58,13 +58,6 @@ installer::install_yq() {
     }
   fi
 
-  if platform::command_exists docker >/dev/null 2>&1; then
-    docker pull mikefarah/yq || {
-      output::error "Could not install yq!"
-      exit 5
-    }
-  fi
-
   output::solution "yq successfully installed!"
 }
 
