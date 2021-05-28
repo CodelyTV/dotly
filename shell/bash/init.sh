@@ -12,15 +12,9 @@ fi
 
 PATH=$(
   IFS=":"
-  echo "${path[*]}"
+  echo "${path[*]:-}"
 )
 export PATH
-
-# Aliases
-[[ -f "$DOTFILES_PATH/shell/aliases.sh" ]] && . "$DOTFILES_PATH/shell/aliases.sh"
-
-# Functions
-[[ -f "$DOTFILES_PATH/shell/functions.sh" ]] && . "$DOTFILES_PATH/shell/functions.sh"
 
 themes_paths=(
   "$DOTFILES_PATH/shell/bash/themes"
@@ -30,32 +24,35 @@ themes_paths=(
 # bash completion
 export BASH_COMPLETION_COMPAT_DIR="/usr/local/etc/bash_completion.d"
 if [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
-    . "/usr/local/etc/profile.d/bash_completion.sh"
+  #shellcheck source=/dev/null
+  . "/usr/local/etc/profile.d/bash_completion.sh"
 fi
 
 # brew Bash completion
 if type brew &>/dev/null; then
   HOMEBREW_PREFIX="$(brew --prefix)"
   if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+    #shellcheck source=/dev/null
     . "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
   else
     for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+      #shellcheck source=/dev/null
       [[ -r "$COMPLETION" ]] && . "$COMPLETION"
     done
   fi
 fi
+unset COMPLETION
 
+#shellcheck disable=SC2068
 for THEME_PATH in ${themes_paths[@]}; do
   THEME_PATH="${THEME_PATH}/${DOTLY_THEME:-codely}.sh"
+  #shellcheck source=/dev/null
   [ -f "$THEME_PATH" ] && . "$THEME_PATH" && break
 done
+unset THEME_PATH
 
-for bash_file in "$DOTLY_PATH"/shell/bash/completions/_*; do
-  . "$bash_file"
+find {"$DOTLY_PATH","$DOTFILES_PATH"}"/shell/bash/completions/" -name "_*" -print0 -exec echo {} \; 2>/dev/null | xargs -I _ echo _ | while read -r completion; do
+  #shellcheck source=/dev/null
+  . "$completion" || echo -e "\033[0;31mBASH completion '$completion' could not be loaded\033[0m"
 done
-
-if [ -n "$(ls -A "$DOTFILES_PATH/shell/bash/completions/")" ]; then
-  for bash_file in "$DOTFILES_PATH"/shell/bash/completions/_*; do
-    . "$bash_file"
-  done
-fi
+unset completion
