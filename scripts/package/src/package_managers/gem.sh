@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 gem::update_all() {
- outdated=$(gem outdated)
+  outdated=$(gem outdated)
 
   if [ -n "$outdated" ]; then
     echo "$outdated" | while IFS= read -r outdated_app; do

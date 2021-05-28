@@ -54,11 +54,11 @@ fi
 docs::parse "$@"
 
 output::answer "Creating dotfiles structure"
-"$DOTLY_PATH/bin/dot" dotfiles create | log::file "Creating dotfiles structure"
+"$DOTLY_PATH/bin/dot" dotfiles create | log::file "Creating dotfiles structure" || exit 1
 
 # @todo Backup if exists before
 output::answer "Setting up symlinks"
-"$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks"
+"$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks" || true
 touch "$HOME/.z"
 
 ! platform::command_exists fzf && installer::install_fzf
@@ -75,3 +75,14 @@ zsh "$ZIM_HOME/zimfw.zsh" install | log::file "Installing zim"
 output::answer "Installing completions"
 "$DOTLY_PATH/bin/dot" shell zsh reload_completions
 
+output::answer "Executing custom restore scripts"
+install_scripts_path="$DOTFILES_PATH/restore_scripts"
+if [ -d "$install_scripts_path" ]; then
+  find "$install_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*.sh' |
+    sort |
+    while read -r install_script; do
+      { [[ -x "$install_script" ]] && . "$install_script" | log::file "Executing afterinstall: $(basename "$install_script")"; } || {
+        output::error "Install script error in $(basename "$install_script")"
+      }
+    done
+fi
