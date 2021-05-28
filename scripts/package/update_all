@@ -10,8 +10,6 @@ source "$DOTLY_PATH/scripts/package/src/package_managers/mas.sh"
 source "$DOTLY_PATH/scripts/package/src/package_managers/npm.sh"
 source "$DOTLY_PATH/scripts/package/src/package_managers/pip.sh"
 
-output::h2 "ey"
-exit
 ##? Update all packages
 ##?
 ##? Usage:
