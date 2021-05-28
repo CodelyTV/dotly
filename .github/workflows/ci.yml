@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-
+    name: 🚀 Build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -41,3 +41,20 @@ jobs:
           echo "DOTLY_BRANCH: $DOTLY_BRANCH"
           echo "DOTLY_ENV: $DOTLY_ENV"
           cat "$HOME/dotly.log"
+
+  lint:
+    runs-on: ubuntu-latest
+    name: 💅 Lint
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: 📥 Install shfmt
+        run: go get mvdan.cc/sh/v3/cmd/shfmt
+
+      - name: 💅 Lint bash files
+        run: |
+          grep "env bash" . -R |
+            grep -v "./modules/" |
+            grep -v "./.github/" |
+            awk -F':' '{print $1}' |
+            xargs "$HOME/go/bin/shfmt" -i 2 -d
