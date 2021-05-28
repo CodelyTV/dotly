@@ -1,18 +1,36 @@
 #!/usr/bin/env zsh
 
-FIRST_CHARACTER_OK="▶"
-FIRST_CHARACTER_KO="▶"
-DIRTY="✗"
-NONE="✓"
+CODELY_THEME_MINIMAL=${CODELY_THEME_MINIMAL:-false}
+CODELY_THEME_MODE=${CODELY_THEME_MODE:-"dark"}
 
+status_icon_ok="▸"
+status_icon_ko="▪"
+git_no_changes_status="✓"
+git_dirty_status="✗"
+
+if [ "$CODELY_THEME_MODE" = "dark" ]; then
+  git_branch_color="green"
+  git_dirty_status_color="yellow"
+  git_no_changes_status_color="white"
+  git_on_branch_color="white"
+  pwd_color="yellow"
+  status_icon_color="white"
+else
+  git_branch_color="black"
+  git_dirty_status_color="magenta"
+  git_no_changes_status_color="green"
+  git_on_branch_color="green"
+  pwd_color="black"
+  status_icon_color="black"
+fi
 
 prompt_codely_pwd() {
   local -r prompt_short_dir=$("$DOTLY_PATH/bin/dot" core short_pwd)
-  print -n "%F{yellow}${prompt_short_dir}"
+  print -n "%F{$pwd_color}${prompt_short_dir}"
 }
 
 prompt_codely_git() {
-  [[ -n ${git_info} ]] && print -n "%F{white} on${(e)git_info[prompt]}"
+  [[ -n ${git_info} ]] && print -n "%F{$git_on_branch_color} on${(e)git_info[prompt]}"
 }
 
 prompt_codely_precmd() {
@@ -20,22 +38,22 @@ prompt_codely_precmd() {
 }
 
 prompt_codely_setup() {
-  local prompt_codely_status='%(?:%F{green}{%F{white}▸%F{green}}:%F{red}{%F{white}▪%F{red}})'
+  local prompt_codely_status="%(?:%F{green}{%F{$status_icon_color}$status_icon_ok%F{green}}:%F{red}{%F{$status_icon_color}$status_icon_ko%F{red}})"
 
   autoload -Uz add-zsh-hook && add-zsh-hook precmd prompt_codely_precmd
 
   prompt_opts=(cr percent sp subst)
 
-  zstyle ':zim:git-info:branch' format '%F{green}%b'
-  zstyle ':zim:git-info:commit' format '%c'
-  zstyle ':zim:git-info:clean' format '%F{white}$NONE'
-  zstyle ':zim:git-info:dirty' format '%F{yellow}$DIRTY'
-  zstyle ':zim:git-info:keys' format 'prompt' ' %F{cyan}%b%c %C%D'
+  zstyle ':zim:git-info:branch' format "%F{$git_branch_color}%b"
+  zstyle ':zim:git-info:commit' format "%c"
+  zstyle ':zim:git-info:clean' format "%F{$git_no_changes_status_color}$git_no_changes_status"
+  zstyle ':zim:git-info:dirty' format "%F{$git_dirty_status_color}$git_dirty_status"
+  zstyle ':zim:git-info:keys' format "prompt" " %F{cyan}%b%c %C%D"
 
-  if [ -z "$CODELY_THEME_MINIMAL" ]; then
-    PS1="${prompt_codely_status} \$(prompt_codely_pwd)\$(prompt_codely_git)%f "
-  else
+  if [ "$CODELY_THEME_MINIMAL" = true ]; then
     PS1="${prompt_codely_status} "
+  else
+    PS1="${prompt_codely_status} \$(prompt_codely_pwd)\$(prompt_codely_git)%f "
   fi
 
   RPS1=''
