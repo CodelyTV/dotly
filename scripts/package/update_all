@@ -34,5 +34,7 @@ docs::parse "$@"
 installer::install_yq
 [[ -f "$HOME/bin/yq" ]] && files::check_if_path_is_older "$HOME/bin/yq" "30" "days" && output::h2 "🛠 Update yq tool" && installer::update_in_home
 
+output::h2 "Zim Framework" && sudo zsh "$DOTLY_PATH/modules/zimfw/zimfw.zsh" upgrade 2>&1 | log::file "Updating Zim"
+
 output::empty_line
 output::solution '👌 All your packages have been successfully updated'

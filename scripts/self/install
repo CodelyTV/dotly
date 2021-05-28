@@ -111,7 +111,7 @@ fi
 docs::parse "$@"
 
 output::answer "Creating dotfiles structure"
-"$DOTLY_PATH/bin/dot" dotfiles create | log::file "Creating dotfiles structure"
+"$DOTLY_PATH/bin/dot" dotfiles create | log::file "Creating dotfiles structure" || exit 1
 
 set +e # Avoid exit if fail a script because dot symlinks apply could fail
 
@@ -210,6 +210,18 @@ fi
 output::empty_line
 output::answer "Installing completions"
 "$DOTLY_PATH/bin/dot" shell zsh reload_completions || output::error "Error reloading completions"
+
+output::answer "Executing custom restore scripts"
+install_scripts_path="$DOTFILES_PATH/restore_scripts"
+if [ -d "$install_scripts_path" ]; then
+  find "$install_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*.sh' |\
+    sort |\
+    while read -r install_script; do
+      { [[ -x "$install_script" ]] && . "$install_script" | log::file "Executing afterinstall: $(basename "$install_script")"; } || {
+        output::error "Install script error in $(basename "$install_script")"
+      }
+    done
+fi
 
 output::empty_line
 output::solution "🏁 Now restart your terminal to finish the installation"
