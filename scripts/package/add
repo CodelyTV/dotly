@@ -40,14 +40,14 @@ platform::command_exists "$package_name" && log::success "$package_name already 
 
 if [ -z "$skip_recipe" ] && registry::install "$package_name"; then
   output::write "✅ \`$package_name\` installed"
-  exit 0
+  return 0
 else
   if platform::is_macos; then
     for package_manager in brew mas ports cargo; do
       package::install $package_manager "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager" || true
 
       if platform::command_exists "$package_name"; then
-        exit 0
+        return 0
       fi
     done
   else
@@ -55,10 +55,10 @@ else
       package::install $package_manager "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager" || true
 
       if platform::command_exists "$package_name"; then
-        exit 0
+        return 0
       fi
     done
   fi
 fi
 
-exit 2
+return 2
