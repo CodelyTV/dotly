@@ -6,8 +6,7 @@ source "$DOTLY_PATH/scripts/package/recipes/_registry.sh"
 ##? Install a package
 ##?
 ##? Usage:
-##?    add <package_name>
-##?    add -s | --skip-recipe
+##?    add <package_name> [--skip-recipe]
 ##?
 if ! ${DOTLY_INSTALLER:-false}; then
   docs::parse "$@"
