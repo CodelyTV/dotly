@@ -44,10 +44,9 @@ if [ -z "$skip_recipe" ] && registry::install "$package_name"; then
 else
   if platform::is_macos; then
     for package_manager in brew mas ports cargo; do
-      install_command_output=$(package::install $package_manager "$package_name")
-      install_command_exit_code=$?
+      package::install $package_manager "$package_name" || true
 
-      if [ $install_command_exit_code -eq 0 ]; then
+      if platform::command_exists "$package_name"; then
         exit 0
       fi
     done
