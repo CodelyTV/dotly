@@ -20,7 +20,11 @@ dotfiles::apply_templating() {
   )
 
   for file in "${tpl_files[@]}"; do
+<<<<<<< HEAD
     templating::replace "$file" --dotfiles-path="${DOTFILES_PATH//$HOME/\$HOME}" 
+=======
+    templating::replace "$file" --dotfiles-path="$DOTFILES_PATH" 
+>>>>>>> eaabc09 (Added some core functions:)
   done
 }
 
