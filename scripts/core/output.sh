@@ -26,11 +26,12 @@ output::error() { output::answer "${red}$1${normal}"; }
 output::solution() { output::answer "${green}$1${normal}"; }
 output::question() {
   with_code_parsed=$(_output::parse_code "$1")
+  variable_name="$2"
 
   if [ "${DOTLY_ENV:-PROD}" == "CI" ]; then
-    echo "y" | read -rp "🤔 $with_code_parsed: " "$2"
+    echo "y" | read -rp "🤔 $with_code_parsed: " "${variable_name?}"
   else
-    read -rp "🤔 $with_code_parsed: " "$2"
+    read -rp "🤔 $with_code_parsed: " "${variable_name?}"
   fi
 }
 
