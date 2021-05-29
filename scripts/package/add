@@ -62,11 +62,6 @@ else
     done
   else
     for package_manager in apt dnf yum brew pacman cargo; do
-
-      if [ "$package_manager" == "cargo" ] && ! platform::command_exists "$package_manager" && [ -d "$HOME/.cargo" ]; then
-        source "$HOME/.cargo/env"
-      fi
-
       package::install $package_manager "$package_name" 2>&1 | log::file "2Trying to install $package_name using $package_manager"
 
       if platform::command_exists "$package_name"; then
