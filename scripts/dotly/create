@@ -14,7 +14,7 @@ dot::get_script_src_path "templating.sh"
 ##? Usage:
 ##?   create [-h | --help]
 ##?   create [-v | --version]
-##?   create [-c | --core] [-s | --sample] [--author <author>] [--email <email] <context> <script_name> [<script_description>...]
+##?   create [-c | --core] [-s | --sample] [--author <author>] [--email <email>] <context> <script_name> [<script_description>...]
 ##?
 ##? Options:
 ##?   -h --help          Show this help
@@ -49,7 +49,7 @@ if [[ -z "${context:-}" ]] || [[ -z "${script_name:-}" ]]; then
   exit 1
 fi
 
-SCRIPT_TEMPLATE_PATH="$(dot::get_full_script_path)/src/templates/script"
+SCRIPT_TEMPLATE_PATH="$(dot::get_script_path)/src/templates/script"
 
 # Path variables
 if ${core:-}; then
