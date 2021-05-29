@@ -15,6 +15,7 @@ script::depends_on() {
 
       "$DOTLY_PATH/bin/dot" package add "$non_existing_command"
     else
+      echo "answer is not yes" | log::file "Debug 6.2"
       output::write "🙅‍ The script can't be ran without \`$non_existing_command\` being installed before."
       exit 1
     fi
