@@ -7,7 +7,7 @@ source "$DOTLY_PATH/scripts/self/utils/install.sh"
 
 export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 
-echo "dot self install" | _log "Debug 1"
+echo "dot self install" | log::file "Debug 1"
 
 installer::install_zsh() {
   output::error "zsh not installed, installing"
@@ -27,18 +27,18 @@ installer::install_fzf() {
   fi
 }
 
-echo "dot self install" | _log "Debug 2"
+echo "dot self install" | log::file "Debug 2"
 
 if platform::is_macos; then
   output::answer "🍎 Setting up macOS platform"
   install_macos_custom
 fi
 
-echo "dot self install" | _log "Debug 3"
+echo "dot self install" | log::file "Debug 3"
 
 script::depends_on docpars
 
-echo "dot self install" | _log "Debug 4"
+echo "dot self install" | log::file "Debug 4"
 
 ##? Install dotly and setup dotfiles
 ##?

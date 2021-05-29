@@ -30,6 +30,14 @@ output::question() {
   read -rp "🤔 $with_code_parsed: " "$2"
 }
 
+output::answer_is_yes() {
+  if [[ "${1:-Y}" =~ ^[Yy] ]] || [ "${DOTLY_ENV:-PROD}" == "CI" ]; then
+    return 0
+  fi
+
+  return 1
+}
+
 output::empty_line() { echo ''; }
 
 output::header() {
