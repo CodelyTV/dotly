@@ -5,10 +5,10 @@ script::depends_on() {
   non_existing_commands=$(coll::filter command_not_exists "$@")
 
   for non_existing_command in $non_existing_commands; do
-    output::question "\`$non_existing_command\` is a dependency of this script. Should this be installed? [Y/n]" "has_to_install"
+    has_to_install=$(output::question "\`$non_existing_command\` is a dependency of this script. Should this be installed? [Y/n]")
 
-    if [[ "${has_to_install:-Y}" =~ ^[Yy] ]]; then
-      dot package install "$non_existing_command"
+    if output::answer_is_yes "$has_to_install"; then
+      "$DOTLY_PATH/bin/dot" package add "$non_existing_command"
     else
       output::write "🙅‍ The script can't be ran without \`$non_existing_command\` being installed before."
       exit 1
