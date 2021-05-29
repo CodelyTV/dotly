@@ -51,6 +51,15 @@ EOF
   esac
 done
 
+# TODO iCloud
+ICLOUD_PATH="$HOME/Library/Mobile\ Documents/com~apple~CloudDocs/"
+IS_ICLOUD_DOTFILES=false
+
+# Check OSX
+# Offer restoration from iCloud
+# fzf iCloud subfolders
+# Create a symbolic link in $HOME/.dotfiles
+# Execute dot self install and all other stuff
 DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
 export DOTLY_ENV=${DOTLY_ENV:-PROD}
 export DOTLY_INSTALLER=true
@@ -197,7 +206,12 @@ fi
 if [[ ! -d "$DOTFILES_PATH" ]]; then
   # Menu to select from where you want to restore your files
   PS3="From where you want to install your dotfiles: "
-  options=("GitHub" "Keybase" "Other Git alternative" "Quit")
+  if [[ "$OSTYPE" =~ ^[darwin] ]]; then
+    options=("GitHub" "Keybase" "Other Git alternative" "iCloud" "Quit")
+  else
+    options=("GitHub" "Keybase" "Other Git alternative" "Quit")
+  fi
+  
   GIT_URL=""
   select opt in "${options[@]}"; do
     case $opt in
@@ -253,6 +267,17 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
       done
       break
       ;;
+    "iCloud")
+      _q "Which is the name of your iCloud dotfiles folder? [.dotfiles]" "ICLOUD_DOTFILES_PATH_NAME"
+      ICLOUD_DOTFILES_PATH="$ICLOUD_PATH/${ICLOUD_DOTFILES_PATH_NAME:-.dotfiles}"
+      DOTFILES_PATH="$HOME/$ICLOUD_DOTFILES_PATH_NAME"
+      
+      if [[ ! -d "$ICLOUD_DOTFILES_PATH" ]]; then
+        _e "Dotfiles folder were not found in iCloud Drive"
+        exit 5
+      fi
+      ln -s "$ICLOUD_DOTFILES_PATH" "$DOTFILES_PATH"
+      ;;
     "Quit")
       _w "Bye!"
       exit 0
@@ -263,40 +288,42 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
     esac
   done
 
-  # Recovering your files
-  _w "Installing your dotfiles from $opt"
-  _a "Attemping: git clone ${GIT_URL} ${DOTFILES_PATH}"
-  is_cloned=false
-  git clone "${GIT_URL}" "${DOTFILES_PATH}" 2>&1 | _log "Cloning from $GIT_URL" && is_cloned=true
+  if [[ ${IS_ICLOUD_DOTFILES:-false} != false ]]; then
+    # Recovering your files
+    _w "Installing your dotfiles from $opt"
+    _a "Attemping: git clone ${GIT_URL} ${DOTFILES_PATH}"
+    is_cloned=false
+    git clone "${GIT_URL}" "${DOTFILES_PATH}" 2>&1 | _log "Cloning from $GIT_URL" && is_cloned=true
 
-  # This because maybe you do not have yet your ssh-keys because you did not download
-  # your dotfiles. And SSH URL for repository would be the default method using a
-  # repository that you can write.
-  if ! $is_cloned && [[ ! -d "$DOTFILES_PATH" ]] && [[ "$opt" == "GitHub" ]]; then
-    _a "Attemping: git clone ${GIT_URL_MIRROR} ${DOTFILES_PATH}"
-    git clone "$GIT_URL_MIRROR" "$DOTFILES_PATH" 2>&1 | _log "Cloning from $GIT_URL_MIRROR" && is_cloned=true
+    # This because maybe you do not have yet your ssh-keys because you did not download
+    # your dotfiles. And SSH URL for repository would be the default method using a
+    # repository that you can write.
+    if ! $is_cloned && [[ ! -d "$DOTFILES_PATH" ]] && [[ "$opt" == "GitHub" ]]; then
+      _a "Attemping: git clone ${GIT_URL_MIRROR} ${DOTFILES_PATH}"
+      git clone "$GIT_URL_MIRROR" "$DOTFILES_PATH" 2>&1 | _log "Cloning from $GIT_URL_MIRROR" && is_cloned=true
 
-    if $is_cloned; then
-      _s "Dotfiles restored."
-      _w
-      _w "Your dotfiles could not be downloaded using ssh. Were downloaded using https."
-      _w
-      _q "Do you want to setup remote SSH origin url? [Y/n]" "SSH_REPLY"
-      [[ "${SSH_REPLY:-Y}" =~ ^[Yy] ]] &&
-        cd "${DOTFILES_PATH}" &&
-        git remote set-url origin "${GIT_URL}" 2>&1 &&
-        _s "SSH Remote was set."
-    else
+      if $is_cloned; then
+        _s "Dotfiles restored."
+        _w
+        _w "Your dotfiles could not be downloaded using ssh. Were downloaded using https."
+        _w
+        _q "Do you want to setup remote SSH origin url? [Y/n]" "SSH_REPLY"
+        [[ "${SSH_REPLY:-Y}" =~ ^[Yy] ]] &&
+          cd "${DOTFILES_PATH}" &&
+          git remote set-url origin "${GIT_URL}" 2>&1 &&
+          _s "SSH Remote was set."
+      else
+        _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
+        exit 1
+      fi
+    elif ! $is_cloned || [[ ! -d "$DOTFILES_PATH" ]]; then
       _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
       exit 1
     fi
-  elif ! $is_cloned || [[ ! -d "$DOTFILES_PATH" ]]; then
-    _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
-    exit 1
-  fi
 
-  _s "Dotfiles cloned successfully."
-  _w
+    _s "Dotfiles cloned successfully."
+    _w
+  fi
 fi
 
 # Update DOTLY submodule
