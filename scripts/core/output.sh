@@ -15,10 +15,9 @@ _output::parse_code() {
 }
 
 output::write() {
+  local with_code_parsed
   local -r text="${*:-}"
-
   with_code_parsed=$(_output::parse_code "$text")
-
   echo -e "$with_code_parsed"
 }
 output::answer() { output::write " > ${*:-}"; }
@@ -26,9 +25,8 @@ output::error() { output::answer "${red}${*:-}${normal}"; }
 output::solution() { output::answer "${green}${*:-}${normal}"; }
 output::question() {
   local with_code_parsed
-  with_code_parsed=$(_output::parse_code "$1")
-
-  [ "${DOTLY_ENV:-PROD}" != "CI" ] && [[ $# -ne 2 ]] && return 1
+  with_code_parsed=$(_output::parse_code "$*")
+  [[ $# -ne 2 ]] && return 1
 
   if [ "${DOTLY_ENV:-PROD}" == "CI" ] || [ "${DOTLY_INSTALLER:-false}" = true ]; then
     answer="y"
@@ -78,8 +76,20 @@ output::yesno() {
 
 output::empty_line() { echo ''; }
 
-output::header() { output::empty_line; output::write "${bold_blue}---- ${*:-} ----${normal}"; }
+output::header() {
+  output::empty_line
+  output::write "${bold_blue}---- ${*:-} ----${normal}"
+}
 output::h1_without_margin() { output::write "${bold_blue}# ${*:-}${normal}"; }
-output::h1() { output::empty_line; output::h1_without_margin "${*:-}"; }
-output::h2() { output::empty_line; output::write "${bold_blue}## ${*:-}${normal}"; }
-output::h3() { output::empty_line; output::write "${bold_blue}### ${*:-}${normal}"; }
+output::h1() {
+  output::empty_line
+  output::h1_without_margin "${*:-}"
+}
+output::h2() {
+  output::empty_line
+  output::write "${bold_blue}## ${*:-}${normal}"
+}
+output::h3() {
+  output::empty_line
+  output::write "${bold_blue}### ${*:-}${normal}"
+}
