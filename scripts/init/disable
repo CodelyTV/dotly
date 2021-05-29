@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+#shellcheck source=/dev/null
+. "$DOTLY_PATH/scripts/core/_main.sh"
+dot::get_script_src_path "init.sh"
+
+##? Disable init scripts
+##? 
+##?
+##? Usage:
+##?   disable [-h | --help]
+##?   disable [-v | --version]
+##?   disable [<script_name>]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+docs::parse "$@"
+
+SCRIPT_NAME="dot init disable"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+if [[ ${DOTLY_INIT_SCRIPTS:-true} != true ]]; then
+  output::error "Init scripts are disabled"
+  exit 1
+fi
+
+# Get the scripts
+#shellcheck disable=SC2207
+enabled_scripts=($(init::get_enabled))
+
+# If there is script_name
+if [[ -n "${script_name:-}" ]]; then
+  status=0
+  if init::exists_script "$script_name"; then
+    init::disable "$script_name"
+    if ! init::status "$script_name"; then
+      output::solution "Disabled '$script_name'"
+    fi
+
+    init::status "$script_name" && output::error "Could not be disabled." && status=1
+  else
+    output::error "$script_name does not exists."
+    status=1
+  fi
+
+  exit $status
+fi
+
+# If there is no script_name
+# If there are no enabled scripts or nothing to be disabled, exit
+if [[ -n "${enabled_scripts[*]:-}" ]]; then
+  #shellcheck disable=SC2207
+  to_disable=($(printf "%s\n" "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to disable from init terminal"))
+else
+  output::answer "Nothing to be disabled"
+fi
+
+[[ -z "${to_disable[*]:-}" ]] && exit 0
+
+for item in "${to_disable[@]}"; do
+
+  init::disable "$item"
+
+  if ! init::status "$item"; then
+    output::solution "Init script '$item'... Disabled"
+  else
+    output::error "Init script '$item'... Could not be disabled."
+  fi
+
+done
