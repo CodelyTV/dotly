@@ -64,14 +64,13 @@ export PATH
 #shellcheck source=/dev/null
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
+
 # Auto Init scripts at the end
-if ${DOTLY_NO_INIT_SCRIPTS:-}; then
-  init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
-  mkdir -p "$init_scripts_path"
+init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
+if [[ ${DOTLY_INIT_SCRIPTS:-true} == true ]] && [[ -d "$init_scripts_path" ]]; then
   find "$DOTFILES_PATH/shell/init-scripts.enabled" -mindepth 1 -maxdepth 1 -type f,l -print0 -exec echo {} \; 2>/dev/null | xargs -I _ echo _ | while read -r init_script; do
     #shellcheck source=/dev/null
-    init_script="$(realpath --logical "$init_script")"
-    [[ -f "$init_script" ]] && . "$init_script" || echo -e "\033[0;31mInit Script: '$init_script' could not be loaded\033[0m"
+    . "$init_script" || echo -e "\033[0;31m$init_script could not be loaded\033[0m"
   done
-  unset init_script init_scripts_path
 fi
+unset init_script init_scripts_path
