@@ -39,7 +39,7 @@ skip_recipe="$2"
 platform::command_exists "$package_name" && log::success "$package_name already installed" && exit 0
 
 if [ -z "$skip_recipe" ] && registry::install "$package_name"; then
-  output::write "\`$package_name!\` installed!"
+  output::write "✅ \`$package_name\` installed"
   exit 0
 else
   if platform::is_macos; then
