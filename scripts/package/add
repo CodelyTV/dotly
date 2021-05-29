@@ -6,8 +6,7 @@ source "$DOTLY_PATH/scripts/package/recipes/_registry.sh"
 ##? Install a package
 ##?
 ##? Usage:
-##?    add <package_name>
-##?    add -s | --skip-recipe
+##?    add <package_name> [--skip-recipe]
 ##?
 if ! ${DOTLY_INSTALLER:-false}; then
   docs::parse "$@"
@@ -40,6 +39,8 @@ platform::command_exists "$package_name" && log::success "$package_name already 
 
 if [ -z "$skip_recipe" ] && registry::install "$package_name"; then
   output::write "✅ \`$package_name\` installed"
+
+  exit 0
 else
   if platform::is_macos; then
     for package_manager in brew mas ports cargo; do
@@ -48,7 +49,7 @@ else
       if platform::command_exists "$package_name"; then
         output::write "✅ \`$package_name\` installed"
 
-        break
+        exit 0
       fi
     done
   else
@@ -58,7 +59,7 @@ else
       if platform::command_exists "$package_name"; then
         output::write "✅ \`$package_name\` installed"
 
-        break
+        exit 0
       fi
     done
   fi
