@@ -1,5 +1,5 @@
 if ! ${DOT_REGISTRY_SOURCED:-false}; then
-  for file in $DOTLY_PATH/scripts/package/recipes/{docpars,rust}.sh; do
+  for file in $DOTLY_PATH/scripts/package/recipes/{docpars,cargo}.sh; do
     source "$file"
   done
   unset file
@@ -10,7 +10,7 @@ fi
 registry::install() {
   case "$1" in
   docpars) docpars::install ;;
-  rust) rust::install ;;
+  cargo) cargo::install ;;
   *) return 1 ;;
   esac
 }
