@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
-echo "4 antes del mensaje"
-
-set -euo
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 source "$DOTLY_PATH/scripts/self/utils/install.sh"
 
 export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 export PATH="$HOME/.cargo/bin:$PATH"
-output::write "3 antes del mensaje"
 
 installer::install_zsh() {
   output::error "zsh not installed, installing"
@@ -18,7 +14,6 @@ installer::install_zsh() {
     exit 5
   fi
 }
-output::write " 2 antes del mensaje"
 
 installer::install_fzf() {
   output::error "fzf not installed, installing"
@@ -34,7 +29,6 @@ if platform::is_macos; then
   install_macos_custom
 fi
 
-output::write "antes del mensaje"
 script::depends_on docpars
 
 ##? Install dotly and setup dotfiles
