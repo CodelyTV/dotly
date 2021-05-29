@@ -27,6 +27,8 @@ case $1 in
   "$DOTLY_PATH/bin/dot" shell zsh reload_completions
   ;;
 "test_performance")
+  script::depends_on hyperfine
+
   hyperfine '/bin/zsh -i -c exit' '/opt/homebrew/bin/zsh -i -c exit' --warmup 1
 
   echo ""

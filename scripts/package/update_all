@@ -18,7 +18,7 @@ dot::get_script_src_path "yq.sh" "self"
 docs::parse "$@"
 
 output::h1_without_margin "♻️  Updating all the apps on your system"
-output::clarification "If you want to debug what's happening behind the scenes, you can execute \`dot self debug\` in parallel."
+output::write "If you want to debug what's happening behind the scenes, you can execute \`dot self debug\` in parallel."
 
 platform::command_exists mas && output::h2 '🍎 App Store' && mas::update_all
 platform::command_exists brew && output::h2 '🍺 Brew' && brew::update_all

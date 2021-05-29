@@ -27,7 +27,7 @@ installer::install_yq() {
   yq_path="$HOME/bin/yq"
   output::error "yq not installed, installing"
 
-  if "$DOTLY_PATH/bin/dot" package install yq | log::file "Installing yq"; then
+  if "$DOTLY_PATH/bin/dot" package add yq | log::file "Installing yq"; then
     return 0
   fi
 

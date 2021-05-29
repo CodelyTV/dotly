@@ -9,6 +9,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##? Usage:
 ##?   debug
 docs::parse "$@"
+script::depends_on tail
 
 file=${DOTLY_LOG_FILE:-$HOME/dotly.log}
 
