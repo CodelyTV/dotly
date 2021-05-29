@@ -1,11 +1,7 @@
-docpars::install(){
-    log::append "Installing docpars"
+docpars::install() {
+  platform::command_exists brew && brew install denisidoro/tools/docpars && return 0 || true
 
-   platform::command_exists brew && brew install denisidoro/tools/docpars && return 0 || true
+  script::depends_on rust
 
-    log::append "Not installed in brew"
-
-   script::depends_on rust
-
-   "$DOTLY_PATH/bin/dot" package add docpars --skip-recipe
+  "$DOTLY_PATH/bin/dot" package add docpars --skip-recipe
 }
