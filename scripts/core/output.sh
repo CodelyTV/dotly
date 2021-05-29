@@ -28,7 +28,7 @@ output::question() {
   with_code_parsed=$(_output::parse_code "$1")
 
   if [ "${DOTLY_ENV:-PROD}" == "CI" ]; then
-    echo "y" | read -rp "🤔 $with_code_parsed: " "answer"
+    answer="y"
   else
     read -rp "🤔 $with_code_parsed: " "answer"
   fi
