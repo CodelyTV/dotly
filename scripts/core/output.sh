@@ -27,7 +27,7 @@ output::solution() { output::answer "${green}$1${normal}"; }
 output::question() {
   with_code_parsed=$(_output::parse_code "$1")
 
-  if [ "${DOTLY_ENV:-PROD}" == "CI" ]; then
+  if [ "${DOTLY_ENV:-PROD}" == "CI" ] || [ "${DOTLY_INSTALLER:-false}" = true ]; then
     answer="y"
   else
     read -rp "🤔 $with_code_parsed: " "answer"
