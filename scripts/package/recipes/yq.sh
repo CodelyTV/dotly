@@ -1,4 +1,4 @@
-dot::get_script_src_path "yq.sh" "self"
+dot::get_script_src_path "yq.sh" "package"
 
 yq::install() {
   local binary_name yq_path

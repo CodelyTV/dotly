@@ -4,22 +4,11 @@ set -euo pipefail
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
 dot::get_script_src_path "install.sh"
-dot::get_script_src_path "yq.sh"
 dot::get_script_src_path "dotbot_yaml_edit.sh" "symlinks"
 dot::get_script_src_path "symlinks.sh" "symlinks"
 
 export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 export PATH="$HOME/.cargo/bin:$PATH"
-
-installer::install_moreutils() {
-  output::error "Moreutils not installed, installing"
-
-  if ! "$DOTLY_PATH/bin/dot" package install moreutils | log::file "Installing moreutils"; then
-    output::error "Could not install moreutils!"
-    exit 5
-  fi
-}
-
 
 backup_and_warn_if_exists() {
   local file_path suffix bk_file_path
@@ -63,11 +52,7 @@ if platform::is_macos; then
   install_macos_custom
 fi
 
-! platform::command_exists cargo && installer::install_rust
-
-! platform::command_exists yq && output::error "yq not installed, installing" && installer::install_yq | log::file "Installing yq"
-! platform::command_exists sponge && installer::install_moreutils
-script::depends_on docpars fzf zsh python jq
+script::depends_on docpars fzf zsh python
 
 ##? Install dotly and setup dotfiles
 ##?

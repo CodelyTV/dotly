@@ -3,13 +3,13 @@
 set -uo pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/brew.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/composer.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/gem.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/mas.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/npm.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/pip.sh"
-dot::get_script_src_path "yq.sh" "self"
+dot::get_script_src_path "package_managers/brew.sh"
+dot::get_script_src_path "package_managers/composer.sh"
+dot::get_script_src_path "package_managers/gem.sh"
+dot::get_script_src_path "package_managers/mas.sh"
+dot::get_script_src_path "package_managers/npm.sh"
+dot::get_script_src_path "package_managers/pip.sh"
+dot::get_script_src_path "yq.sh"
 
 ##? Update all packages
 ##?
