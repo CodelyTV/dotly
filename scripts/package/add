@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/package/recipes/_registry.sh"
+
+##? Install a package
+##?
+##? Usage:
+##?    add <package_name>
+##?    add -s | --skip-recipe
+##?
+if ! ${DOTLY_INSTALLER:-false}; then
+  docs::parse "$@"
+fi
+
+package::install() {
+  local -r package_manager="$1"
+  local -r package_to_install="$2"
+
+  platform::command_exists "$package_manager" || exit 3
+
+  local -r file="$DOTLY_PATH/scripts/package/package_managers/$package_manager.sh"
+
+  # unsupported package manager
+  [ ! -f "$file" ] && exit 4
+
+  source "$file"
+
+  local -r install_command="${package_manager}::install"
+
+  "$install_command" "$package_to_install"
+}
+
+package_name="$1"
+skip_recipe="$2"
+
+platform::command_exists "$package_name" && log::success "$package_name is already installed" && exit 0
+
+if [ -z "$skip_recipe" ] && registry::install "$package_name"; then
+  output::write "\`$package_name!\` installed!"
+  exit 0
+else
+  if platform::is_macos; then
+    for package_manager in brew mas ports cargo; do
+      install_command_output=$(package::install $package_manager "$package_name")
+      install_command_exit_code=$?
+
+      if [ $install_command_exit_code -eq 0 ]; then
+        exit 0
+      fi
+    done
+  else
+    for package_manager in apt dnf yum brew pacman cargo; do
+      install_command_output=$(package::install $package_manager "$package_name")
+      install_command_exit_code=$?
+
+      if [ $install_command_exit_code -eq 0 ]; then
+        exit 0
+      fi
+    done
+  fi
+fi
+
+exit 2

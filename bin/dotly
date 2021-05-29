@@ -10,7 +10,7 @@ docs::parse "$@"
 
 case $1 in
 "self-update")
-  dot self update
+  "$DOTLY_PATH/bin/dot" self update
   ;;
 *)
   exit 1

@@ -8,7 +8,7 @@ script::depends_on() {
     output::question "\`$non_existing_command\` is a dependency of this script. Should this be installed? [Y/n]" "has_to_install"
 
     if [[ "${has_to_install:-Y}" =~ ^[Yy] ]]; then
-      dot package install "$non_existing_command"
+      dot package add "$non_existing_command"
     else
       output::write "🙅‍ The script can't be ran without \`$non_existing_command\` being installed before."
       exit 1
