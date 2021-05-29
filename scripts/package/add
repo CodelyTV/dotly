@@ -25,7 +25,7 @@ package::install() {
   # unsupported package manager
   [ ! -f "$file" ] && exit 4
 
-  source "$file"
+  . "$file"
 
   local -r install_command="${package_manager}::install"
 
