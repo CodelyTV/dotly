@@ -8,8 +8,6 @@ if ! ${DOT_REGISTRY_SOURCED:-false}; then
 fi
 
 registry::install() {
-  log::append "Trying registry"
-
   case "$1" in
   docpars) docpars::install ;;
   rust) rust::install ;;
