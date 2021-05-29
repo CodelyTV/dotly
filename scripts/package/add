@@ -13,7 +13,7 @@ if ! ${DOTLY_INSTALLER:-false}; then
   docs::parse "$@"
 fi
 
-log::append "Executing dot package add $1 with second arg $2"
+log::append "Executing dot package add $1 with second arg: $2"
 
 package::install() {
   local -r package_manager="$1"
@@ -36,12 +36,15 @@ package::install() {
 package_name="$1"
 skip_recipe="$2"
 
-platform::command_exists "$package_name" && log::success "$package_name is already installed" && exit 0
+platform::command_exists "$package_name" && log::success "$package_name already installed" && log::append "$package_name already installed" && exit 0
 
 if [ -z "$skip_recipe" ] && registry::install "$package_name"; then
+  log::append "$package_name installed from the registry"
   output::write "\`$package_name!\` installed!"
   exit 0
 else
+  log::append "Installing $package_name using package managers"
+
   if platform::is_macos; then
     for package_manager in brew mas ports cargo; do
       install_command_output=$(package::install $package_manager "$package_name")
