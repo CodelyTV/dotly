@@ -83,6 +83,14 @@ log::file() {
   echo "" >>"$DOTLY_LOG_FILE"
 }
 
+log::append() {
+  local -r log_name="$1"
+  local -r current_date=$(date "+%Y-%m-%d %H:%M:%S")
+
+  touch "$DOTLY_LOG_FILE"
+  echo "----- $current_date - $log_name -----" >>"$DOTLY_LOG_FILE"
+}
+
 die() {
   log::error "$@"
   exit 42

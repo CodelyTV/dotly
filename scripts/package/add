@@ -13,7 +13,7 @@ if ! ${DOTLY_INSTALLER:-false}; then
   docs::parse "$@"
 fi
 
-echo "Gogogo!" | log::file "Executing dot package add $1"
+log::append "Executing dot package add $1 with second arg $2"
 
 package::install() {
   local -r package_manager="$1"
