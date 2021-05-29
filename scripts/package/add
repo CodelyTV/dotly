@@ -21,6 +21,10 @@ package::install() {
 
   log::append "Using package manager $1 to install package $2"
 
+  if [ "$package_manager" == "cargo" ] && ! platform::command_exists "$package_manager" && [ -d "$HOME/.cargo" ]; then
+    source "$HOME/.cargo/env"
+  fi
+
   platform::command_exists "$package_manager" || exit 3
   log::append "2 Using package manager $1 to install package $2"
 
