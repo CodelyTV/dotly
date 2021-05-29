@@ -4,6 +4,8 @@ CODELY_THEME_MINIMAL=${CODELY_THEME_MINIMAL:-false}
 CODELY_THEME_MODE=${CODELY_THEME_MODE:-"dark"}
 CODELY_THEME_PROMPT_IN_NEW_LINE=${CODELY_THEME_PROMPT_IN_NEW_LINE:-false}
 
+ [[ $(echotc Co) -gt 100 ]] && support_color_tones=true || support_color_tones=false
+
 status_icon_ok="▸"
 status_icon_ko="▪"
 git_no_changes_status="✓"
@@ -16,6 +18,7 @@ if [ "$CODELY_THEME_MODE" = "dark" ]; then
   git_on_branch_color="white"
   pwd_color="yellow"
   status_icon_color="white"
+  [[ $support_color_tones = true ]] && ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8' || ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=magenta'
 else
   git_branch_color="black"
   git_dirty_status_color="magenta"
@@ -23,6 +26,7 @@ else
   git_on_branch_color="green"
   pwd_color="black"
   status_icon_color="black"
+  [[ $support_color_tones = true ]] && ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8' || ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=magenta'
 fi
 
 prompt_codely_pwd() {
