@@ -25,9 +25,11 @@ package::install() {
   log::append "2 Using package manager $1 to install package $2"
 
   local -r file="$DOTLY_PATH/scripts/package/package_managers/$package_manager.sh"
+  log::append "2.1 Using package manager $1 to install package $2"
 
   # unsupported package manager
   [ ! -f "$file" ] && exit 4
+  log::append "2.2 Using package manager $1 to install package $2"
 
   source "$file"
 
