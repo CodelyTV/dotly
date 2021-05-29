@@ -1,5 +1,5 @@
 if ! ${DOT_REGISTRY_SOURCED:-false}; then
-  for file in $DOTLY_PATH/scripts/package/recipes{docpars,rust}.sh; do
+  for file in $DOTLY_PATH/scripts/package/recipes/{docpars,rust}.sh; do
     source "$file"
   done
   unset file
