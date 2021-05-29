@@ -6,26 +6,45 @@ bold_blue='\033[1m\033[34m'
 gray='\e[90m'
 normal='\033[0m'
 
+_output::parse_code() {
+  local -r text="${1:-}"
+
+  with_code_parsed=$(echo "$text" | awk "{ORS=(NR+1)%2==0?\"${green}\":RS}1" RS="\`" | awk "{ORS=NR%1==0?\"${normal}\":RS}1" RS="\`" | tr -d '\n')
+
+  echo -e "$with_code_parsed"
+}
+
 output::write() {
+  local with_code_parsed
   local -r text="${*:-}"
-  echo -e "$text"
+  with_code_parsed=$(_output::parse_code "$text")
+  echo -e "$with_code_parsed"
 }
+output::clarification() { output::write "$*"; }
 output::answer() { output::write " > ${*:-}"; }
-output::clarification() {
-  with_code_parsed=$(echo "${*:-}" | awk "{ORS=(NR+1)%2==0?\"${green}\":RS}1" RS="\`" | awk "{ORS=NR%1==0?\"${normal}\":RS}1" RS="\`"| tr -d '\n')
-  output::write "$with_code_parsed";
-}
 output::error() { output::answer "${red}${*:-}${normal}"; }
 output::solution() { output::answer "${green}${*:-}${normal}"; }
 output::question() {
+  local with_code_parsed
+  with_code_parsed=$(_output::parse_code "$*")
   [[ $# -ne 2 ]] && return 1
 
-  if [ platform::is_macos ]; then
-    echo -n " > 🤔 $1: ";
-    read -r "$2";
+  if [ "${DOTLY_ENV:-PROD}" == "CI" ] || [ "${DOTLY_INSTALLER:-false}" = true ]; then
+    answer="y"
+
   else
-    read -rp "🤔 $1: " "$2"
+    read -rp "🤔 $with_code_parsed: " "answer"
   fi
+
+  echo "$answer"
+}
+
+output::answer_is_yes() {
+  if [[ "${1:-Y}" =~ ^[Yy] ]]; then
+    return 0
+  fi
+
+  return 1
 }
 output::question_default() {
   local question default_value var_name
@@ -59,8 +78,20 @@ output::yesno() {
 
 output::empty_line() { echo ''; }
 
-output::header() { output::empty_line; output::write "${bold_blue}---- ${*:-} ----${normal}"; }
+output::header() {
+  output::empty_line
+  output::write "${bold_blue}---- ${*:-} ----${normal}"
+}
 output::h1_without_margin() { output::write "${bold_blue}# ${*:-}${normal}"; }
-output::h1() { output::empty_line; output::h1_without_margin "${*:-}"; }
-output::h2() { output::empty_line; output::write "${bold_blue}## ${*:-}${normal}"; }
-output::h3() { output::empty_line; output::write "${bold_blue}### ${*:-}${normal}"; }
+output::h1() {
+  output::empty_line
+  output::h1_without_margin "${*:-}"
+}
+output::h2() {
+  output::empty_line
+  output::write "${bold_blue}## ${*:-}${normal}"
+}
+output::h3() {
+  output::empty_line
+  output::write "${bold_blue}### ${*:-}${normal}"
+}

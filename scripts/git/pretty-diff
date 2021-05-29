@@ -9,6 +9,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##? Usage:
 ##?   pretty-diff
 docs::parse "$@"
+script::depends_on git-delta
 
 if (! git::is_in_repo); then
   echo "Not in a git repo!"
