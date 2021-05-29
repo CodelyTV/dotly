@@ -63,16 +63,16 @@ if [ -z "$skip_recipe" ] && registry::install "$package_name"; then
 
   exit 0
 else
-  package::install $package_manager "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager" || true
+  package::command install "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager" || true
 
-  if package::is_installed "$package_manager" "$package_name"; then
+  if package::is_installed "$package_name"; then
     output::write "✅ \`$package_name\` installed"
 
     exit 0
   fi
 fi
 
-if ! package::is_installed "$package_manager" "$package_name"; then
+if ! package::is_installed "$package_name"; then
   output::write "❌ \`$package_name\` could not be installed"
 
   exit 1
