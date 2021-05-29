@@ -7,7 +7,7 @@ script::depends_on() {
   echo "dot self install" | log::file "Debug 5"
 
   for non_existing_command in $non_existing_commands; do
-    output::question "\`$non_existing_command\` is a dependency of this script. Should this be installed? [Y/n]" "has_to_install"
+    has_to_install=$(output::question "\`$non_existing_command\` is a dependency of this script. Should this be installed? [Y/n]")
 
     echo "Before answer is" | log::file "Debug 5.5"
     if output::answer_is_yes "$has_to_install"; then
