@@ -150,6 +150,7 @@ git submodule update --init --recursive 2>&1 | _log "Installing dotly dependenci
 
 cd "$DOTLY_PATH"
 
+echo "VAMOS!"
 "$PWD/bin/dot" self install
 
 _a "🎉 dotly installed correctly! 🎉"

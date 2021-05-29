@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+output::write "4 antes del mensaje"
 
 set -euo
 
