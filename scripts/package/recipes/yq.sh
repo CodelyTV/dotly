@@ -8,7 +8,7 @@ yq::install() {
   output::error "yq not installed, installing"
 
   "$DOTLY_PATH/bin/dot" package add yq --skip-recipe | log::file "Installing yq"
-  if package::command is_installed yq; then
+  if package::is_installed yq; then
     return 0
   fi
 
