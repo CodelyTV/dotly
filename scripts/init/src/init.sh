@@ -8,13 +8,13 @@ ENABLED_INIT_SCRIPTS_PATH="$DOTFILES_PATH/shell/init-scripts.enabled"
 
 [[ ! -d "$ENABLED_INIT_SCRIPTS_PATH" ]] &&\
   output::error "The folder path to enable scripts does not exists." &&\
-  output::clarification "If you want to disble init script add in your exports \`export DOTLY_INIT_SCRIPTS=false\` " &&\
-  output::clarification "If you want to enable. Execute \`dot self migration v2.0.0\` first." &&\
+  output::write "If you want to disble init script add in your exports \`export DOTLY_INIT_SCRIPTS=false\` " &&\
+  output::write "If you want to enable. Execute \`dot self migration v2.0.0\` first." &&\
   exit 1
 
 [[ ! -d "$DOTLY_INIT_SCRIPTS_PATH" ]] &&\
   output::error "The init scripts of DOTLY does not exists." &&\
-  output::clarification "Try with \`dot self migration v2.0.0\` first." &&\
+  output::write "Try with \`dot self migration v2.0.0\` first." &&\
   exit 1
 
 init::exists_script() {
