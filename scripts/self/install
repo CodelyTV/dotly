@@ -6,30 +6,12 @@ source "$DOTLY_PATH/scripts/self/utils/install.sh"
 export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 export PATH="$HOME/.cargo/bin:$PATH"
 
-installer::install_zsh() {
-  output::error "zsh not installed, installing"
-
-  if ! "$DOTLY_PATH/bin/dot" package add zsh | log::file "Installing zsh"; then
-    output::error "Could not install zsh!"
-    exit 5
-  fi
-}
-
-installer::install_fzf() {
-  output::error "fzf not installed, installing"
-
-  if ! "$DOTLY_PATH/bin/dot" package add fzf | log::file "Installing fzf"; then
-    output::error "Could not install fzf!"
-    exit 5
-  fi
-}
-
 if platform::is_macos; then
   output::answer "🍎 Setting up macOS platform"
   install_macos_custom
 fi
 
-script::depends_on docpars
+script::depends_on docpars fzf zsh python
 
 ##? Install dotly and setup dotfiles
 ##?
@@ -44,9 +26,6 @@ output::answer "Creating dotfiles structure"
 output::answer "Setting up symlinks"
 "$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks" || true
 touch "$HOME/.z"
-
-! platform::command_exists fzf && installer::install_fzf
-! platform::command_exists zsh && installer::install_zsh
 
 if ! str::contains zsh "$SHELL"; then
   output::answer "Setting zsh as the default shell"
