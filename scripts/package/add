@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/package/recipes/_registry.sh"
+
+##? Install a package
+##?
+##? Usage:
+##?    add <package_name> [--skip-recipe]
+##?
+if ! ${DOTLY_INSTALLER:-false}; then
+  docs::parse "$@"
+fi
+
+if [[ $# -lt 1 ]]; then
+  exit 1
+fi
+
+export PATH="$HOME/.cargo/bin:$PATH"
+
+package::command() {
+  local package_manager
+  local -r command="$1"
+  local -r args=("${@:2}")
+
+  # Package manager
+  if platform::is_macos; then
+    for package_manager in brew mas ports cargo none; do
+      if platform::command_exists "$package_manager"; then
+        break
+      fi
+    done
+  else
+    for package_manager in apt dnf yum brew pacman cargo none; do
+      if platform::command_exists "$package_manager"; then
+        break
+      fi
+    done
+  fi
+
+  if [[ "$package_manager" == "none" ]]; then
+    return 1
+  fi
+
+  local -r file="$DOTLY_PATH/scripts/package/package_managers/$package_manager.sh"
+
+  [[ ! -f "$file" ]] && exit 4
+  . "$file"
+  declare -F "$package_manager::$command" &>/dev/null && "$package_manager::$command" "${args[@]}"
+}
+
+package::is_installed() {
+  package::command is_installed "$1" || platform::command_exists "$1"
+}
+
+package_name="${1:-}"
+skip_recipe="${2:-}"
+
+package::is_installed "$package_manager" "$package_name" && log::success "$package_name already installed" && exit 0
+
+if [ -z "$skip_recipe" ] && registry::install "$package_name"; then
+  output::write "✅ \`$package_name\` installed"
+
+  exit 0
+else
+  package::command install "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager" || true
+
+  if package::is_installed "$package_name"; then
+    output::write "✅ \`$package_name\` installed"
+
+    exit 0
+  fi
+fi
+
+if ! package::is_installed "$package_name"; then
+  output::write "❌ \`$package_name\` could not be installed"
+
+  exit 1
+fi

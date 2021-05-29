@@ -9,3 +9,7 @@ brew::install() {
 
   brew install "$package"
 }
+
+brew::is_installed() {
+  brew list "$@" &>/dev/null
+}
