@@ -20,7 +20,6 @@ output::write() {
   with_code_parsed=$(_output::parse_code "$text")
   echo -e "$with_code_parsed"
 }
-output::clarification() { output::write "$*"; }
 output::answer() { output::write " > ${*:-}"; }
 output::error() { output::answer "${red}${*:-}${normal}"; }
 output::solution() { output::answer "${green}${*:-}${normal}"; }
