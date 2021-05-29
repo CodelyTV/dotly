@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_LOADED_LIBS=("${LOADED_LIBS[@]:-}")
+[[ -z "${SCRIPT_LOADED_LIBS[*]:-}" ]] && SCRIPT_LOADED_LIBS=()
 
 dot::list_contexts() {
   dotly_contexts=$(ls "$DOTLY_PATH/scripts")
@@ -75,7 +75,7 @@ dot::get_script_src_path() {
 
     # Library loading
     if [[ -n "${lib_full_path:-}" ]] && [[ -f "${lib_full_path:-}" ]]; then
-      ! [[ " ${LOADED_LIBS[@]} " =~ " ${lib_full_path:-} " ]] && . "$lib_full_path"
+      ! [[ " ${SCRIPT_LOADED_LIBS[@]} " =~ " ${lib_full_path:-} " ]] && . "$lib_full_path"
       return 0
     else
       output::error "🚨 Library loading error with: \"${lib_full_path:-No lib path found}\""

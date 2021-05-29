@@ -6,8 +6,8 @@
 # Author: Gabriel Trabanco
 # This was done, using "dot dotfiles create" as reference
 
-# templating::replace_var [<file_path>|<template_string>] <var_name> [value1 [... [valueN]]
-# echo "template string" | templating::replace_var <var_name> [value1 [... [valueN]]
+# templating::replace_var [<file_path>|<template_string>] <var_name> [<value1>...]
+# echo "template string" | templating::replace_var <var_name> [<value1>...]
 #
 # echo "Those are my family names: XXX_FAMILY_NAMES_XXX" |\
 #   templating::replace_var family-names Miguel Manuel
@@ -15,27 +15,31 @@
 # This will print:
 #   "Those are my family names: Miguel Manuel"
 templating::replace_var () {
-  local any
-  if (( $# % 2 == 0 )); then
-    any="$(</dev/stdin)"
-  elif [ $# -gt 0 ]; then
-    any="$1"; shift
-  fi
+  local file_path string var_name value
 
-  local var_name="XXX_$(str::to_upper "$1" | tr '-' '_')_XXX"; shift
-  local value="$1"; shift
+  [[ $# -lt 2 ]] && return 1
 
   # Replacer
-  if [[ -f $any ]]; then
-    sed -i -e "s|${var_name}|${value}|g" "$any"
+  if [[ -t 0 ]] && [[ -f "$1" ]]; then
+    file_path="$1"; shift
+    var_name="XXX_$(str::to_upper "$1" | tr '-' '_')_XXX"; shift
+    value="${*:-}"
+    sed -i -e "s|${var_name}|${value}|g" "$file_path"
+  elif [[ -t 0 ]]; then
+    string="$1"; shift
+    var_name="XXX_$(str::to_upper "$1" | tr '-' '_')_XXX"; shift
+    value="${*:-}"
+    echo "${string//$var_name/$value}"
   else
-    echo "${any//$var_name/$value}"
+    var_name="XXX_$(str::to_upper "$1" | tr '-' '_')_XXX"; shift
+    value="${*:-}"
+    sed -e "s|${var_name}|${value}|g" </dev/stdin
   fi
 }
 
 # This is the unique function that only allow piped template
 #
-# templating::replace_var_join <var_name> <glue> [value1 [... [valueN]]
+# templating::replace_var_join <var_name> <glue> [<value1>...]
 #
 # echo "Those are common names in spain: XXX_NAMES_XXX" |\
 #   templating::replace_var_join names ', ' Manuel Jorge David Luis Pedro
@@ -44,15 +48,21 @@ templating::replace_var () {
 #   "Those are common names in spain: Manuel, Jorge, David, Luis, Pedro"
 #
 templating::replace_var_join() {
-  local input="$(</dev/stdin)"
-  local var_name="$1"; shift
-  local glue="$1"; shift
-  local joined_str="$(str::join "$glue" "$@")"
-  local IFS=''
-  if [[ -f "$input" ]]; then
-    templating::replace_var "$input" "$var_name" "$joined_str"
+  local string var_name glue joined_str
+
+  { [[ -t 0 && $# -lt 3 ]] || [[ $# -lt 2 ]]; } && return 1
+
+  if [[ -t 0 ]]; then
+    string="$1"; 
+    var_name="$1"; shift
+    glue="$1"; shift
+    joined_str="$(str::join "$glue" "$@")"
+    templating::replace_var "$string" "$var_name" "$joined_str"
   else
-    echo "$input" | templating::replace_var "$var_name" "$joined_str"
+    var_name="$1"; shift
+    glue="$1"; shift
+    joined_str="$(str::join "$glue" "$@")"
+    templating::replace_var "$var_name" "$joined_str" </dev/stdin
   fi
 }
 
@@ -64,7 +74,6 @@ templating::replace_var_join() {
 # templating::replace /path/to/file --name=Gabriel --email-address=no-email@example.com
 # templating::replace /path/to/file --name Gabriel --email-address no-email@example.com
 # templating::replace /path/to/file name Gabriel email-address no-email@example.com
-
 #
 # This will print
 #   "Gabriel <no-email@example.com>"
@@ -89,6 +98,7 @@ templating::replace() {
         shift
         ;;
       --*)
+        #shellcheck disable=SC2001
         var_name="$(echo "$1" | sed 's/\-\-//')"; shift
         var_value="${1:-}"; shift
         ;;
