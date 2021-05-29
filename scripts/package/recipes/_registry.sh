@@ -12,5 +12,5 @@ registry::install() {
 
   dot::get_script_src_path "${receipe}.sh" "$(dirname "$file")"
   
-  declare -F "${receipe}::install" && "${receipe}::install"
+  declare -F "${receipe}::install" &>/dev/null && "${receipe}::install"
 }
