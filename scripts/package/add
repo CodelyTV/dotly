@@ -13,6 +13,7 @@ if ! ${DOTLY_INSTALLER:-false}; then
   docs::parse "$@"
 fi
 
+export PATH="$HOME/.cargo/bin:$PATH"
 log::append "Executing 'dot package add $1' with second arg: $2"
 
 package::install() {
