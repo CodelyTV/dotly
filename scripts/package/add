@@ -19,7 +19,10 @@ package::install() {
   local -r package_manager="$1"
   local -r package_to_install="$2"
 
+  log::append "Using package manager $1 to install package $2"
+
   platform::command_exists "$package_manager" || exit 3
+  log::append "2 Using package manager $1 to install package $2"
 
   local -r file="$DOTLY_PATH/scripts/package/package_managers/$package_manager.sh"
 
@@ -28,9 +31,12 @@ package::install() {
 
   source "$file"
 
+  log::append "3 Using package manager $1 to install package $2"
   local -r install_command="${package_manager}::install"
 
+  log::append "4 Using package manager $1 to install package $2"
   "$install_command" "$package_to_install"
+  log::append "5 Using package manager $1 to install package $2"
 }
 
 package_name="$1"
