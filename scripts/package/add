@@ -14,32 +14,23 @@ if ! ${DOTLY_INSTALLER:-false}; then
 fi
 
 export PATH="$HOME/.cargo/bin:$PATH"
-log::append "Executing 'dot package add $1' with second arg: $2"
 
 package::install() {
   local -r package_manager="$1"
   local -r package_to_install="$2"
 
-  log::append "Using package manager $1 to install package $2"
-
   platform::command_exists "$package_manager" || exit 3
-  log::append "2 Using package manager $1 to install package $2"
 
   local -r file="$DOTLY_PATH/scripts/package/package_managers/$package_manager.sh"
-  log::append "2.1 Using package manager $1 to install package $2"
 
   # unsupported package manager
   [ ! -f "$file" ] && exit 4
-  log::append "2.2 Using package manager $1 to install package $2"
 
   source "$file"
 
-  log::append "3 Using package manager $1 to install package $2"
   local -r install_command="${package_manager}::install"
 
-  log::append "4 Using package manager $1 to install package $2"
   "$install_command" "$package_to_install"
-  log::append "5 Using package manager $1 to install package $2"
 }
 
 package_name="$1"
