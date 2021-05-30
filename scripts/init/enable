@@ -61,7 +61,8 @@ fi
 # be enabled, exit
 not_enabled_scripts=("$(array::disjunction "${init_scripts[@]}" "${enabled_scripts[@]}")")
 if [[ -n "${not_enabled_scripts[*]:-}" ]]; then
-  to_enable=$(array::disjunction "${init_scripts[@]}" "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to enable when init terminal")
+  #shellcheck disable=SC2207
+  to_enable=($(array::disjunction "${init_scripts[@]}" "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to enable when init terminal"))
 else
   output::answer "Nothing can be enabled"
 fi
