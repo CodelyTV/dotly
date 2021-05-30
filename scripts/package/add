@@ -58,7 +58,7 @@ skip_recipe="${2:-}"
 
 package::is_installed "$package_manager" "$package_name" && log::success "$package_name already installed" && exit 0
 
-if [ -z "$skip_recipe" ] && registry::install "$package_name"; then
+if [ -z "$skip_recipe" ] && [[ -n "$(registry::recipe_exists "$package_name")" ]] && registry::install "$package_name"; then
   output::write "✅ \`$package_name\` installed"
 
   exit 0
