@@ -24,25 +24,16 @@ output::answer() { output::write " > ${*:-}"; }
 output::error() { output::answer "${red}${*:-}${normal}"; }
 output::solution() { output::answer "${green}${*:-}${normal}"; }
 output::question() {
-  local with_code_parsed
-  with_code_parsed=$(_output::parse_code "$*")
   [[ $# -ne 2 ]] && return 1
 
   if [ "${DOTLY_ENV:-PROD}" == "CI" ] || [ "${DOTLY_INSTALLER:-false}" = true ]; then
-    answer="y"
+    echo "y"
+  elif declare -F platform::is_macos &>/dev/null && platform::is_macos; then
+    echo -n " > 🤔 $1: ";
+    read -r "$2";
   else
-    read -rp "🤔 $with_code_parsed: " "answer"
+    read -rp "🤔 $1: " "$2"
   fi
-
-  echo "$answer"
-}
-
-output::answer_is_yes() {
-  if [[ "${1:-Y}" =~ ^[Yy] ]]; then
-    return 0
-  fi
-
-  return 1
 }
 output::question_default() {
   local question default_value var_name
@@ -72,6 +63,14 @@ output::yesno() {
 
   output::question "$question? [$values]" "PROMPT_REPLY"
   [[ "${PROMPT_REPLY:-$default}" =~ ^[Yy] ]]
+}
+
+output::answer_is_yes() {
+  if [[ "${1:-Y}" =~ ^[Yy] ]]; then
+    return 0
+  fi
+
+  return 1
 }
 
 output::empty_line() { echo ''; }
