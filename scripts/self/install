@@ -148,7 +148,7 @@ output::answer "Setting up symlinks"
 if ${quiet_symlinks:-false}; then
   "$DOTLY_PATH/bin/dot" symlinks apply --quiet | log::file "Applying symlinks" || true
 else
-  "$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks" || output::clarification "Error applying symlinks, see `dot self backup`"
+  "$DOTLY_PATH/bin/dot" symlinks apply | log::file "Applying symlinks" || output::write "Error applying symlinks, see `dot self backup`"
 fi
 touch "$HOME/.z"
 
@@ -163,7 +163,7 @@ if zsh "$ZIM_HOME/zimfw.zsh" install | log::file "Installing zim"; then
   output::solution "ZIM Framework Installed"
 else
   output::error "ZIM Framework could not be installed"
-  output::clarification "Use `dot self debug` to view what happened"
+  output::write "Use `dot self debug` to view what happened"
   output::write "You will need to run manually the ZIM Framework install command"
   output::write "  zsh \"$ZIM_HOME/zimfw.zsh\" install"
 fi

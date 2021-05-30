@@ -5,6 +5,7 @@ set -euo pipefail
 . "$DOTLY_PATH/scripts/core/_main.sh"
 
 symlinks::apply() {
+  [[ -z "${1:-}" ]] && return 1
   local -r CONFIG="$DOTFILES_PATH/symlinks/$1"
   shift
 
@@ -24,14 +25,6 @@ symlinks::apply() {
 ##?   -h --help     Show this help
 ##?   -v --version  Show the program version
 ##?   -q --quiet    Run dotbot in super quiet mode
-##?
-##? Options:
-##?   -h --help     Show this help
-##?   -v --version  Show the program version
-##?
-##? Options:
-##?   -h --help     Show this help
-##?   -v --version  Show the program version
 ##?
 docs::parse "$@"
 
@@ -57,30 +50,6 @@ _args+=(
 )
 
 symlinks::apply "conf.yaml" "${_args[@]}"
-
-case "${1:-}" in
-"update")
-  if [[ -z "$symlinks_file" ]]; then
-    symlinks_file="$DOTLY_PATH/symlinks/$(symlinks::get_files | symlinks::fzf)"
-    [[ -z "$symlinks_file" ]] && exit 0
-  else
-    if [[ -f "$DOTLY_PATH/symlinks/$symlinks_file.yaml" ]]; then
-      symlinks_file="$DOTLY_PATH/symlinks/$symlinks_file.yaml"
-    elif [[ -f "$DOTLY_PATH/symlinks/$symlinks_file" ]]; then
-      symlinks_file="$DOTLY_PATH/symlinks/$symlinks_file"
-    else
-      output::error "The file does not exists"
-      exit 1
-    fi
-  fi
-
-
-  output::header "Apply dotbot update to your dotfiles"
-  output::write "This will apply a selected symlinks to apply any dotly update"
-  
-  output::empty_line
-  "$DOTLY_PATH/modules/dotbot/bin/dotbot" -d "$DOTFILES_PATH" -c "$symlinks_file"
-  output::empty_line
 
 if platform::is_macos; then
   if platform::is_macos_arm; then
