@@ -23,7 +23,7 @@ if ! ${silent:-false}; then
   output::empty_line
 fi
 
-HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/mac/brew/${HOSTNAME}"
+HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/mac/brew/${HOSTNAME}.txt"
 APT_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/apt/${HOSTNAME}.txt"
 SNAP_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/snap/${HOSTNAME}.txt"
 PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/${HOSTNAME}.txt"

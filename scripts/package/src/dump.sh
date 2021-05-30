@@ -8,7 +8,7 @@ volta_title='⚡︎⚔️ volta'
 snap_title='Snap'
 
 package::clarification() {
-  output::clarification "${1:-} could not be updated. Use \`dot self debug\` to view more details."
+  output::write "${1:-} could not be updated. Use \`dot self debug\` to view more details."
 }
 
 package::exists_dump_current_machine_file() {
@@ -37,13 +37,14 @@ package::which_file() {
   header="$2"
   var_name="$3"
 
-  files="$(ls -1 "$FILES_PATH/" 2>/dev/null | grep -v ".lock.json$" | sort -u | tr '\n' ',' && echo 'No import')"
+  #shellcheck disable=SC2207
+  files=($(find "$FILES_PATH" -not -iname ".*" -maxdepth 1 -type f,l -print0 -exec echo {} \; 2>/dev/null | xargs basename | sort -u))
 
-  if [[ -d "$FILES_PATH" ]]; then
-    answer="$(echo $files | tr ',' '\n' | fzf -0 --filepath-word -d ',' --prompt "$(hostname -s) > " --header "$header" --preview "[[ -f $FILES_PATH/{} ]] && cat $FILES_PATH/{} || echo No import a file for this package manager")"
+  if [[ -d "$FILES_PATH" && ${#files[@]} -gt 0 ]]; then
+    answer="$(printf "%s\n" "${files[@]}" | fzf -0 --filepath-word -d ',' --prompt "$(hostname -s) > " --header "$header" --preview "[[ -f $FILES_PATH/{} ]] && cat $FILES_PATH/{} || echo No import a file for this package manager")"
     [[ -f "$FILES_PATH/$answer" ]] && answer="$FILES_PATH/$answer" || answer=""
   fi
-  eval "$var_name=$answer"
+  eval "$var_name=${answer:-}"
 }
 
 package::common_dump_check() {
