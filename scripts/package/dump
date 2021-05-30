@@ -14,7 +14,7 @@ source "$DOTLY_PATH/scripts/package/src/dump.sh"
 ##?   dump
 docs::parse "$@"
 
-platform::command_exists brew & package::brew_dump && output::answer "Brew apps dumped on $HOMEBREW_DUMP_FILE_PATH"
+platform::command_exists brew && package::brew_dump && output::answer "Brew apps dumped on $HOMEBREW_DUMP_FILE_PATH"
 
 platform::command_exists apt-mark && package::apt_dump && output::answer "Apt apps dumped on $APT_DUMP_FILE_PATH"
 
