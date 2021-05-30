@@ -12,6 +12,7 @@ source "$DOTLY_PATH/scripts/package/src/dump.sh"
 ##?
 ##? Usage:
 ##?   dump
+docs::parse "$@"
 
 platform::command_exists brew & package::brew_dump && output::answer "Brew apps dumped on $HOMEBREW_DUMP_FILE_PATH"
 
