@@ -2,6 +2,7 @@
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 source "$DOTLY_PATH/scripts/package/recipes/_registry.sh"
+source "$DOTLY_PATH/scripts/package/src/package.sh"
 
 ##? Install a package
 ##?
