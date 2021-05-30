@@ -1,6 +1,14 @@
 #!/bin/user/env bash
 
-HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/mac/brew/Brewfile"
+source "$DOTLY_PATH/scripts/core/platform.sh"
+
+
+if platform::is_macos; then
+  HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/mac/brew/Brewfile"
+elif platform::is_linux; then
+  HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/brew/Brewfile"
+fi
+
 APT_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/apt/packages.txt"
 SNAP_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/snap/packages.txt"
 PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/requirements.txt"
@@ -8,7 +16,12 @@ NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/global_modules.txt"
 VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta_dependencies.txt"
 
 package::brew_dump() {
-  mkdir -p "$DOTFILES_PATH/os/mac/brew"
+
+  if platform::is_macos; then
+    mkdir -p "$DOTFILES_PATH/os/mac/brew"
+  else
+    mkdir -p "$DOTFILES_PATH/os/linux/brew"
+  fi
 
   brew bundle dump --file="$HOMEBREW_DUMP_FILE_PATH" --force
   brew bundle --file="$HOMEBREW_DUMP_FILE_PATH" --force cleanup
