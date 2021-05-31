@@ -52,11 +52,13 @@ if platform::is_macos; then
   install_macos_custom
 fi
 
-script::depends_on docpars fzf zsh python yq jq
+script::depends_on docpars fzf zsh python jq
 # PR Review note
 # script::depends_on will fail for `moreutils` package
 # because moreutils is not a binary
 "$DOTLY_PATH/bin/dot" package add moreutils
+# The same for python-yq
+"$DOTLY_PATH/bin/dot" package add python-yq
 
 ##? Install dotly and setup dotfiles
 ##?
