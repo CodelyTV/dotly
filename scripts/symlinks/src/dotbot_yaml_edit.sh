@@ -24,25 +24,37 @@ dotbot::create_relative_link() {
 
 # Save json as yaml
 dotbot::save_as_yaml() {
-  [ -z "${1:-}" ] && return 1
-  eval mkdir -p "$(dirname "${1:-}")"
-  touch "${1:-}"
-  json::to_yaml < /dev/stdin | sponge "${1:-}"
+  local file_path input
+  file_path="${1:-}"
+
+  [ -z "$file_path" ] && return 1
+  eval mkdir -p "$(dirname "$file_path")"
+  touch "$file_path"
+  json::to_yaml </dev/stdin | sponge "$file_path"
 }
 
 # Use jq with yaml file or stdin yaml content
 # Last argument is the file if stdin is clean
 dotbot::jq_yaml_file() {
-  local _args file lastarg
+  local _args file lastarg input
   _args=( "$@" )
   lastarg=$(( ${#:-1} - 1 ))
 
   if [ -t 0 ]; then
     file="${_args[$lastarg]}"
     unset "_args[$lastarg]"
-    yaml::to_json "$file" | jq "${_args[@]}"
+    if json::is_valid "$file"; then
+      jq "${_args[@]}" "$file"
+    else
+      yq "${_args[@]}" "$file"
+    fi
   else
-    yaml::to_json </dev/stdin | jq "$@"
+    input="$(</dev/stdin)"
+    if echo "$input" | json::is_valid; then
+      echo "$input" | jq "$@"
+    else
+      echo "$input" | yq "$@"
+    fi
   fi
 }
 
@@ -140,10 +152,10 @@ dotbot::get_key_by_value_in() {
 # pass the file it will read from that file and save changes in it.
 # If you do not provide a file to read/save it will read from piped value and
 # output to stdout.
-# dotbot::add_or_edit_value_to_directive directive value [file_to_read_and_save]
+# dotbot::add_or_edit_value_to_directive directive json_value [file_to_read_and_save]
 # dotbot::add_or_edit_value_to_directive directive object_key object_value [file_to_read_and_save]
 #
-# The value should be always a valid json (quoted string, right quoted object....), if is a string
+# The json_value should be always a valid json (quoted string, right quoted object....), if is a string
 # in array, should be an array to combine...
 dotbot::add_or_edit_json_value_to_directive() {
   local input _jq_query _jq_args directive value check_directive_exists
@@ -168,7 +180,6 @@ dotbot::add_or_edit_json_value_to_directive() {
       value="${2:-}"
       file="${3:-}"
     fi
-
     input="$(</dev/stdin)"
   fi
 
@@ -234,9 +245,11 @@ dotbot::delete_by_key_in() {
     [[ -e "$file_to_write" ]] && dotbot::jq_yaml_file_save "${_jq_args[@]}" "$file_to_write"
   else
     # File to write
-    { [ -n "$file_to_read" ] &&\
-      dotbot::jq_yaml_file_save "${_jq_args[@]}" "$file_to_write" < /dev/stdin; } ||\
-      dotbot::jq_yaml_file "${_jq_args[@]}" < /dev/stdin
+    {
+      [ -n "$file_to_read" ] &&\
+      dotbot::jq_yaml_file_save "${_jq_args[@]}" "$file_to_write" < /dev/stdin;
+      
+    } || dotbot::jq_yaml_file "${_jq_args[@]}" < /dev/stdin
   fi
 }
 

@@ -2,22 +2,18 @@
 
 yaml::to_json() {
   if [[ -t 0 ]]; then
-    [[ -f "${1:-}" ]] && yq -j e '.' - <"$1"
+    [[ -f "${1:-}" ]] && yq -r '.' - <"$1"
   else
-    yq -j e '.' - </dev/stdin
+    yq -r '.' </dev/stdin
   fi
 }
 
-yq() {
-  local yq_bin
-  yq_bin="$(which yq)"
-  if [[ -f "$yq_bin" ]]; then
-    "$yq_bin" "$@"
-    return $?
-  fi
-
-  if platform::command_exists docker; then
-    docker run --rm -i -v "${PWD}":/workdir mikefarah/yq "$@"
-    return $?
+yaml::is_valid() {
+  local input
+  if [[ -t 0 ]]; then
+    [[ -n "${1:-}" && -f "$1" ]] && yq -e '.' "$1" &>/dev/null && ! json::is_json "$1"
+  else
+    input="$(</dev/stdin)"
+    echo "$input" | yq -e '.' &>/dev/null && ! echo "$input" | json::is_json
   fi
 }
