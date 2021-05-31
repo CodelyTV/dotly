@@ -67,6 +67,11 @@ case $1 in
     done
     output::solution "Defaults '$import_name' imported."
   fi
+
+  killall Dock
+  killall Finder
+  output::answer "A Reboot is suggested"
+  output::yesno "Do you want to reboot now" && sudo reboot
   ;;
 *)
   exit 1
