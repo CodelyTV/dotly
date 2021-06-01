@@ -17,7 +17,8 @@ dotbot::create_relative_link() {
   local item
   # realpath inception, this is the best way I promise
   # this is to avoid possible path errors 
-  item="$(dotbot::exec_in_dotbot_path realpath -m -q -s "$(eval realpath -m -q -s --relative-to=$DOTBOT_BASE_PATH "${1:-.}")")" # eval to expand ~ * in links
+  item="${1//\~/$HOME:-.}"
+  item="$(dotbot::exec_in_dotbot_path 'realpath -m -q -s "$(realpath -m -q -s --relative-to="$DOTBOT_BASE_PATH" "${item}")"')"
   item="${item//$DOTBOT_BASE_PATH\//}"
   echo "${item//$HOME/\~}"
 }
