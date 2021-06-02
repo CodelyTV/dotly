@@ -7,9 +7,9 @@ set -eou pipefail
 [[ -z "$DOTLY_PATH" ]] && exit 1
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "dotbot_yaml
+dot::load_library "dotbot_yaml
 .sh"
-dot::get_script_src_path "symlinks.sh"
+dot::load_library "symlinks.sh"
 
 edit_link_question() {
   local current_link dotfile_relative_path
@@ -69,7 +69,7 @@ if [ -z "${origin_link_path:-}" ]; then
   exit 1
 fi
 
-yaml_file="$(symlinks::get_yaml_file_path "${yaml:-}")"
+yaml_file="$(dotbot::yaml_file_path "${yaml:-}")"
 
 [[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
 

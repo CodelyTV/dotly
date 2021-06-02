@@ -7,8 +7,8 @@ set -euo pipefail
 [[ -z "$DOTLY_PATH" ]] && exit 1
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "dotbot_yaml.sh"
-dot::get_script_src_path "symlinks.sh"
+dot::load_library "dotbot_yaml.sh"
+dot::load_library "symlinks.sh"
 
 ##?  Restore moved file to inside your DOTFILES_PATH to its current link and
 ##? delete the link from your dotbot yaml file and move the file out (if the
@@ -73,7 +73,7 @@ case "$1" in
       exit 1
     fi
 
-    yaml_file="$(symlinks::get_yaml_file_path "${yaml:-}")"
+    yaml_file="$(dotbot::yaml_file_path "${yaml:-}")"
     [[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
 
     if [ -n "${link_or_dotfile_path:-}" ]; then
@@ -83,7 +83,7 @@ case "$1" in
         exit 1
     else
       preview_cmd='. "$DOTLY_PATH/scripts/core/_main.sh";'
-      preview_cmd+='dot::get_script_src_path "dotbot_yaml.sh"";'
+      preview_cmd+='dot::load_library "dotbot_yaml.sh"";'
       preview_cmd+="yaml_file='$yaml_file';"
       preview_cmd+='echo "Press Tab+Shift to select multiple options.\n'
       preview_cmd+='Press Ctrl+C to exit with no selection.\n\n'

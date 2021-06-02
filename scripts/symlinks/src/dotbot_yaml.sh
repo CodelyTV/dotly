@@ -2,6 +2,31 @@
 #shellcheck disable=SC2016
 
 DOTBOT_BASE_PATH="${DOTBOT_BASE_PATH:-$DOTFILES_PATH}"
+DOTBOT_DEFAULT_YAML_FILES_BASE_PATH="${DOTBOT_DEFAULT_YAML_FILES_BASE_PATH:-$DOTBOT_BASE_PATH/symlinks}"
+
+dotbot::yaml_file_path() {
+  local yaml_file_posibilities yaml_file yaml_dir_path
+  yaml_file="${1:-}"
+  yaml_dir_path="${2:-$DOTBOT_DEFAULT_YAML_FILES_BASE_PATH}"
+  yaml_file_posibilities=(
+    "$yaml_file"
+    "$yaml_file.yaml"
+    "$yaml_file.yml"
+    "$yaml_dir_path/$yaml_file"
+    "$yaml_dir_path/$yaml_file.yaml"
+    "$yaml_dir_path/$yaml_file.yml"
+  )
+
+  for f in "${yaml_file_posibilities[@]}" ; do
+    [[ -f "$f" ]] && [[ -w "$f" ]] && yaml_file="$f" && break
+  done
+
+  if [[ ! -w "$yaml_file" ]]; then
+    yaml_file=""
+  fi
+
+  echo "$yaml_file" && return 0
+}
 
 dotbot::exec_in_dotbot_path() {
   local return_code
@@ -101,7 +126,7 @@ dotbot::save_as_yaml() {
   local file_path input
   file_path="${1:-}"
 
-  [ -z "$file_path" ] && return 1
+  [[ -z "$file_path" ]] && return 1
   eval mkdir -p "$(dirname "$file_path")"
   touch "$file_path"
   json::to_yaml </dev/stdin | sponge "$file_path"
@@ -114,7 +139,7 @@ dotbot::jq_yaml_file() {
   _args=( "$@" )
   lastarg=$(( ${#:-1} - 1 ))
 
-  if [ -t 0 ]; then
+  if [[ -t 0 ]]; then
     file="${_args[$lastarg]}"
     unset "_args[$lastarg]"
     if json::is_valid "$file"; then
@@ -141,7 +166,7 @@ dotbot::jq_yaml_file_save() {
   file="${_args[$lastarg]}"
   unset "_args[$lastarg]"
 
-  if [ -t 0 ]; then
+  if [[ -t 0 ]]; then
     dotbot::jq_yaml_file "$@" | dotbot::save_as_yaml "$file"
   else
     dotbot::jq_yaml_file "${_args[@]}" </dev/stdin | dotbot::save_as_yaml "$file"
@@ -154,7 +179,7 @@ dotbot::get_all_keys_in() {
   _jq_query='.[] | select(has($directive)) | .[] | keys[] | values'
   _jq_args=(-r --arg directive "${1:-}" "$_jq_query")
 
-  if [ -t 0 ]; then
+  if [[ -t 0 ]]; then
     dotbot::jq_yaml_file "${_jq_args[@]}" "${2:-}"
   else
     dotbot::jq_yaml_file "${_jq_args[@]}" < /dev/stdin
@@ -167,7 +192,7 @@ dotbot::get_all_values_in() {
   _jq_query='.[] | select(has($directive)) | .[] | .[] | values'
   _jq_args=(-r --arg directive "${1:-}" "$_jq_query")
 
-  if [ -t 0 ]; then
+  if [[ -t 0 ]]; then
     dotbot::jq_yaml_file "${_jq_args[@]}" "${2:-}"
   else
     dotbot::jq_yaml_file "${_jq_args[@]}" < /dev/stdin
@@ -191,7 +216,7 @@ dotbot::get_value_of_key_in() {
 
   _jq_args+=(key "${2:-}" "$_jq_query")
 
-  if [ -t 0 ]; then
+  if [[ -t 0 ]]; then
     dotbot::jq_yaml_file "${_jq_args[@]}" "${3:-}"
   else
     dotbot::jq_yaml_file "${_jq_args[@]}" < /dev/stdin
@@ -203,7 +228,7 @@ dotbot::get_key_by_value_in() {
   _jq_args=(-r --arg directive "${1:-}" --arg value "${2:-}")
   _jq_query_type='.[] | select(has($directive)) | .[$directive] | values | type'
 
-  [ -t 0 ] && input="$(cat "${3:-}")" || input="$(</dev/stdin)"
+  [[ -t 0 ]] && input="$(cat "${3:-}")" || input="$(</dev/stdin)"
 
   case "$(echo "$input" | dotbot::jq_yaml_file "${_jq_args[@]}" "$_jq_query_type")" in
     object)
@@ -235,8 +260,8 @@ dotbot::add_or_edit_json_value_to_directive() {
   local input _jq_query _jq_args directive value check_directive_exists
   directive="${1:-}"
 
-  if [ -t 0 ]; then
-    if [ $# -gt 3 ]; then
+  if [[ -t 0 ]]; then
+    if [[ $# -gt 3 ]]; then
       value="{\"${2:-}\": \"${3:-}\"}"
       file="${4:-}"
     else
@@ -244,10 +269,10 @@ dotbot::add_or_edit_json_value_to_directive() {
       file="${3:-}"
     fi
 
-    [ ! -e "$file" ] && return 1
+    [[ ! -e "$file" ]] && return 1
     input="$(cat "$file")"
   else
-    if [ $# -gt 2 ]; then
+    if [[ $# -gt 2 ]]; then
       value="{\"${2:-}\": \"${3:-}\"}"
       file="${4:-}"
     else
@@ -259,7 +284,7 @@ dotbot::add_or_edit_json_value_to_directive() {
 
   check_directive_exists=$(echo "$input" | dotbot::get_all_keys_in "$directive")
 
-  if [ -n "$check_directive_exists" ]; then
+  if [[ -n "$check_directive_exists" ]]; then
     _jq_query='. | (.[] | .[$directive] | values) as $currentvalues | if select($currentvalues | values) then del(.[] | select(has($directive))) | . += [{($directive): ($currentvalues + $value)}] else . end'
   else
     _jq_query='. + [{($directive): $value}]'
@@ -267,7 +292,7 @@ dotbot::add_or_edit_json_value_to_directive() {
 
   _jq_args=(-r --arg directive "$directive" --argjson value "$value" "$_jq_query")
 
-  if [ -n "$file" ]; then
+  if [[ -n "$file" ]]; then
     echo "$input" | dotbot::jq_yaml_file_save "${_jq_args[@]}" "$file"
   else
     echo "$input" | dotbot::jq_yaml_file "${_jq_args[@]}"
@@ -280,11 +305,11 @@ dotbot::delete_directive() {
   _jq_query='del(.[] | select(has($directive)))'
   _jq_args=(-r --arg directive "${1:-}" "$_jq_query")
 
-  if [ -t 0 ] && [ -n "${3:-}" ]; then
+  if [[ -t 0 ]] && [[ -n "${3:-}" ]]; then
     dotbot::jq_yaml_file_save -r "${_jq_args[@]}" "${3:-}" < "${2:-}"
-  elif [ -t 0 ]; then
+  elif [[ -t 0 ]]; then
     dotbot::jq_yaml_file_save -r "${_jq_args[@]}" "${2:-}"
-  elif [ -n "${2:-}" ]; then
+  elif [[ -n "${2:-}" ]]; then
     dotbot::jq_yaml_file_save -r "${_jq_args[@]}" "${2:-}" < /dev/stdin
   else
     dotbot::jq_yaml_file -r "${_jq_args[@]}" < /dev/stdin
@@ -312,15 +337,15 @@ dotbot::delete_by_key_in() {
   
   _jq_args+=(key "$key_to_delete" "$_jq_query")
 
-  if [ -t 0 ] && [ -n "${4:-}" ]; then
+  if [[ -t 0 ]] && [[ -n "${4:-}" ]]; then
     dotbot::jq_yaml_file_save "${_jq_args[@]}" "$file_to_write" < "$file_to_read"
-  elif [ -t 0 ]; then
+  elif [[ -t 0 ]]; then
     # Fire to read is also to write
     [[ -e "$file_to_write" ]] && dotbot::jq_yaml_file_save "${_jq_args[@]}" "$file_to_write"
   else
     # File to write
     {
-      [ -n "$file_to_read" ] &&\
+      [[ -n "$file_to_read" ]] &&\
       dotbot::jq_yaml_file_save "${_jq_args[@]}" "$file_to_write" < /dev/stdin;
       
     } || dotbot::jq_yaml_file "${_jq_args[@]}" < /dev/stdin
@@ -334,7 +359,7 @@ dotbot::delete_by_value_in() {
   value_to_delete="${2:-}"
   file_save="${4:-${3:-}}"
   
-  if [ -t 0 ]; then
+  if [[ -t 0 ]]; then
     input="$(cat "${3:-}")"
   else
     input="$(</dev/stdin)"

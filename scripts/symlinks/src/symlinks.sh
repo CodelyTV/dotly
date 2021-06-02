@@ -10,31 +10,6 @@ symlinks::realpath_existing_file() {
   realpath -qL "${file_path//\~/$HOME}"
 }
 
-symlinks::get_yaml_file_path() {
-  local yaml_file_posibilities yaml_file yaml_dir_path
-  yaml_file="${1:-conf.yaml}"
-  yaml_dir_path="${2:-$DOTFILES_PATH/symlinks}"
-  yaml_file_posibilities=(
-    "$yaml_file"
-    "$yaml_file.yaml"
-    "$yaml_file.yml"
-    "$yaml_dir_path/$yaml_file"
-    "$yaml_dir_path/$yaml_file.yaml"
-    "$yaml_dir_path/$yaml_file.yml"
-  )
-
-  for f in "${yaml_file_posibilities[@]}" ; do
-    [[ -f "$f" ]] && [[ -w "$f" ]] && yaml_file="$f" && break
-  done
-
-  if [ ! -w "$yaml_file" ]; then
-    output::error "The yaml file '$yaml_file' does not exists or its not writable by you."
-    exit 1
-  fi
-
-  echo "$yaml_file" && return 0
-}
-
 # Check if link exist by given link or value of the link
 # it will always return the link key
 symlinks::link_exists() {
@@ -42,23 +17,63 @@ symlinks::link_exists() {
   yaml_file="${1:-}"
   link_or_dotfile_path="${2:-}"
 
-  if [ -z "$link_or_dotfile_path" ] || [ -z "$yaml_file" ]; then
+  if [[ -z "$link_or_dotfile_path" || -z "$yaml_file" ]]; then
     return 1
   fi
 
-  link_check_value="$(dotbot::get_value_of_key_in "link" "$link_or_dotfile_path" "$yaml_file")"
-  [ -n "$link_check_value" ] && echo "$link_or_dotfile_path" && return 0
+  # By link
+  link_check_value="$(dotbot::get_value_of_key_in "link" "$link_or_dotfile_path" "$yaml_file" || echo -n "")"
+  [[ -n "$link_check_value" ]] && echo "$link_or_dotfile_path" && return 0
 
-  link_check_value="$(dotbot::get_value_of_key_in "link" "$(dotbot::relative_path "$link_or_dotfile_path")" "$yaml_file")"
-  [ -n "$link_check_value" ] && echo "$link_check_value" && return 0
+  link_check_value="$(dotbot::get_value_of_key_in "link" "$(dotbot::relative_path "$link_or_dotfile_path")" "$yaml_file" || echo "")"
+  [[ -n "$link_check_value" ]] && echo "$link_or_dotfile_path" && return 0
 
+  # By link value
   link_check_value="$(dotbot::get_key_by_value_in "link" "$link_or_dotfile_path" "$yaml_file")"
-  [ -n "$link_check_value" ] && echo "$link_check_value" && return 0
+  [[ -n "$link_check_value" ]] && echo "$link_check_value" && return 0
 
   link_check_value="$(dotbot::get_key_by_value_in "link" "$(dotbot::relative_path "$link_or_dotfile_path")" "$yaml_file")"
-  [ -n "$link_check_value" ] && echo "$link_check_value" && return 0
+  [[ -n "$link_check_value" ]] && echo "$link_check_value" && return 0
 
   return 1
+}
+
+symlinks::get_all_links() {
+  local yaml_file
+  yaml_file="${1:-}"
+
+  [[ ! -f "$yaml_file" ]] && return
+
+  dotbot::get_all_keys_in "link" "$yaml_file" || echo -n ""
+}
+
+symlinks::get_all_link_values() {
+  local yaml_file
+  yaml_file="${1:-}"
+
+  [[ ! -f "$yaml_file" ]] && return
+
+  dotbot::get_all_values_in "link" "$yaml_file" || echo -n ""
+}
+
+symlinks::get_linked_path_by_link() {
+  local yaml_file link
+  yaml_file="${1:-}"
+  link="${2:-}"
+
+  [[ ! -f "$yaml_file" || -z "$link" ]] && return
+
+  dotbot::get_value_of_key_in "link" "$link" "$yaml_file" || echo -n ""
+}
+
+symlinks::get_link_by_linked_path() {
+  local yaml_file linked_path
+  yaml_file="${1:-}"
+  linked_path="${2:-}"
+
+  [[ ! -f "$yaml_file" ]] && return
+
+  dotbot::get_key_by_value_in "link" "$linked_path" "$yaml_file" || echo -n ""
 }
 
 # Does not need to exist a symlink to create it and store it in yaml
@@ -94,7 +109,7 @@ symlinks::move_from_pwd_to_dotbot() {
   from="$(symlinks::realpath_existing_file "${2:-}")"
   path_to="$(dotbot::realpath "${3:-}")"
 
-  if [ -f "$yaml_file" ]; then
+  if [[ -f "$yaml_file" ]]; then
     # 1. Create internal dotbot path
     # TODO Uncoment on production
     # mkdir -p "$path_to"
@@ -182,7 +197,7 @@ symlinks::edit_link_by_link_path() {
     # 4. Add it the new one
     # TODO Uncomment in production
     # dotbot::add_or_edit_json_value_to_directive "link" "$new_link" "$link_value" "$yaml_file"
-    return 0
+    [[ ! -f "$old_link" ]] && ! symlinks::link_exists "$old_link"
   fi
 
   return 1
