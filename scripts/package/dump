@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "dump.sh"
+dot::load_library "dump.sh"
 
 ##? Dump all installed packages from:
 ##?  * Brew

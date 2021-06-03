@@ -3,7 +3,7 @@
 set -euo pipefail
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "dotly_autoupdate.sh"
+dot::load_library "dotly_autoupdate.sh"
 
 ##? Async autoupdate dotly to avoid load all core functions in default bash
 ##?

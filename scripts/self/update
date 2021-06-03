@@ -4,7 +4,7 @@ set -euo pipefail
 
 #shellcheck source=/dev/null
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "update.sh"
+dot::load_library "update.sh"
 
 ##? Update dotly to the latest stable release
 ##?
