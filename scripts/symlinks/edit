@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
+# TODO Review that is using new symlinks.sh and dotbot_yaml.sh libraries
+
 set -eou pipefail
 
 [[ -z "$DOTLY_PATH" ]] && exit 1
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "dotbot_yaml_edit.sh"
+dot::get_script_src_path "dotbot_yaml.sh"
 dot::get_script_src_path "symlinks.sh"
 
 ##?  Edit the link section of dotbot yaml file. With this you could edit a
@@ -19,15 +21,12 @@ dot::get_script_src_path "symlinks.sh"
 ##? Usage:
 ##?   edit [-h | --help]
 ##?   edit [-v | --version]
-##?   edit [-b | --by-value] [[-n | --no] [-y | --yes]] [--yaml=<yaml_file>] [<origin_link_path> [<new_origin_link_path>]]
+##?   edit [-b | --by-value] [--yaml=<yaml_file>] [<origin_link_path> [<new_origin_link_path>]]
 ##?
 ##? Options:
 ##?   -h --help           Show this help
 ##?   -v --version        Show the program version
-##?   -b --by-value       Delete by the value of the link in the <yaml_file> instead
-##?                       of deleting by the link.
-##?   -y --yes            Apply without prompt the new symlinks file
-##?   -n --no             Exit without asking about applying the new updated symlinks file
+##?   -b --by-value       Edit by the value of the link in the <yaml_file>.
 ##?   --yaml=<yaml_file>  Use a custom yaml file instead of default one which is
 ##?                       DOTFILES_PATH/symlinks/conf.yaml
 ##?
@@ -47,7 +46,7 @@ fi
 
 output::empty_line
 
-yaml_file="$(symlinks::get_file_path "$yaml_file")"
+yaml_file="$(symlinks::get_yaml_file_path "${yaml:-}")"
 [[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
 
 if [[ -n "${origin_link_path:-}" ]]; then
@@ -66,7 +65,7 @@ if [[ -n "${origin_link_path:-}" ]]; then
   fi
 else
   preview_cmd='. "$DOTLY_PATH/scripts/core/_main.sh";'
-  preview_cmd+='dot::get_script_src_path "dotbot_yaml_edit.sh";'
+  preview_cmd+='dot::get_script_src_path "dotbot_yaml.sh";'
   preview_cmd+="yaml_file=$yaml_file;"
   preview_cmd+='echo "Press Tab+Shift to select multiple options.\n'
   preview_cmd+='Press Ctrl+C to exit with no selection.\n\n'
@@ -88,24 +87,23 @@ else
 
     output::question_default "Write the new link for '$current_link'" "$current_link" "new_link"
 
-    [[ -n "$new_link" ]] && [[ "$new_link" != "$current_link" ]] && {  
+    if [[ -n "$new_link" && "$new_link" != "$current_link" ]]; then 
       symlinks::edit_link_by_link_path "$yaml_file" "$current_link" "$new_link"
 
-      if $?; then
-        output::error "Link '$current_link' could not be updated to '$new_link'"
+      if [[ -n "$(symlinks::link_exists "$yaml_file" "$current_link")" ]]; then
+        if [[ -n "$(symlinks::link_exists "$yaml_file" "$new_link")" ]]; then 
+          output::error "Link '$new_link' was added to point the same link as '$current_link' but could not be deleted from '$yaml_file'"
+          output::error "Delete it manually or you will preserve old and new symlink."
+        else
+          output::error "Link '$current_link' could not be replaced for '$new_link' in the '$yaml_file'."
+        fi
         exit 1
       else
         output::solution "Link '$current_link' changed to '$new_link' for file: $yaml_link_value"
       fi
-    }
+    else
+      output::answer "No new link or point to the same link"
+      exit 0
+    fi
   done
-fi
-
-${no:-} &&  exit 0
-
-if ${yes:-}; then
-  "$DOTLY_PATH/bin/dot" symlinks apply
-else
-  output::yesno "Do you want to execute 'dot symlinks apply' to apply all your changes (this will apply all dotbot yaml files)" &&\
-  "$DOTLY_PATH/bin/dot" symlinks apply
 fi

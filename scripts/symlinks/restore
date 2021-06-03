@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
+# TODO Review that is using new symlinks.sh and dotbot_yaml.sh libraries
+
 set -euo pipefail
-set +e
 
 [[ -z "$DOTLY_PATH" ]] && exit 1
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "dotbot_yaml_edit.sh"
+dot::get_script_src_path "dotbot_yaml.sh"
 dot::get_script_src_path "symlinks.sh"
 
 ##?  Restore moved file to inside your DOTFILES_PATH to its current link and
@@ -67,12 +68,12 @@ case "$1" in
     output::solution "Link '$link_realpath' restored."
     ;;
   *)
-    if [[ -L "$link_or_dotfile_path" ]]; then
+    if [[ ! -L "$link_or_dotfile_path" ]]; then
       output::error "Given file is not a symbolic link"
       exit 1
     fi
 
-    yaml_file="$(symlinks::get_file_path "${yaml_file:-}")"
+    yaml_file="$(symlinks::get_yaml_file_path "${yaml:-}")"
     [[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
 
     if [ -n "${link_or_dotfile_path:-}" ]; then
@@ -82,8 +83,8 @@ case "$1" in
         exit 1
     else
       preview_cmd='. "$DOTLY_PATH/scripts/core/_main.sh";'
-      preview_cmd+='dot::get_script_src_path "dotbot_yaml_edit.sh"";'
-      preview_cmd+="yaml_file=$yaml_file;"
+      preview_cmd+='dot::get_script_src_path "dotbot_yaml.sh"";'
+      preview_cmd+="yaml_file='$yaml_file';"
       preview_cmd+='echo "Press Tab+Shift to select multiple options.\n'
       preview_cmd+='Press Ctrl+C to exit with no selection.\n\n'
       preview_cmd+='Point to file in \"DOTFILES_PATH\":\n'

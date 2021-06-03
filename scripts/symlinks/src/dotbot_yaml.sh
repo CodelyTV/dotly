@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#shellcheck disable=SC2016
 
 DOTBOT_BASE_PATH="${DOTBOT_BASE_PATH:-$DOTFILES_PATH}"
 
@@ -11,16 +12,88 @@ dotbot::exec_in_dotbot_path() {
   return ${return_code:-0}
 }
 
-# Create a relative path to DOTBOT_BASE_PATH and if not, replace $HOME by ~ to
-# make a generic path for the dotbot
-dotbot::create_relative_link() {
-  local item
-  # realpath inception, this is the best way I promise
-  # this is to avoid possible path errors 
-  item="${1//\~/$HOME:-.}"
-  item="$(dotbot::exec_in_dotbot_path 'realpath -m -q -s "$(realpath -m -q -s --relative-to="$DOTBOT_BASE_PATH" "${item}")"')"
-  item="${item//$DOTBOT_BASE_PATH\//}"
-  echo "${item//$HOME/\~}"
+# Return a path to store in the dotbot yaml file
+dotbot::relative_path() {
+  local link_path
+  [[ -z "${1:-}" ]] && return
+
+  link_path="${1//\~/$HOME}"
+  link_path="$(realpath -qms --relative-base="$DOTBOT_BASE_PATH" "$link_path" 2>/dev/null || true)"
+  link_path="${link_path//$HOME/~}"
+  echo "$link_path"
+}
+
+# Return a path to do any stuff with the file
+dotbot::realpath() {
+  local file_path
+  [[ -z "${1:-}" ]] && return
+
+  file_path="${1//\~/$HOME}"
+  dotbot::exec_in_dotbot_path realpath -qms "\"$file_path\"" 2>/dev/null || true
+}
+
+# Move files by converting values to relative in dotbot or don't
+dotbot::mv() {
+  local from_argn from to_argn to _args relative_dotbot
+  relative_dotbot=false
+  while true; do
+    case "$1" in
+      --relative-dotbot)
+        relative_dotbot=true
+        shift
+        ;;
+      *)
+        break 2
+        ;;
+    esac
+  done
+  [[ $# -lt 2 ]] && return 1
+  _args=( "$@" )
+  from_argn=$(( ${#_args[@]:-2} - 2 ))
+  to_argn=$(( ${#_args[@]:-2} - 1 ))
+  from="$(dotbot::realpath "${_args[$from_argn]}")"
+  to="$(dotbot::realpath"${_args[$to_argn]}")"
+  unset "_args[$from_argn]" "_args[$to_argn]"
+  
+  if [[ -e "$from" ]]; then
+    # TODO Undo in production
+    echo mv "${_args[@]}" "$from" "$to"
+  else
+    return 1
+  fi
+}
+
+# Remove files by converting or not the path to relative to DOTBOT_BASE_PATH
+dotbot::rm() {
+  local file_argn file_path _args rm_cmd relative_dotbot
+  rm_cmd="rm"
+  relative_dotbot=false
+  while true; do
+    case "$1" in
+      --rm-cmd)
+        rm_cmd="${2:-}"
+        shift 2
+        ;;
+      --relative-dotbot)
+        relative_dotbot=true
+        shift
+        ;;
+      *)
+        break 2
+        ;;
+    esac
+  done
+  [[ $# -lt 2 ]] && return 1
+  _args=( "$@" )
+  file_argn=$(( ${#_args[@]:-1} - 1 ))
+  file_path="$(dotbot::realpath "${_args[$file_argn]}")"
+  unset "_args[$file_argn]"
+
+  # TODO Undo in production
+  if [[ -e "$file_path" ]]; then
+    #shellcheck disable=SC2086
+    echo $rm_cmd "${_args[@]}" "\"$file_path\""
+  fi
 }
 
 # Save json as yaml

@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
+# TODO Review that is using new symlinks.sh and dotbot_yaml.sh libraries
+
 set -eou pipefail
 
 [[ -z "$DOTLY_PATH" ]] && exit 1
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "dotbot_yaml_edit.sh"
+dot::get_script_src_path "dotbot_yaml
+.sh"
 dot::get_script_src_path "symlinks.sh"
 
 edit_link_question() {
@@ -66,7 +69,7 @@ if [ -z "${origin_link_path:-}" ]; then
   exit 1
 fi
 
-yaml_file="$(symlinks::get_file_path "${yaml_file:-}")"
+yaml_file="$(symlinks::get_yaml_file_path "${yaml:-}")"
 
 [[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
 
@@ -86,14 +89,18 @@ if [[ -z "$link_dotfile_directory" ]]; then
 fi
 
 if ${only_move:-}; then
+  # Fixme symlinks::move_from_pwd_to_dotfiles is not called symlinks::move_from_pwd_to_dotbot
   symlinks::move_from_pwd_to_dotfiles "$origin_link_path" "$link_dotfile_directory"
   exit $?
 elif ${skip:-false}; then
+  # FIXME Replace dotbot::create_relative_link
+  # FIXME use symlinks::new_link ?
   dotbot::add_or_edit_json_value_to_directive "link" "$(dotbot::create_relative_link "$origin_link_path")" "$(dotbot::create_relative_link "$link_dotfile_directory")" "$yaml_file"
 else
   symlinks::add_yaml_and_move_files "$yaml_file" "$origin_link_path" "$link_dotfile_directory"
 fi
 
+# FIXME Replace dotbot::create_relative_link
 link_value="$(dotbot::get_value_of_key_in "link" "$(dotbot::create_relative_link "$origin_link_path")" "$yaml_file")"
 
 if [ -z "$link_value" ] && [ ! -f "$origin_link_path" ]; then

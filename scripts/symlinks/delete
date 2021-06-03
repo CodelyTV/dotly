@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
+#shellcheck disable=SC2016,SC2207
+
+# TODO Test, after all tests work delete this
+# - [ ] Test Delete by value skiping file deletion
+# - [ ] Test Delete by value
+# - [ ] Test Delete by link skiping file deletion
+# - [ ] Test Delete by link
 
 set -eou pipefail
 
 [[ -z "$DOTLY_PATH" ]] && exit 1
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "dotbot_yaml_edit.sh"
+dot::get_script_src_path "dotbot_yaml.sh"
 dot::get_script_src_path "symlinks.sh"
 
 ##? Delete a symbolic link in the "link" directive of your dotbot yaml file.
@@ -43,13 +50,13 @@ if ${version:-}; then
   exit
 fi
 
-yaml_file="$(symlinks::get_file_path "${yaml_file:-}")"
+yaml_file="$(symlinks::get_yaml_file_path "${yaml:-}")"
 [[ -z "${yaml_file:-}" ]] && output::error "The dotbot yaml file '$yaml_file' does not exists." && exit 1
 
 links=("${origin_link_path:-}")
 
 preview_cmd='. "$DOTLY_PATH/scripts/core/_main.sh";'
-preview_cmd+='dot::get_script_src_path "dotbot_yaml_edit.sh" "symlinks";'
+preview_cmd+='dot::get_script_src_path "dotbot_yaml.sh" "symlinks";'
 preview_cmd+="yaml_file=$yaml_file;"
 preview_cmd+='echo "Press Tab+Shift to select multiple options.\n'
 preview_cmd+='Press Ctrl+C to exit with no selection.\n\n'
@@ -62,10 +69,13 @@ if [ -z "${links[*]}" ] && ${by_value:-false}; then
 
   for df in "${dotfiles[@]}"; do
     if ${skip:-false}; then
-      dotbot::delete_by_value_in "link" "$df" "$yaml_file"
-      output::solution "Link for '$df' deleted from yaml file."
+      if symlinks::delete_link_by_link_value "$df" "$yaml_file"; then
+        output::solution "Link for \`$df\` deleted from yaml file."
+      else
+        output::error "Link for \`$df\` could not be deleted from yaml file."
+      fi
     else
-      symlinks::delete_by_dotbot_file_path "$yaml_file" "$df"
+      symlinks::delete_link_and_files_by_link_value "$yaml_file" "$df"
       output::solution "'$df' deleted."
     fi
   done
@@ -77,13 +87,21 @@ else
   fi
 
   for link in "${links[@]}"; do
-    link="$(dotbot::create_relative_link "$link")"
+    link="$(dotbot::relative_path "$link")"
     if ${skip:-false}; then
-      dotbot::delete_by_key_in "link" "$link" "$yaml_file"
-      output::solution "'$link' link deleted from yaml file."
+      # Delete only the symlink in yaml and symbolic link
+      if symlinks::delete_link "$yaml_file" "$link"; then
+        output::solution "\`$link\` link deleted from yaml file."
+      else
+        output::error "Error deleting \`$link\` symlink."
+      fi
     else
-      symlinks::delete_by_link "$yaml_file" "$link"
-      output::solution "'$link' deleted."
+      # Delete the symliks, files and the symlink in yaml
+      if symlinks::delete_link_and_files "$yaml_file" "$link"; then
+        output::solution "\`$link\` deleted from yaml and symlinked files."
+      else
+        output::error "Error deleting \`$link\` and the files it is linking to."
+      fi
     fi
   done
 fi
