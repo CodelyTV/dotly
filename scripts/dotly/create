@@ -6,7 +6,7 @@ set -euo pipefail
 
 #shellcheck source=/dev/null
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "templating.sh"
+dot::load_library "templating.sh"
 
 ##? Dotly script creator
 ##? 
