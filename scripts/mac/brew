@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "dump.sh" "package"
+dot::load_library "dump.sh" "package"
 
 ##? Some brew utils.
 ##?   - If cleanup does not receive any param will take your
