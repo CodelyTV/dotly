@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/core/dotly.sh"
+
+##? Lint all dotly related bash files
+##?
+##? Usage:
+##?    lint
+if [ "$1" == "-h" ] || [ "$1" = "--help" ]; then
+  docs::parse "$@"
+fi
+
+dotly::list_bash_files | xargs shfmt -i 2 -d
