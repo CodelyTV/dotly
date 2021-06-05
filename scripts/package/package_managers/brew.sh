@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 brew::install() {
   # Some aliases
   case "$1" in

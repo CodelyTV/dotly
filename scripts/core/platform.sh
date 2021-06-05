@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 platform::command_exists() {
   type "$1" >/dev/null 2>&1
 }

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 script::depends_on() {
   utils::curry command_not_exists utils::not platform::command_exists
   non_existing_commands=$(coll::filter command_not_exists "$@")

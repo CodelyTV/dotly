@@ -1,5 +1,3 @@
-#!/bin/user/env bash
-
 source "$DOTLY_PATH/scripts/core/platform.sh"
 
 if platform::is_macos; then
