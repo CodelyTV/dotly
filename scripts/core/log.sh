@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
 
 echoerr() {

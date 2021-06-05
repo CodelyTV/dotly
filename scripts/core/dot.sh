@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 dot::list_contexts() {
   dotly_contexts=$(ls "$DOTLY_PATH/scripts")
   dotfiles_contexts=$(ls "$DOTFILES_PATH/scripts")
