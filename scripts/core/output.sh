@@ -1,7 +1,6 @@
 red='\033[0;31m'
 green='\033[0;32m'
 bold_blue='\033[1m\033[34m'
-gray='\e[90m'
 normal='\033[0m'
 
 _output::parse_code() {
