@@ -2,7 +2,6 @@
 
 source "$DOTLY_PATH/scripts/core/platform.sh"
 
-
 if platform::is_macos; then
   HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/mac/brew/Brewfile"
 elif platform::is_linux; then
@@ -16,7 +15,6 @@ NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/global_modules.txt"
 VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta_dependencies.txt"
 
 package::brew_dump() {
-
   if platform::is_macos; then
     mkdir -p "$DOTFILES_PATH/os/mac/brew"
   else
