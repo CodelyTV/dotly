@@ -3,18 +3,6 @@ coll::is_empty() {
   [[ -z ${var} ]]
 }
 
-coll::contains_element() {
-  elements="${@:2}"
-  element="${1}"
-
-  for e in ${elements[@]}; do
-    if [[ "$e" == "${element}" ]]; then
-      return 1
-    fi
-  done
-  return 0
-}
-
 coll::map() {
   local -r fn="$1"
 

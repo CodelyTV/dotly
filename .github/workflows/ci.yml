@@ -51,9 +51,10 @@ jobs:
       - name: Set needed environment variables
         run: |
           echo "DOTLY_PATH=$PWD" >> $GITHUB_ENV
+          echo "PATH=$PATH:$HOME/go/bin" >> $GITHUB_ENV
 
       - name: 📥 Install shfmt
         run: go get mvdan.cc/sh/v3/cmd/shfmt
 
       - name: 💅 Lint bash files
-        run: bash scripts/self/list_bash_files | xargs "$HOME/go/bin/shfmt" -i 2 -d
+        run: bash scripts/self/lint
