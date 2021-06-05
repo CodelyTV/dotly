@@ -14,10 +14,17 @@
 
 ## Restore your Dotfiles with script
 
-1. Execute
+1. Execute with curl:
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/codelytv/dotly/master/restore)
+bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/restore)
 ```
+
+Or wget:
+Using wget
+```bash
+bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/restore)
+```
+
 2. Follow the steps.
 3. You need to know your github username, repository and install ssh key if your repository is private.
 
