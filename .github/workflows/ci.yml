@@ -42,6 +42,19 @@ jobs:
           echo "DOTLY_ENV: $DOTLY_ENV"
           cat "$HOME/dotly.log"
 
+  static-analysis:
+    runs-on: ubuntu-latest
+    name: 💿 Static analysis
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set needed environment variables
+        run: |
+          echo "DOTLY_PATH=$PWD" >> $GITHUB_ENV
+
+      - name: 💿 Static analysis
+        run: bash scripts/self/static_analysis
+
   lint:
     runs-on: ubuntu-latest
     name: 💅 Lint
