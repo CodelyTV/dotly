@@ -1,4 +1,6 @@
 composer::update_all() {
+  script::depends_on jq
+
   outdated=$(composer global outdated --direct -f json --no-ansi)
   total_outdated=$(echo "$outdated" | jq '.installed' | jq length)
 
