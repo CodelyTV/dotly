@@ -1,3 +1,4 @@
+# Needed dotly functions
 #shellcheck disable=SC2148
 function cdd() {
   #shellcheck disable=SC2012
@@ -23,21 +24,16 @@ function recent_dirs() {
 }
 
 # Envs
+# GPG TTY
+GPG_TTY="$(tty)"
+export GPG_TTY
+
 # shellcheck source=/dev/null
 [[ -f "$DOTFILES_PATH/shell/exports.sh" ]] && . "$DOTFILES_PATH/shell/exports.sh"
 
 # Paths
 # shellcheck source=/dev/null
 [[ -f "$DOTFILES_PATH/shell/paths.sh" ]] && . "$DOTFILES_PATH/shell/paths.sh"
-
-# Brew add gnutools in macos only
-if ! which brew | grep -q 'not found' && [[ "$(uname)" == "Darwin" ]]; then
-  export paths=(
-    "$(brew --prefix)/opt/coreutils/libexec/gnubin"
-    "$(brew --prefix)/opt/findutils/libexec/gnubin"
-    "${paths[@]}"
-  )
-fi
 
 # Add openssl if it exists
 [[ -d "/usr/local/opt/openssl/bin" ]] && path+=("/usr/local/opt/openssl/bin")
@@ -49,12 +45,28 @@ fi
 [[ -d "$HOME/.deno/bin" ]] && path+=("$HOME/.deno/bin")
 [[ -d "/usr/local/opt/ruby/bin" ]] && path+=("/usr/local/opt/ruby/bin")
 [[ -d "/usr/local/opt/python/libexec/bin" ]] && path+=("/usr/local/opt/python/libexec/bin")
-[[ -d "/usr/local/bin" ]] && path+=("/usr/local/sbin")
+[[ -d "/usr/local/bin" ]] && path+=("/usr/local/bin")
 [[ -d "/usr/local/sbin" ]] && path+=("/usr/local/sbin")
 [[ -d "/bin" ]] && path+=("/bin")
 [[ -d "/usr/bin" ]] && path+=("/usr/bin")
 [[ -d "/usr/sbin" ]] && path+=("/usr/sbin")
 [[ -d "/sbin" ]] && path+=("/sbin")
+
+# Brew add gnutools in macos only
+# UNAME_BIN and BREW_BIN are necessary because paths are not yet loaded
+UNAME_BIN="${UNAME_BIN:-/usr/bin/uname}"
+if [[ -x "$UNAME_BIN" &&  "$("$UNAME_BIN" -s)" == "Darwin" ]]; then
+  BREW_BIN="${BREW_BIN:-$(which brew)}"
+  [[ ! -x "$BREW_BIN" && -x "/usr/local/bin/brew" ]] && BREW_BIN="/usr/local/bin/brew"
+  
+  if [[ -d "$("$BREW_BIN" --prefix)" ]]; then
+    export path=(
+      "$("$BREW_BIN" --prefix)/opt/coreutils/libexec/gnubin"
+      "$("$BREW_BIN" --prefix)/opt/findutils/libexec/gnubin"
+      "${path[@]}"
+    )
+  fi
+fi
 
 # Load dotly core for your current BASH
 # PR Note about this: $SHELL sometimes see zsh under certain circumstances in macOS
