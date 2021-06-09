@@ -10,3 +10,7 @@ cargo::install() {
   export PATH="$HOME/.cargo/bin:$PATH"
   source "$HOME/.cargo/env"
 }
+
+cargo::is_installed() {
+  platform::command_exists cargo
+}

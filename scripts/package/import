@@ -14,7 +14,7 @@ docs::parse "$@"
 
 output::write "🎩 Let's import your packages (this could take a while)"
 
-platform::is_macos && output::header "Importing Brew apps from $HOMEBREW_DUMP_FILE_PATH" && package::brew_import
+platform::command_exists brew && output::header "Importing Brew apps from $HOMEBREW_DUMP_FILE_PATH" && package::brew_import
 
 platform::command_exists apt-mark && output::header "Importing Apt apps from $APT_DUMP_FILE_PATH" && package::apt_import
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
 
 echoerr() {
@@ -47,9 +45,9 @@ _log() {
   local template=$1
   shift
   if ${log_to_file:-false}; then
-    echoerr -e $(printf "$template" "$@") | tee -a "$DOT_LOG_FILE" >&2
+    echoerr -e "$(printf "$template" "$@")" | tee -a "$DOT_LOG_FILE" >&2
   else
-    echoerr -e $(printf "$template" "$@")
+    echoerr -e "$(printf "$template" "$@")"
   fi
 }
 
