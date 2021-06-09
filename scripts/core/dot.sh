@@ -43,7 +43,9 @@ dot::get_full_script_path() {
   echo "$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )/$(basename "$0")"
 }
 
-#dot::load_library
+# Old name: dot::get_script_src_path
+# If you find any old name replace by
+# new one:
 dot::load_library() {
   local lib lib_path lib_paths lib_full_path
   lib="${1:-}"
