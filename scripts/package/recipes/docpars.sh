@@ -5,3 +5,7 @@ docpars::install() {
 
   "$DOTLY_PATH/bin/dot" package add docpars --skip-recipe
 }
+
+docpars::is_installed() {
+  platform::command_exists docpars
+}

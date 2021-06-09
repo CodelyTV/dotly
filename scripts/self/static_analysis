@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+source "$DOTLY_PATH/scripts/core/_main.sh"
+source "$DOTLY_PATH/scripts/core/dotly.sh"
+
+##? Static analysis of all dotly related bash files
+##?
+##? Usage:
+##?    lint
+if [ "$1" == "-h" ] || [ "$1" = "--help" ]; then
+  docs::parse "$@"
+fi
+script::depends_on shellcheck
+
+dotly::list_bash_files | xargs shellcheck -s bash -S warning -e SC1090 -e SC2010 -e SC2154

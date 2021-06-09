@@ -1,19 +1,14 @@
 # ------------------------------------------------------------------------------
 # Path - The higher it is, the more priority it has
 # ------------------------------------------------------------------------------
-# JAVA_HOME, GEM_HOME and GOHOME now are loaded in init-dotly.sh
+# JAVA_HOME, GEM_HOME, GOHOME, deno($HOME/.deno/bin), cargo are now loaded
+# in init-dotly.sh
+# Mandatory paths: /usr/local/{bin,sbin}, /bin, /usr/{bin,sbin} /sbin
+# are also loaded in init-dotly
+# paths defined here are loaded first
+#
 export path=(
   "$HOME/bin"
   "$DOTLY_PATH/bin"
   "$DOTFILES_PATH/bin"
-  "$HOME/.cargo/bin"
-  "/usr/local/opt/ruby/bin"
-  "/usr/local/opt/python/libexec/bin"
-  "/opt/homebrew/bin"
-  "/usr/local/bin"
-  "/usr/local/sbin"
-  "/bin"
-  "/usr/bin"
-  "/usr/sbin"
-  "/sbin"
 )

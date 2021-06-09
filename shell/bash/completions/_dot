@@ -11,7 +11,7 @@ _dot() {
   *) suggestions="" ;;
   esac
 
-  COMPREPLY=($(compgen -W "$suggestions" "${COMP_WORDS[$COMP_CWORD]}"))
+  mapfile -t COMPREPLY < <(compgen -W "$suggestions" "${COMP_WORDS[$COMP_CWORD]}")
 }
 
 complete -F _dot dot

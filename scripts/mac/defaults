@@ -34,7 +34,7 @@ case $1 in
 
   if [[ -d "$import_plist_path" ]]; then
     for plist in "${import_plist_path}"/*.plist; do
-      defaults import $(basename ${plist%.*}) "$plist"
+      defaults import "$(basename ${plist%.*})" "$plist"
     done
   fi
   ;;

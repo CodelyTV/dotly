@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 npm::update_all() {
   outdated=$(npm -g outdated | tail -n +2)
 
@@ -19,7 +17,7 @@ npm::update_all() {
       output::write "└ $url"
       output::empty_line
 
-      sudo npm install -g "$package" 2>&1 | log::file "Updating npm app: $package"
+      npm install -g "$package" 2>&1 | log::file "Updating npm app: $package"
     done
   else
     output::answer "Already up-to-date"

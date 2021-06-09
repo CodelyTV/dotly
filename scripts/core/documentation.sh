@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 docs::parse() {
   if ! platform::command_exists docpars; then
     output::error "You need to have docpars installed in order to use dotly"

@@ -21,11 +21,6 @@ symlinks::apply() {
 ##?    apply [-v | --version]
 ##?    apply [-q | --quiet]
 ##?
-##? Options:
-##?   -h --help     Show this help
-##?   -v --version  Show the program version
-##?   -q --quiet    Run dotbot in super quiet mode
-##?
 docs::parse "$@"
 
 SCRIPT_NAME="dot symlinks apply"
@@ -37,19 +32,7 @@ if ${version:-false}; then
   exit
 fi
 
-# Dotbot args
-_args=()
-if ${quiet:-false}; then
-  _args+=(--super-quiet)
-fi
-
-_args+=(
-  -d
-  "$DOTFILES_PATH"
-  -c
-)
-
-symlinks::apply "conf.yaml" "${_args[@]}"
+symlinks::apply "conf.yaml"
 
 if platform::is_macos; then
   if platform::is_macos_arm; then
