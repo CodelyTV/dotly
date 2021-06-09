@@ -1,3 +1,4 @@
+# Needed dotly functions
 #shellcheck disable=SC2148
 function cdd() {
   #shellcheck disable=SC2012
@@ -23,6 +24,10 @@ function recent_dirs() {
 }
 
 # Envs
+# GPG TTY
+GPG_TTY="$(tty)"
+export GPG_TTY
+
 # shellcheck source=/dev/null
 [[ -f "$DOTFILES_PATH/shell/exports.sh" ]] && . "$DOTFILES_PATH/shell/exports.sh"
 
