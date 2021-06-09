@@ -23,18 +23,17 @@ if ! ${silent:-false}; then
   output::empty_line
 fi
 
-HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/mac/brew/${HOSTNAME}.txt"
+HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/$(platform::os)/brew/${HOSTNAME}.txt"
 APT_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/apt/${HOSTNAME}.txt"
 SNAP_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/snap/${HOSTNAME}.txt"
 PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/${HOSTNAME}.txt"
 NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/npm/${HOSTNAME}.txt"
 VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta/${HOSTNAME}.txt"
 
-# Brew command is not macOS exclusive, it can be used on Linux. If I am right. Please delete this comment when reviewing PR
 {
   platform::command_exists brew && \
     package::brew_dump "$HOMEBREW_DUMP_FILE_PATH" && \
-    output::answer "${brew_title:-Brew}apps dumped on $HOMEBREW_DUMP_FILE_PATH" &&\
+    output::answer "${brew_title:-Brew} apps dumped on $HOMEBREW_DUMP_FILE_PATH" &&\
     output::empty_line
 } || package::clarification "${brew_title:-Brew}"
 

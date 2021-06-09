@@ -34,7 +34,13 @@ ZSH_AUTOSUGGEST_USE_ASYNC=true
 # shellcheck disable=SC2034
 ZSH_HIGHLIGHT_MAXLENGTH=300
 
-fpath=("$DOTFILES_PATH/shell/zsh/themes" "$DOTFILES_PATH/shell/zsh/autocompletions" "$DOTLY_PATH/shell/zsh/themes" "$DOTLY_PATH/shell/zsh/completions" "${fpath[@]}")
+fpath=(
+  "$DOTFILES_PATH/shell/zsh/themes"
+  "$DOTFILES_PATH/shell/zsh/autocompletions"
+  "$DOTLY_PATH/shell/zsh/themes"
+  "$DOTLY_PATH/shell/zsh/completions"
+  "${fpath[@]}"
+)
 
 # Brew ZSH Completions
 if type brew &>/dev/null; then

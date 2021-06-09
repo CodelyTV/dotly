@@ -1,4 +1,11 @@
 # ------------------------------------------------------------------------------
+# GENERAL INFORMATION ABOUT THIS FILE
+# The variables here are loaded previously PATH is defined. Use full path if you
+# need to do something like JAVA_HOME here or consider to add a init-script
+# ------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
 # Dotly config
 # ------------------------------------------------------------------------------
 export DOTLY_AUTO_UPDATE_PERIOD_IN_DAYS=7

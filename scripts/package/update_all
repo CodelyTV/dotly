@@ -31,7 +31,7 @@ platform::command_exists rustup && output::h2 '☢️ Rust compiler' && rustup u
 platform::command_exists deno && output::h2 '🦕 deno' && deno upgrade
 platform::command_exists tldr && output::h2 '📜 tldr database' && tldr --update
 
-output::h2 "Zim Framework" && sudo zsh "$DOTLY_PATH/modules/zimfw/zimfw.zsh" upgrade 2>&1 | log::file "Updating Zim"
+output::h2 "Zim Framework" && zsh "$DOTLY_PATH/modules/zimfw/zimfw.zsh" upgrade 2>&1 | log::file "Updating Zim"
 
 output::empty_line
 output::solution '👌 All your packages have been successfully updated'

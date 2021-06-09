@@ -40,8 +40,8 @@ zsh "$ZIM_HOME/zimfw.zsh" install | log::file "Installing zim"
 output::answer "Installing completions"
 "$DOTLY_PATH/bin/dot" shell zsh reload_completions
 
-output::answer "Executing custom restore scripts"
-install_scripts_path="$DOTFILES_PATH/restore_scripts"
+output::answer "Executing custom restoration scripts"
+install_scripts_path="$DOTFILES_PATH/restoration_scripts"
 if [ -d "$install_scripts_path" ]; then
   find "$install_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*.sh' |
     sort |
