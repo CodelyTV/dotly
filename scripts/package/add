@@ -9,7 +9,7 @@ dot::load_library "_registry.sh" "$(dot::get_script_path)/recipes/"
 ##? Usage:
 ##?    add [-v | --version]
 ##?    add [-h | --help]
-##?    add <package_name> [--skip-recipe]
+##?    add [--recipe-path <recipe_path>] <package_name> [--skip-recipe]
 ##?
 ##? Options:
 ##?    -h --help     Show script help
@@ -17,10 +17,32 @@ dot::load_library "_registry.sh" "$(dot::get_script_path)/recipes/"
 ##?
 if ! ${DOTLY_INSTALLER:-false}; then
   docs::parse "$@"
-fi
-
-if [[ $# -lt 1 ]]; then
-  exit 1
+else
+  package_name=""
+  skip_recipe=false
+  recipe_path="$(dot::get_script_path)/recipes/"
+  while $# -gt 0; do
+    case "$1" in
+      --recipe-path)
+        if [[ "$2" != "_registry" ]]; then
+          recipe_path="$2"
+        fi
+        shift 2
+        ;;
+      --skip-recipe)
+        skip_recipe=true; shift
+        ;;
+      --version|-v)
+        version=true; shift
+        ;;
+      --help|-h)
+        help=true; shift
+        ;;
+      *)
+        package_name="$1"; shift
+        ;;
+    esac
+  done
 fi
 
 SCRIPT_NAME="dot package add"
@@ -29,19 +51,22 @@ SCRIPT_VERSION="3.0.0"
 if ${version:-}; then
   output::write "${SCRIPT_NAME} v${SCRIPT_VERSION}"
   exit 0
+elif ${help:-}; then
+  grep '^##?' "$0" | tr '##?' ' '
+  exit 0
 fi
 
-export PATH="$HOME/.cargo/bin:$PATH"
+# No package
+[[ -z "${package_name:-}" ]] && exit 1
 
-package_name="$1"
-skip_recipe="${2:-}"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 package::is_installed "$package_name" && log::success "$package_name already installed" && exit 0
 
 if [[ -z "$skip_recipe" ]] &&\
-   [[ -n "$(registry::recipe_exists "$package_name")" ]] &&\
-   registry::install "$package_name" &&\
-   registry::is_installed "$package_name"
+   [[ -n "$(registry::recipe_exists "$package_name" "${recipe_path:-}")" ]] &&\
+   registry::install "$package_name" "${recipe_path:-}" &&\
+   registry::is_installed "$package_name" "${recipe_path:-}"
 then
   output::write "✅ \`$package_name\` installed"
 
