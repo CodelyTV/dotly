@@ -5,7 +5,7 @@ set -euo pipefail
 ##? Setups the environment
 ##?
 ##? Usage:
-##?    install
+##?    installer
 
 DOTLY_REPOSITORY=${DOTLY_REPOSITORY:-CodelyTV/dotly}
 DOTLY_BRANCH=${DOTLY_BRANCH:-master}

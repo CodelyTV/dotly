@@ -5,12 +5,12 @@ set -euo pipefail
 ##? Setups the environment
 ##?
 ##? Usage:
-##?    install [-c | --continue]
+##?    restorer [-c | --continue]
 ##?
 ##? Options:
 ##?    -h --help      Prints this help
 ##?    -v --version   Prints this script version
-##?    -c --continue  Continue previous install withour cloning again your
+##?    -c --continue  Continue previous install without cloning again your
 ##?                   dotfiles if they exists. Useful if previous restore fails.
 ##?
 

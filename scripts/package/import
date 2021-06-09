@@ -25,7 +25,7 @@ docs::parse "$@"
 
 # Define paths for package managers
 # Is defined this way because this enable the user to define a custom path
-BREW_PATH="${BREW_PATH:-$DOTFILES_PATH/os/mac/brew}"
+BREW_PATH="${BREW_PATH:-$DOTFILES_PATH/os/$(platform::os)/brew}"
 APT_PATH="${APT_PATH:-$DOTFILES_PATH/os/linux/apt}"
 SNAP_PATH="${SNAP_PATH:-$DOTFILES_PATH/os/linux/snap}"
 CARGO_PATH="${CARGO_PATH:-$DOTFILES_PATH/langs/rust/cargo/}"

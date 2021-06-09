@@ -1,4 +1,4 @@
-#!/bin/user/env bash
+#!/usr/bin/env bash
 
 apt_title='@ APT'
 brew_title='🍺 Brew'
@@ -15,7 +15,7 @@ package::exists_dump_current_machine_file() {
   local FILES_PATH
   FILES_PATH="$(realpath -sm "${1:-}")"
 
-  ls -1 -d "$FILES_PATH"/* 2>/dev/null | grep -v ".lock.json$" | grep "^$(hostname -s)$"
+  find "$FILES_PATH" -name "*" -not -iname "*lock*" -not -iname ".*" -print0 2>/dev/null | xargs -0 -I _ basename _ | grep -Ei "^$(hostname -s)(.txt|.json)?$" | head -n 1
 }
 
 package::preview() {

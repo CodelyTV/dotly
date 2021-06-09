@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 gem::update_all() {
   outdated=$(gem outdated)
 
