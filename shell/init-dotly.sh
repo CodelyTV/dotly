@@ -53,12 +53,12 @@ fi
 
 # Brew add gnutools in macos only
 if ! which brew | grep -q 'not found' && [[ "$(uname)" == "Darwin" ]]; then
-  PATH="$PATH:$(brew --prefix)/opt/coreutils/libexec/gnubin"
-  PATH="$PATH:$(brew --prefix)/opt/findutils/libexec/gnubin"
+  PATH="$(brew --prefix)/opt/coreutils/libexec/gnubin:$PATH"
+  PATH="$(brew --prefix)/opt/findutils/libexec/gnubin:$PATH"
 fi
 
 # Add openssl if it exists
-[[ -d "/usr/local/opt/openssl/bin" ]] && PATH="$PATH:/usr/local/opt/openssl/bin"
+[[ -d "/usr/local/opt/openssl/bin" ]] && PATH="/usr/local/opt/openssl/bin:$PATH"
 export PATH
 
 #shellcheck source=/dev/null
@@ -68,7 +68,8 @@ export PATH
 # Auto Init scripts at the end
 init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
 if [[ ${DOTLY_INIT_SCRIPTS:-true} == true ]] && [[ -d "$init_scripts_path" ]]; then
-  find "$DOTFILES_PATH/shell/init-scripts.enabled" -mindepth 1 -maxdepth 1 -type f,l -print0 -exec echo {} \; 2>/dev/null | xargs -I _ realpath --quiet --logical _ | while read -r init_script; do
+  find "$DOTFILES_PATH/shell/init-scripts.enabled" -mindepth 1 -maxdepth 1 -type f,l -print0 2>/dev/null | xargs -0 -I _ realpath --quiet --logical _ | while read -r init_script; do
+    [[ -z "$init_script" ]] && continue
     #shellcheck source=/dev/null
     { [[ -f "$init_script" ]] && . "$init_script"; } || echo -e "\033[0;31m$init_script could not be loaded\033[0m"
   done
