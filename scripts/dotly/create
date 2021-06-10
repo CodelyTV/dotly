@@ -68,8 +68,8 @@ case "${1:-}" in
 
     rm -f "$new_script_path"
     touch "$new_script_path"
-    printf "#!/usr/bin/env bash\n" >> "$new_script_path"
-    printf "set -euo pipefail" >> "$new_script_path"
+    printf "#!/usr/bin/env bash\n\n" >> "$new_script_path"
+    printf "set -euo pipefail\n" >> "$new_script_path"
     #shellcheck disable=SC2016
     printf '. "$DOTLY_PATH/scripts/core/_main.sh"\n' >> "$new_script_path"
 
