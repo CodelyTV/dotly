@@ -73,6 +73,8 @@ case "${1:-}" in
     #shellcheck disable=SC2016
     printf '. "$DOTLY_PATH/scripts/core/_main.sh"\n' >> "$new_script_path"
 
+    chmod u+x "$new_script_path"
+
     output::empty_line
     output::solution "The script \`$name\` where successfully created."
     output::write ""
