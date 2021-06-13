@@ -30,13 +30,13 @@ init::get_scripts() {
     [[ -d "$DOTFILES_INIT_SCRIPTS_PATH" ]] &&\
     find "$DOTLY_INIT_SCRIPTS_PATH" \
         "$DOTFILES_INIT_SCRIPTS_PATH" -name "*" -type f,l -print0 -exec echo {} \; |\
-    xargs -I _ basename _ | sort | uniq
+    xargs -0 -I _ basename _ | sort | uniq
 }
 
 init::get_enabled() {
   [[ -d "$ENABLED_INIT_SCRIPTS_PATH" ]] &&\
     find "$ENABLED_INIT_SCRIPTS_PATH" -name "*" -type l -print0 -exec echo {} \; |\
-    xargs -I _ basename _ | sort | uniq
+    xargs -0 -I _ basename _ | sort | uniq
 }
 
 init::fzf() {

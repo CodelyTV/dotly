@@ -77,8 +77,15 @@ dot::load_library() {
     done
 
     # Library loading
-    if [[ -n "${lib_full_path:-}" ]] && [[ -f "${lib_full_path:-}" ]]; then
-      { ! array::exists_value "${lib_full_path:-}" "${SCRIPT_LOADED_LIBS[@]:-}" && . "$lib_full_path"; } || true
+    if [[ -n "${lib_full_path:-}" ]] && [[ -r "${lib_full_path:-}" ]]; then
+      if ! array::exists_value "${lib_full_path:-}" "${SCRIPT_LOADED_LIBS[@]:-}"; then
+        #shellcheck disable=SC1090
+        . "$lib_full_path"
+        SCRIPT_LOADED_LIBS+=(
+          "$lib_full_path"
+        )
+      fi
+
       return 0
     else
       output::error "🚨 Library loading error with: \"${lib_full_path:-No lib path found}\""
