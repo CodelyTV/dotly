@@ -1,4 +1,4 @@
-source "$DOTLY_PATH/scripts/package/recipes/_registry.sh"
+. "$DOTLY_PATH/scripts/package/recipes/_registry.sh"
 
 command_or_package_exists() {
   platform::command_exists "$1" || registry::is_installed "$1"

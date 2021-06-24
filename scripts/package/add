@@ -1,67 +1,83 @@
 #!/usr/bin/env bash
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/package/recipes/_registry.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+dot::load_library "package.sh"
+dot::load_library "_registry.sh" "$(dot::get_script_path)/recipes/"
 
 ##? Install a package
 ##?
 ##? Usage:
-##?    add <package_name> [--skip-recipe]
+##?    add [-v | --version]
+##?    add [-h | --help]
+##?    add [--recipe-path <recipe_path>] <package_name> [--skip-recipe]
+##?
+##? Options:
+##?    -h --help     Show script help
+##?    -v --version  Show script version
 ##?
 if ! ${DOTLY_INSTALLER:-false}; then
   docs::parse "$@"
+else
+  package_name=""
+  skip_recipe=false
+  recipe_path="$(dot::get_script_path)/recipes/"
+  while $# -gt 0; do
+    case "$1" in
+      --recipe-path)
+        if [[ "$2" != "_registry" ]]; then
+          recipe_path="$2"
+        fi
+        shift 2
+        ;;
+      --skip-recipe)
+        skip_recipe=true; shift
+        ;;
+      --version|-v)
+        version=true; shift
+        ;;
+      --help|-h)
+        help=true; shift
+        ;;
+      *)
+        package_name="$1"; shift
+        ;;
+    esac
+  done
 fi
+
+SCRIPT_NAME="dot package add"
+SCRIPT_VERSION="3.0.0"
+
+if ${version:-}; then
+  output::write "${SCRIPT_NAME} v${SCRIPT_VERSION}"
+  exit 0
+elif ${help:-}; then
+  grep '^##?' "$0" | tr '##?' ' '
+  exit 0
+fi
+
+# No package
+[[ -z "${package_name:-}" ]] && exit 1
 
 export PATH="$HOME/.cargo/bin:$PATH"
 
-package::install() {
-  local -r package_manager="$1"
-  local -r package_to_install="$2"
+package::is_installed "$package_name" && log::success "$package_name already installed" && exit 0
 
-  platform::command_exists "$package_manager" || exit 3
-
-  local -r file="$DOTLY_PATH/scripts/package/package_managers/$package_manager.sh"
-
-  # unsupported package manager
-  [ ! -f "$file" ] && exit 4
-
-  source "$file"
-
-  local -r install_command="${package_manager}::install"
-
-  "$install_command" "$package_to_install"
-}
-
-package_name="$1"
-skip_recipe="$2"
-
-platform::command_exists "$package_name" || registry::is_installed "$package_name" && log::success "$package_name already installed" && exit 0
-
-if [ -z "$skip_recipe" ] && registry::install "$package_name"; then
+if [[ -z "$skip_recipe" ]] &&\
+   [[ -n "$(registry::recipe_exists "$package_name" "${recipe_path:-}")" ]] &&\
+   registry::install "$package_name" "${recipe_path:-}" &&\
+   registry::is_installed "$package_name" "${recipe_path:-}"
+then
   output::write "✅ \`$package_name\` installed"
 
   exit 0
 else
-  if platform::is_macos; then
-    for package_manager in brew mas ports cargo; do
-      package::install $package_manager "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager" || true
+  package::command install "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager" || true
 
-      if platform::command_exists "$package_name"; then
-        output::write "✅ \`$package_name\` installed"
+  if package::is_installed "$package_name"; then
+    output::write "✅ \`$package_name\` installed"
 
-        exit 0
-      fi
-    done
-  else
-    for package_manager in apt dnf yum brew pacman cargo; do
-      package::install $package_manager "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager"
-
-      if platform::command_exists "$package_name"; then
-        output::write "✅ \`$package_name\` installed"
-
-        exit 0
-      fi
-    done
+    exit 0
   fi
 fi
 

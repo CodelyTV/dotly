@@ -31,6 +31,10 @@ export GPG_TTY
 # shellcheck source=/dev/null
 [[ -f "$DOTFILES_PATH/shell/exports.sh" ]] && . "$DOTFILES_PATH/shell/exports.sh"
 
+# SLOTH_PATH & DOTLY_PATH compatibility
+[[ -z "${SLOTH_PATH:-}" && -n "${DOTLY_PATH:-}" ]] && SLOTH_PATH="$DOTLY_PATH"
+[[ -z "${DOTLY_PATH:-}" && -n "${SLOTH_PATH:-}" ]] && DOTLY_PATH="$SLOTH_PATH"
+
 # Paths
 # shellcheck source=/dev/null
 [[ -f "$DOTFILES_PATH/shell/paths.sh" ]] && . "$DOTFILES_PATH/shell/paths.sh"
@@ -97,12 +101,12 @@ fi
 
 
 # Auto Init scripts at the end
-init_scripts_path="$DOTFILES_PATH/shell/init-scripts.enabled"
-if [[ ${DOTLY_INIT_SCRIPTS:-true} == true ]] && [[ -d "$init_scripts_path" ]]; then
-  find "$DOTFILES_PATH/shell/init-scripts.enabled" -mindepth 1 -maxdepth 1 -type f,l -print0 2>/dev/null | xargs -0 -I _ realpath --quiet --logical _ | while read -r init_script; do
+init_scripts_path="$DOTFILES_PATH/shell/init.scripts-enabled"
+if [[ ${SLOTH_INIT_SCRIPTS:-true} == true ]] && [[ -d "$init_scripts_path" ]]; then
+  find "$DOTFILES_PATH/shell/init.scripts-enabled" -mindepth 1 -maxdepth 1 -type f,l -print0 2>/dev/null | xargs -0 -I _ realpath --quiet --logical _ | while read -r init_script; do
     [[ -z "$init_script" ]] && continue
     #shellcheck source=/dev/null
-    { [[ -f "$init_script" ]] && . "$init_script"; } || echo -e "\033[0;31m$init_script could not be loaded\033[0m"
+    { [[ -f "$init_script" ]] && . "$init_script"; } || echo -e "\033[0;31m${init_script} could not be loaded\033[0m"
   done
 fi
 unset init_script init_scripts_path

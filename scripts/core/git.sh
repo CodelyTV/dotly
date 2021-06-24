@@ -166,7 +166,7 @@ git::check_local_repo_is_updated() {
   git::is_in_repo && ! git status -sb 2>/dev/null | grep -q 'behind'
 }
 
-git::dotly_repository_exec() {
+git::sloth_repository_exec() {
   local return_code
   return_code=0
   cd "$DOTLY_PATH" || return 1

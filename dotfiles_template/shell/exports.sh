@@ -6,11 +6,12 @@
 
 
 # ------------------------------------------------------------------------------
-# Dotly config
+# Sloth config
 # ------------------------------------------------------------------------------
-export DOTLY_AUTO_UPDATE_PERIOD_IN_DAYS=7
-export DOTLY_AUTO_UPDATE_MODE="auto" # silent, auto, info, prompt
-export DOTLY_UPDATE_VERSION="stable" # latest, stable, minor
+export SLOTH_AUTO_UPDATE_PERIOD_IN_DAYS=7
+export SLOTH_AUTO_UPDATE_MODE="auto" # silent, auto, info, prompt
+export SLOTH_UPDATE_VERSION="stable" # latest, stable, minor
+export SLOTH_INIT_SCRIPTS=true # Init scripts enabled
 
 # ------------------------------------------------------------------------------
 # Codely theme config

@@ -1,7 +1,7 @@
 # sloth command by the moment is a dot alias but it will change
-alias sloth='"$DOTLY_PATH/bin/dotly"'
-alias lazy='"$DOTLY_PATH/bin/dot"'
-alias s='"$DOTLY_PATH/bin/dot"'
+alias sloth='"$SLOTH_PATH/bin/dotly"'
+alias lazy='"$SLOTH_PATH/bin/dot"'
+alias s='"$SLOTH_PATH/bin/dot"'
 
 # Enable aliases to be sudo’ed
 alias sudo='sudo '

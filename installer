@@ -10,7 +10,7 @@ set -euo pipefail
 ICLOUD_PATH="$HOME/Library/Mobile\ Documents/com~apple~CloudDocs/"
 IS_ICLOUD_DOTFILES=false
 
-DOTLY_REPOSITORY=${DOTLY_REPOSITORY:-CodelyTV/dotly}
+DOTLY_REPOSITORY=${DOTLY_REPOSITORY:-gtrabanco/sloth}
 DOTLY_BRANCH=${DOTLY_BRANCH:-master}
 DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
 export DOTLY_ENV=${DOTLY_ENV:-PROD}
@@ -66,7 +66,7 @@ command_exists() {
 }
 
 _w "  ┌────────────────────────────────────┐"
-_w "~ │ 🚀 Welcome to the ${green}dotly${normal} installer! │ ~"
+_w "~ │ 🚀 Welcome to the ${green}sloth${normal} installer! │ ~"
 _w "  └────────────────────────────────────┘"
 _w
 
@@ -87,7 +87,7 @@ if [[ ${IS_ICLOUD_DOTFILES:-false} == false ]]; then
 fi
 export DOTFILES_PATH="$DOTFILES_PATH"
 
-dotly_inner_path="modules/dotly"
+dotly_inner_path="modules/sloth"
 export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 
 create_dotfiles_dir "$DOTFILES_PATH"

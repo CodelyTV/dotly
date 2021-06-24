@@ -5,3 +5,7 @@ pacman::install() {
     sudo pacman -S --noconfirm "$@"
   fi
 }
+
+pacman::is_installed() {
+  pacman -Qs "$@" | grep -q 'local'
+}

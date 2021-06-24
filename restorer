@@ -149,7 +149,7 @@ package_install() {
 }
 
 _w "  ┌────────────────────────────────────┐"
-_w "~ │ 🚀 Welcome to the ${green}dotly${normal} restorer!  │ ~"
+_w "~ │ 🚀 Welcome to the ${green}sloth${normal} restorer!  │ ~"
 _w "  └────────────────────────────────────┘"
 _w
 
@@ -194,7 +194,7 @@ _q "Where do you want your dotfiles to be located? (default ~/.dotfiles)" "DOTFI
 DOTFILES_PATH="$(eval echo "${DOTFILES_PATH:-$HOME/.dotfiles}")"
 export DOTFILES_PATH
 
-dotly_inner_path="modules/dotly"
+dotly_inner_path="modules/sloth"
 export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 
 # Backup if currently there are any dotfiles and prepare parent directory
@@ -331,7 +331,7 @@ cd "${DOTFILES_PATH}"
 # Only dotly submodule must be updated recursively because we do not know if
 # user has added any other submodules that are privated and maybe the user
 # needs to configure something to access those repositories
-git submodule update --init --recursive modules/dotly 2>&1 | _log "Downloading dotly and submodules" || {
+git submodule update --init --recursive "$dotly_inner_path" 2>&1 | _log "Downloading dotly and submodules" || {
   _e "Downloading dotly failed. See for more details:"
   _e "  tail -f $HOME/dotly.log"
   _w

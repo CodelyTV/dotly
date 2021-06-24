@@ -2,8 +2,8 @@
 
 . "$DOTLY_PATH/scripts/self/src/update.sh"
 
-autoupdate::dotly_updater() {
-  local CURRENT_DIR remote_dotly_minor
+autoupdate::sloth_updater() {
+  local CURRENT_DIR remote_sloth_minor
   set +e # Avoid crash if any function return an error
 
   # Other needed variables
@@ -12,8 +12,8 @@ autoupdate::dotly_updater() {
   # Change to dotly path
   cd "$DOTLY_PATH" || return 1
 
-  [[ -f "$DOTFILES_PATH/.dotly_updated" ]] &&\
-  [[ "${DOTLY_AUTO_UPDATE_MODE:-auto}" != "silent" ]] && {
+  [[ -f "$DOTFILES_PATH/.sloth_updated" ]] &&\
+  [[ "${SLOTH_AUTO_UPDATE_MODE:-auto}" != "silent" ]] && {
     output::empty_line
     output::write "     🥳 🎉 🍾      DOTLY UPDATED     🥳 🎉 🍾  "
     output::empty_line
@@ -24,35 +24,35 @@ autoupdate::dotly_updater() {
       output::empty_line
     fi
 
-    [[ -z "$migration_script" ]] && rm "$DOTFILES_PATH/.dotly_updated"
+    [[ -z "$migration_script" ]] && rm "$DOTFILES_PATH/.sloth_updated"
   }
 
-  [[ -f "$DOTFILES_PATH/.dotly_update_available" ]] && return 0
+  [[ -f "$DOTFILES_PATH/.sloth_update_available" ]] && return 0
   
-  if files::check_if_path_is_older "$DOTLY_PATH" "${DOTLY_AUTO_UPDATE_PERIOD_IN_DAYS:-7}" "days" &&\
+  if files::check_if_path_is_older "$DOTLY_PATH" "${SLOTH_AUTO_UPDATE_PERIOD_IN_DAYS:-7}" "days" &&\
     ! git::check_local_repo_is_updated "origin" "$DOTLY_PATH"
   then
-    touch "$DOTFILES_PATH/.dotly_update_available"
+    touch "$DOTFILES_PATH/.sloth_update_available"
 
-    remote_dotly_minor="$(update::check_minor_update)"
-    if [[ -z "$remote_dotly_minor" ]]; then
-      touch "$DOTFILES_PATH/.dotly_update_available_is_major"
+    remote_sloth_minor="$(update::check_minor_update)"
+    if [[ -z "$remote_sloth_minor" ]]; then
+      touch "$DOTFILES_PATH/.sloth_update_available_is_major"
     fi
   fi
 
   cd "$CURRENT_DIR" || return 1
 }
 
-autoupdate::dotly_success() {
-  if [[ -f "$DOTFILES_PATH/.dotly_update_available" ]] && [[ ! -f "$DOTFILES_PATH/.dotly_force_current_version" ]]; then
-    if [[ -f "$DOTFILES_PATH/.dotly_update_available_is_major" ]] && [[ "$(str::to_lower "$DOTLY_UPDATE_VERSION")" =~ minor$ ]]; then
+autoupdate::sloth_success() {
+  if [[ -f "$DOTFILES_PATH/.sloth_update_available" ]] && [[ ! -f "$DOTFILES_PATH/.sloth_force_current_version" ]]; then
+    if [[ -f "$DOTFILES_PATH/.sloth_update_available_is_major" ]] && [[ "$(str::to_lower "$SLOTH_UPDATE_VERSION")" =~ minor$ ]]; then
       return 0
     fi
 
-    case "$(str::to_lower "${DOTLY_AUTO_UPDATE_MODE:-auto}")" in
+    case "$(str::to_lower "${SLOTH_AUTO_UPDATE_MODE:-auto}")" in
       "silent")
-        update::update_local_dotly_module
-        rm -f "$DOTFILES_PATH/.dotly_update_available"
+        update::update_local_sloth_module
+        rm -f "$DOTFILES_PATH/.sloth_update_available"
         ;;
       "info")
         output::empty_line
@@ -66,15 +66,15 @@ autoupdate::dotly_success() {
         ;;
       *) # auto
           output::answer "🚀 Updating DOTLY Automatically"
-          update::update_local_dotly_module
+          update::update_local_sloth_module
           output::solution "Updated, restart your terminal."
-          rm -f "$DOTFILES_PATH/.dotly_update_available"
+          rm -f "$DOTFILES_PATH/.sloth_update_available"
       ;;
     esac
   fi
 }
 
-autoupdate::dotly_reject() {
+autoupdate::sloth_reject() {
   # Nothing to be updated
   return 0
 }

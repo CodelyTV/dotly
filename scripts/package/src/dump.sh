@@ -1,4 +1,4 @@
-source "$DOTLY_PATH/scripts/core/platform.sh"
+. "$DOTLY_PATH/scripts/core/platform.sh"
 
 if platform::is_macos; then
   HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/mac/brew/Brewfile"

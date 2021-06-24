@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # Needed variables
-DOTLY_INIT_SCRIPTS_PATH=${DOTLY_INIT_SCRIPTS_PATH:-$DOTLY_PATH/shell/init-scripts}
-DOTFILES_INIT_SCRIPTS_PATH=${DOTFILES_INIT_SCRIPTS_PATH:-$DOTFILES_PATH/shell/init-scripts}
-ENABLED_INIT_SCRIPTS_PATH=${ENABLED_INIT_SCRIPTS_PATH:-$DOTFILES_PATH/shell/init-scripts.enabled}
+DOTLY_INIT_SCRIPTS_PATH=${DOTLY_INIT_SCRIPTS_PATH:-$DOTLY_PATH/shell/init.scripts}
+DOTFILES_INIT_SCRIPTS_PATH=${DOTFILES_INIT_SCRIPTS_PATH:-$DOTFILES_PATH/shell/init.scripts}
+ENABLED_INIT_SCRIPTS_PATH=${ENABLED_INIT_SCRIPTS_PATH:-$DOTFILES_PATH/shell/init.scripts-enabled}
 
 # Check if init script exists in dotly or dotfiles
 init::exists_script() {

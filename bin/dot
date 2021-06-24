@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Usage:
 ##?    dot

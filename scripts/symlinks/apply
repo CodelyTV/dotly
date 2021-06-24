@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
 
 symlinks::apply() {
   local -r CONFIG="$DOTFILES_PATH/symlinks/$1"
@@ -28,7 +28,7 @@ SCRIPT_NAME="lazy symlinks apply"
 SCRIPT_VERSION="1.0.0"
 
 # Print name and version
-if $version; then
+if ${version:-false}; then
   output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
   exit
 fi

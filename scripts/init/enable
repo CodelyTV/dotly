@@ -33,7 +33,7 @@ if ${version:-}; then
   exit
 fi
 
-if [[ ${DOTLY_INIT_SCRIPTS:-true} != true ]]; then
+if [[ ${SLOTH_INIT_SCRIPTS:-true} != true ]]; then
   output::error "Init scripts are disabled"
   exit 1
 fi

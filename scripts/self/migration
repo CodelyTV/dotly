@@ -34,7 +34,7 @@ if ${version:-}; then
   exit
 fi
 
-output::header "DOTLY migration wizard"
+output::header "SLOTH migration wizard"
 
 [[ -z "${to_version:-}" ]] && [[ -f "$DOTFILES_PATH/.dotly_updated" ]] && to_version="$(uptate::migration_script_exits)"
 

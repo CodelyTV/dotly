@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-source "$DOTLY_PATH/shell/zsh/themes/prompt_codely_setup"
+. "$DOTLY_PATH/shell/zsh/themes/prompt_codely_setup"
 
 prompt_codelytv_setup() {
   prompt_codely_setup "$@"

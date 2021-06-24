@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/package/src/dump.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/package/src/dump.sh"
 
 ##? Dump all installed packages from:
 ##?  * Brew

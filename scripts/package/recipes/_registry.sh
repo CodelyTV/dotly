@@ -1,28 +1,52 @@
-if ! ${DOT_REGISTRY_SOURCED:-false}; then
-  for file in $DOTLY_PATH/scripts/package/recipes/{docpars,cargo,git-delta}.sh; do
-    source "$file"
-  done
-  unset file
+registry::recipe_exists() {
+  local -r recipe="${1:-}"
+  local recipe_path recipe_paths=()
 
-  readonly DOT_REGISTRY_SOURCED=true
-fi
+  if [[ -n "${2:-}" ]]; then
+    recipe_paths+=("$2")
+  fi
+
+  recipe_paths+=(
+    "$DOTLY_PATH/scripts/package/recipes/${recipe}.sh"
+    "$DOTFILES_PATH/recipes/${recipe}.sh"
+  )
+  [[ -z "$recipe" ]] && return
+  
+  for recipe_path in "${recipe_paths[@]}"; do
+    [[ -f "$recipe_path" ]] && break
+  done
+
+  echo "$recipe_path"
+}
 
 registry::install() {
-  local -r installation_command="$1::install"
+  local -r recipe="${1:-}"
+  local -r install_command="${recipe}::install"
+  local -r recipe_path="$(registry::recipe_exists "$recipe" "${2:-}" || echo -n "")"
+  
+  [[ -z "$recipe" || -z "$recipe_path" || ! -f "$recipe_path" ]] && return 1
 
-  if [ "$(command -v "$installation_command")" ]; then
-    "$installation_command"
-  else
-    return 1
+  dot::load_library "${recipe}.sh" "$(dirname "$recipe_path")"
+
+  if [[ "$(command -v "$install_command")" ]]; then
+    "$install_command"
+    return $?
   fi
+
+  return 1
 }
 
 registry::is_installed() {
-  local -r is_installed_command="$1::is_installed"
+  local -r recipe="${1:-}"
+  local -r is_installed_command="${recipe}::is_installed"
+  local -r recipe_path="$(registry::recipe_exists "$recipe" "${2:-}")"
+  [[ -z "$recipe" || -z "$recipe_path" || ! -f "$recipe_path" ]] && return 1
+  dot::load_library "${recipe}.sh" "$(dirname "$recipe_path")"
 
-  if [ "$(command -v "$is_installed_command")" ]; then
+  if [[ "$(command -v "$is_installed_command")" ]]; then
     "$is_installed_command"
-  else
-    return 1
+    return $?
   fi
+
+  return 1
 }
