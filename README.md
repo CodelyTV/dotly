@@ -1,16 +1,16 @@
-<p style="text-align: center">
+<p align="center">
   <a href="https://github.com/gtrabanco/sloth">
     <img src="sloth.svg" alt="Sloth Logo" style="width: 256px; height: 256px" />
   </a>
 </p>
 
-<h1 style="text-align: center">
+<h1 align="center">
   Dotfiles for laziness
 </h1>
 
-<h4 style="text-align: right">
+<p align="right">
   Original idea is <a href="https://github.com/codelytv/dotly" alt="Dotly repository">Dotly Framework</a> by <a href="https://github.com/rgomezcasas" alt="Dotly orginal developer">Rafa Gomez</a>
-</h4>
+</p>
 
 ## INSTALLATION
 
