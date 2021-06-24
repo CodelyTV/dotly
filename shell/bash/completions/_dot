@@ -15,3 +15,6 @@ _dot() {
 }
 
 complete -F _dot dot
+complete -F _dot sloth
+complete -F _dot s
+complete -F _dot lazy
