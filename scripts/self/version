@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+set -uo pipefail
+set +e # Avoid crash if any function return false
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/core/templating.sh"
+dot::load_library "update.sh"
+
+##?   Select a specific dotly version from local dotly module. If you select
+##? any of: latest, stable, minor, it also modifies you 'exports.sh' file
+##?
+##? Usage:
+##?   version [-h | --help]
+##?   version [-v | --version]
+##?   version [-r | --view-remote]
+##?   version
+##?
+##? Options:
+##?   -h --help         Show this help
+##?   -v --version      Show the program version
+##?   -r --view-remote  View remote versions (only view)
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+docs::parse "$@"
+
+SCRIPT_NAME="lazy self version"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+if ${view_remote:-false}; then
+  git::get_all_remote_tags_version_only
+  exit 0
+fi
+
+local_tags=($(git::get_all_local_tags) "minor" "stable" "latest")
+selected_tag="$(printf "%s\n" "${local_tags[@]}" | fzf --header "Select a dotly version" --preview "")"
+
+case "$selected_tag" in
+  "minor")
+    current_tag_version="$(update::get_latest_minor_local_head)" # Current HEAD tag or stable
+    if [[ -n "$current_tag_version" ]]; then
+      git::dotly_repository_exec git checkout -q "$current_tag_version"
+      output::solution "Switched to latest DOTLY stable version $current_tag_version"
+      modify_bash_file_variable "$DOTFILES_PATH/shell/exports.sh" "DOTLY_UPDATE_VERSION" "minor"
+    else
+      output::error "No releases locally yet"
+    fi
+    ;;
+  "stable")
+    latest_stable="$(git::get_current_latest_tag)"
+    if [[ -n "$latest_stable" ]]; then
+      git::dotly_repository_exec git checkout -q "$latest_stable"
+      output::solution "Switched to latest DOTLY stable version $latest_stable"
+      modify_bash_file_variable "$DOTFILES_PATH/shell/exports.sh" "DOTLY_UPDATE_VERSION" "stable"
+    else
+      output::error "No releases locally yet"
+    fi
+    ;;
+  "latest")
+    git::dotly_repository_exec git checkout -q "master"
+    ;;
+  *)
+    if [[ -n "$selected_tag" ]]; then
+      git::dotly_repository_exec git checkout -q "$selected_tag"
+      output::solution "Switched to DOTLY version $selected_tag"
+    fi
+    ;;
+esac
+
+if [[ -n "$selected_tag" ]]; then
+  output::answer "DOTLY is update locked. To unlock updates use: dot self update --enable"
+  touch "$DOTFILES_PATH/.dotly_force_current_version"
+fi

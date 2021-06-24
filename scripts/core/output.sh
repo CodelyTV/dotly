@@ -4,25 +4,60 @@ bold_blue='\033[1m\033[34m'
 normal='\033[0m'
 
 _output::parse_code() {
-  local -r text="${1:-}"
+  local color="$normal"
+  case "${1:-}" in
+    --color)
+      color="$2"
+      shift 2
+      ;;
+  esac
 
-  with_code_parsed=$(echo "$text" | awk "{ORS=(NR+1)%2==0?\"${green}\":RS}1" RS="\`" | awk "{ORS=NR%1==0?\"${normal}\":RS}1" RS="\`" | tr -d '\n')
+  echo "color: $color"
+
+  local -r text="${*:-}"
+
+  with_code_parsed=$(echo "$text" | awk "{ORS=(NR+1)%2==0?\"${green}\":RS}1" RS="\`" | awk "{ORS=NR%1==0?\"${color}\":RS}1" RS="\`" | tr -d '\n')
 
   echo -e "$with_code_parsed"
 }
 
 output::write() {
-  local -r text="${1:-}"
+  local with_code_parsed color
+  color="$normal"
+  case "${1:-}" in
+    --color)
+      color="$2"
+      shift 2
+      ;;
+  esac
 
-  with_code_parsed=$(_output::parse_code "$text")
-
+  local -r text="${*:-}"
+  with_code_parsed="$(_output::parse_code --color "${color}" "$text")"
   echo -e "$with_code_parsed"
 }
-output::answer() { output::write " > $1"; }
-output::error() { output::answer "${red}$1${normal}"; }
-output::solution() { output::answer "${green}$1${normal}"; }
+output::answer() {
+  local color
+  color="$normal"
+  case "${1:-}" in
+    --color)
+      color="$2"
+      shift 2
+      ;;
+  esac
+  output::write --color "${color}" " > ${*:-}";
+}
+output::error() { output::answer --color "${red}" "${red}${*:-}${normal}"; }
+output::solution() { output::answer --color "${green}" "${green}${*:-}${normal}"; }
 output::question() {
-  with_code_parsed=$(_output::parse_code "$1")
+  local with_code_parsed color
+  color="$normal"
+  case "${1:-}" in
+    --color)
+      color="$2"
+      shift 2
+      ;;
+  esac
+  with_code_parsed="$(_output::parse_code --color "${color}" "${1:-}")"
 
   if [ "${DOTLY_ENV:-PROD}" == "CI" ] || [ "${DOTLY_INSTALLER:-false}" = true ]; then
     answer="y"
@@ -32,7 +67,6 @@ output::question() {
 
   echo "$answer"
 }
-
 output::answer_is_yes() {
   if [[ "${1:-Y}" =~ ^[Yy] ]]; then
     return 0
@@ -41,22 +75,71 @@ output::answer_is_yes() {
   return 1
 }
 
+output::question_default() {
+  local with_code_parsed color question default_value var_name
+  color="$normal"
+  case "${1:-}" in
+    --color)
+      color="$2"
+      shift 2
+      ;;
+  esac
+
+  [[ $# -lt 3 ]] && return 1
+
+  question="$1"
+  default_value="$2"
+  var_name="$3"
+
+  with_code_parsed="$(_output::parse_code --color "${color}" "$question")"
+
+  read -rp "🤔 $with_code_parsed ? [$default_value]: " PROMPT_REPLY
+  eval "$var_name=\"${PROMPT_REPLY:-$default_value}\""
+}
+
+output::yesno() {
+  local with_code_parsed color question default PROMPT_REPLY values
+  color="$normal"
+  case "${1:-}" in
+    --color)
+      color="$2"
+      shift 2
+      ;;
+  esac
+
+  [[ $# -eq 0 ]] && return 1
+
+  question="$1"
+  default="${2:-Y}"
+  with_code_parsed="$(_output::parse_code --color "${color}" "$question")"
+
+  if [[ "$default" =~ ^[Yy] ]]; then
+    values="Y/n"
+  else
+    values="y/N"
+  fi
+
+  output::question_default "$with_code_parsed" "$values" "PROMPT_REPLY"
+  [[ "$PROMPT_REPLY" == "$values" ]] && PROMPT_REPLY=""
+  [[ "${PROMPT_REPLY:-$default}" =~ ^[Yy] ]]
+}
+
 output::empty_line() { echo ''; }
 
 output::header() {
   output::empty_line
-  output::write "${bold_blue}---- $1 ----${normal}"
+  output::write --color "${bold_blue}" "${bold_blue}---- ${*:-} ----${normal}"
 }
-output::h1_without_margin() { output::write "${bold_blue}# $1${normal}"; }
+output::h1_without_margin() { output::write --color "${bold_blue}" "${bold_blue}# ${*:-}${normal}"; }
 output::h1() {
   output::empty_line
-  output::h1_without_margin "$1"
+  output::h1_without_margin "${*:-}"
 }
 output::h2() {
   output::empty_line
-  output::write "${bold_blue}## $1${normal}"
+  output::write --color "${bold_blue}" "${bold_blue}## ${*:-}${normal}"
 }
 output::h3() {
   output::empty_line
-  output::write "${bold_blue}### $1${normal}"
+  output::write --color "${bold_blue}" "${bold_blue}### ${*:-}${normal}"
 }

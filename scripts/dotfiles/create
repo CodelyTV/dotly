@@ -2,7 +2,8 @@
 
 set -euo pipefail
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/core/templating.sh"
 
 ##? Create the dotfiles structure
 ##?
@@ -12,9 +13,15 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 docs::parse "$@"
 
 dotfiles::apply_templating() {
-  sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/bin/sdot"
-  sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/bash/.bashrc"
-  sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/zsh/.zshenv"
+  local tpl_files=(
+    "$DOTFILES_PATH/bin/sdot"
+    "$DOTFILES_PATH/shell/bash/.bashrc"
+    "$DOTFILES_PATH/shell/zsh/.zshenv"
+  )
+
+  for file in "${tpl_files[@]}"; do
+    templating::replace "$file" --dotfiles-path="${DOTFILES_PATH//$HOME/\$HOME}" 
+  done
 }
 
 if [ ! -d "$DOTFILES_PATH/shell" ]; then

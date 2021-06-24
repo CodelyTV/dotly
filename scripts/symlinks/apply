@@ -18,7 +18,20 @@ symlinks::apply() {
 ##? Usage:
 ##?    apply
 ##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
 docs::parse "$@"
+
+SCRIPT_NAME="lazy symlinks apply"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if $version; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
 
 symlinks::apply "conf.yaml"
 

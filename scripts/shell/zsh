@@ -9,6 +9,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?   zsh test_performance
 ##?   zsh reload_completions
 ##?   zsh clean_cache
+##?   zsh fix_permissions
 docs::parse "$@"
 
 case $1 in
@@ -47,6 +48,11 @@ case $1 in
 
   output::empty_line
   output::answer 'Now restart your terminal'
+  ;;
+"fix_permissions")
+  sudo -v
+  sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
+  chmod u+w /usr/local/share/zsh /usr/local/share/zsh/site-functions
   ;;
 *)
   exit 1

@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+#shellcheck source=/dev/null
+. "$DOTLY_PATH/scripts/core/_main.sh"
+dot::load_library "init.sh"
+
+##? Enable init scripts
+##? 
+##?
+##? Usage:
+##?   enable [-h | --help]
+##?   enable [-v | --version]
+##?   enable [<script_name>]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+docs::parse "$@"
+
+SCRIPT_NAME="lazy init enable"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+if [[ ${DOTLY_INIT_SCRIPTS:-true} != true ]]; then
+  output::error "Init scripts are disabled"
+  exit 1
+fi
+
+# Get the scripts
+init_scripts=("$(init::get_scripts)")
+enabled_scripts=("$(init::get_enabled)")
+
+# If the user gives the script_name
+if [[ -n "${script_name:-}" ]]; then
+  status=0
+  if init::exists_script "$script_name"; then
+    init::enable "$script_name"
+    init::status "$script_name" && output::solution "Enabled"
+    ! init::status "$script_name" && output::error "Could not be enabled." && status=1
+  else
+    output::error "$script_name does not exists."
+    status=1
+  fi
+  exit $status
+fi
+
+# If there is no script_name
+# If there is nothing that can be enabled or not select scripts to
+# be enabled, exit
+not_enabled_scripts=("$(array::disjunction "${init_scripts[@]}" "${enabled_scripts[@]}")")
+if [[ -n "${not_enabled_scripts[*]:-}" ]]; then
+  #shellcheck disable=SC2207
+  to_enable=($(array::disjunction "${init_scripts[@]}" "${enabled_scripts[@]}" | init::fzf "Choose one or more (Shift + Tab) scripts to enable when init terminal"))
+else
+  output::answer "Nothing can be enabled"
+fi
+[[ -z "$to_enable" ]] && exit 0
+
+for item in "${to_enable[@]}"; do
+  init::enable "$item"
+  
+  if init::status "$item"; then
+    output::solution "Init script '$item'...  Enabled"
+  else
+    output::error "Init script '$item' error... It could not be enabled."
+    exit 1
+  fi
+done

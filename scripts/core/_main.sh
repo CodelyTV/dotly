@@ -1,6 +1,7 @@
 if ! ${DOT_MAIN_SOURCED:-false}; then
-  for file in $DOTLY_PATH/scripts/core/{args,collections,documentation,dot,git,log,platform,output,script,str}.sh; do
-    source "$file"
+  for file in "$DOTLY_PATH"/scripts/core/{args,array,async,collections,documentation,dot,files,git,log,platform,output,script,str}.sh; do
+    #shellcheck source=/dev/null
+    . "$file" || exit 5
   done
   unset file
 

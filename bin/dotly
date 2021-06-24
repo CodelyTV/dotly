@@ -6,6 +6,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Usage:
 ##?    dotly self-update
+##?    dotly autoupdate
 docs::parse "$@"
 
 case $1 in

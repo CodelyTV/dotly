@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/self/utils/install.sh"
+set -euo pipefail
+
+. "$DOTLY_PATH/scripts/core/_main.sh"
+dot::load_library "install.sh"
 
 export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 export PATH="$HOME/.cargo/bin:$PATH"
