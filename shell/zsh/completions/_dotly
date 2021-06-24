@@ -1,4 +1,4 @@
- #compdef dotly
+ #compdef dotly sloth=dotly
 
  _dotly() {
    local curcontext="$curcontext" state line

@@ -1,4 +1,4 @@
-#compdef dot
+#compdef dot lazy=dot s=lazy
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
