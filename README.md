@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/gtrabanco/sloth">
-    <img src="sloth.svg" alt="Sloth Logo" style="width: 512px; height: 512px" />
+    <img src="sloth.svg" alt="Sloth Logo" width="256px" height="256px" />
   </a>
 </p>
 
