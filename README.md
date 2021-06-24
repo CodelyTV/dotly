@@ -18,12 +18,12 @@
 
 Using wget
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
+bash <(wget -qO- https://raw.githubusercontent.com/gtrabanco/sloth/HEAD/installer)
 ```
 
 Using curl
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
+bash <(curl -s https://raw.githubusercontent.com/gtrabanco/sloth/HEAD/installer)
 ```
 
 ### [WIP] Installation for Windows
@@ -41,12 +41,12 @@ In your repository you see a way to restore your dotfiles, anyway you can restor
 
 Using wget
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/restorer)
+bash <(wget -qO- https://raw.githubusercontent.com/gtrabanco/sloth/HEAD/restorer)
 ```
 
 Using curl
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/restorer)
+bash <(curl -s https://raw.githubusercontent.com/gtrabanco/sloth/HEAD/restorer)
 ```
 ### Windows
 
