@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 
-set -uo pipefail
+set -euo pipefail
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/brew.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/composer.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/gem.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/mas.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/npm.sh"
-source "$DOTLY_PATH/scripts/package/src/package_managers/pip.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/package/src/package_managers/brew.sh"
+. "$DOTLY_PATH/scripts/package/src/package_managers/composer.sh"
+. "$DOTLY_PATH/scripts/package/src/package_managers/gem.sh"
+. "$DOTLY_PATH/scripts/package/src/package_managers/mas.sh"
+. "$DOTLY_PATH/scripts/package/src/package_managers/npm.sh"
+. "$DOTLY_PATH/scripts/package/src/package_managers/pip.sh"
+
+update_all_error() {
+  [[ -n "${1:-}" ]] && output::clarification "Error updating ${1:-} apps. See \`dot self debug\` for view errors"
+}
 
 ##? Update all packages
 ##?
@@ -17,21 +21,50 @@ source "$DOTLY_PATH/scripts/package/src/package_managers/pip.sh"
 docs::parse "$@"
 
 output::h1_without_margin "♻️  Updating all the apps on your system"
-output::write "If you want to debug what's happening behind the scenes, you can execute \`dot self debug\` in parallel."
+output::clarification "If you want to debug what's happening behind the scenes, you can execute \`dot self debug\` in parallel."
 
-platform::command_exists mas && output::h2 '🍎 App Store' && mas::update_all
-platform::command_exists brew && output::h2 '🍺 Brew' && brew::update_all
-platform::command_exists pip3 && output::h2 '🐍 pip' && pip::update_all
-platform::command_exists composer && output::h2 '🐘 Composer' && composer::update_all
-platform::command_exists gem && output::h2 '♦️  gem' && gem::update_all
-platform::command_exists npm && output::h2 '🌈 npm' && npm::update_all
-platform::command_exists cargo && output::h2 '📦 cargo' && cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' | xargs -n1 cargo install
+{
+  platform::command_exists mas && output::h2 '🍎 App Store' && mas::update_all
+} || update_all_error '🍎 App Store'
 
-platform::command_exists rustup && output::h2 '☢️ Rust compiler' && rustup update
-platform::command_exists deno && output::h2 '🦕 deno' && deno upgrade
-platform::command_exists tldr && output::h2 '📜 tldr database' && tldr --update
+{
+  platform::command_exists brew && output::h2 '🍺 Brew' && brew::update_all
+} || update_all_error '🍺 Brew'
 
-output::h2 "Zim Framework" && zsh "$DOTLY_PATH/modules/zimfw/zimfw.zsh" upgrade 2>&1 | log::file "Updating Zim"
+{
+  platform::command_exists pip3 && output::h2 '🐍 pip' && pip::update_all
+} || update_all_error '🐍 pip'
+
+{
+  platform::command_exists composer && output::h2 '🐘 Composer' && composer::update_all
+} || update_all_error '🐘 Composer'
+
+{
+  platform::command_exists gem && output::h2 '♦️  gem' && gem::update_all
+} || update_all_error '♦️  gem'
+
+{
+  platform::command_exists npm && output::h2 '🌈 npm' && npm::update_all
+} || update_all_error '🌈 npm'
+
+{
+  platform::command_exists cargo && output::h2 '📦 cargo' && cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' | xargs -n1 cargo install
+} || update_all_error '📦 cargo'
+
+
+{
+  platform::command_exists rustup && output::h2 '☢️ Rust compiler' && rustup update
+} || update_all_error '☢️ Rust compiler'
+
+{
+  platform::command_exists deno && output::h2 '🦕 deno' && deno upgrade
+} || update_all_error '🦕 deno'
+
+{
+  platform::command_exists tldr && output::h2 '📜 tldr database' && tldr --update
+} || update_all_error '📜 tldr database'
+
+output::h2 "Zim Framework" && sudo zsh "$DOTLY_PATH/modules/zimfw/zimfw.zsh" upgrade 2>&1 | log::file "Updating Zim"
 
 output::empty_line
 output::solution '👌 All your packages have been successfully updated'
