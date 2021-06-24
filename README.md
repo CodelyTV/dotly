@@ -1,22 +1,14 @@
-<style>
-<!--
-.hcentered { text-align: center }
-.right-text { text-align: right }
-.logo { width: 256px; height: 256px }
--->
-</style>
-
-<p class="hcentered">
+<p style="text-align: center">
   <a href="https://github.com/gtrabanco/sloth">
-    <img src="sloth.svg" alt="Sloth Logo" class="logo" />
+    <img src="sloth.svg" alt="Sloth Logo" style="width: 256px; height: 256px" />
   </a>
 </p>
 
-<h1 class="hcentered">
+<h1 style="text-align: center">
   Dotfiles for laziness
 </h1>
 
-<h4 class="right-text">
+<h4 style="text-align: right">
   Original idea is <a href="https://github.com/codelytv/dotly" alt="Dotly repository">Dotly Framework</a> by <a href="https://github.com/rgomezcasas" alt="Dotly orginal developer">Rafa Gomez</a>
 </h4>
 
