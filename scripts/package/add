@@ -2,6 +2,7 @@
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
 dot::load_library "package.sh"
+# TODO If _registry is finally moved this should change
 dot::load_library "_registry.sh" "$(dot::get_script_path)/recipes/"
 
 ##? Install a package
@@ -45,7 +46,13 @@ else
   done
 fi
 
-SCRIPT_NAME="dot package add"
+if [[ $# -lt 1 ]]; then
+  exit 1
+fi
+
+export PATH="$HOME/.cargo/bin:$PATH"
+
+SCRIPT_NAME="lazy package add"
 SCRIPT_VERSION="3.0.0"
 
 if ${version:-}; then

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+#shellcheck source=/dev/null
+. "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? XXX_SCRIPT_DESCRIPTION_XXX
+##? 
+##?
+##? Usage:
+##?   XXX_SCRIPT_NAME_XXX [-h | --help]
+##?   XXX_SCRIPT_NAME_XXX [-v | --version]
+##?   XXX_SCRIPT_NAME_XXX -c | --custom-option
+##?   XXX_SCRIPT_NAME_XXX subcommand <example_variable> [<example_optional_variable>...]
+##?
+##? Options:
+##?   -h --help                                                      Show this help
+##?   -v --version                                                   Show the program version
+##?   -c --custom-option                                             With two or more spaces you can add some help
+##?   subcomand <example_variable> [<example_optional_variable>...]  Also provide a help with subcommand
+##? This text will be printed as well when you call -h or --help option
+##?
+##? Author:
+##?   XXX_SCRIPT_AUTHOR_XXX <XXX_SCRIPT_AUTHOR_EMAIL_XXX>
+
+# Options part its important because assign short and long version of the params
+docs::parse "$@"
+
+SCRIPT_NAME="lazy XXX_SCRIPT_CONTEXT_XXX XXX_SCRIPT_NAME_XXX"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Here begin your script
+
+case $1 in
+"subcommand")
+  echo "This case is optional and only useful if you want to implement subcommands"
+  echo "The example repeteable variable value is \"${example_variable[*]:-No value provided}\""
+  echo "The optional variable value is \"${example_optional_variable:-No value provided}\""
+  ;;
+*)
+  exit 1
+  ;;
+esac

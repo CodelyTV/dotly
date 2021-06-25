@@ -89,7 +89,7 @@ dot::load_library() {
       return 0
     else
       output::error "🚨 Library loading error with: \"${lib_full_path:-No lib path found}\""
-      exit 1
+      exit 4
     fi
   fi
   

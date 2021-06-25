@@ -18,6 +18,20 @@ platform::is_wsl() {
   grep -qEi "(Microsoft|WSL|microsoft)" /proc/version &>/dev/null
 }
 
+platform::os() {
+  local os="unknown"
+  
+  if platform::is_macos; then
+    os="mac"
+  elif platform::is_linux; then
+    os="linux"
+  elif platform::is_wsl; then
+    os="wsl-linux"
+  fi
+
+  echo "$os"
+}
+
 platform::wsl_home_path() {
   wslpath "$(wslvar USERPROFILE 2>/dev/null)"
 }

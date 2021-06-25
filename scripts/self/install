@@ -3,9 +3,9 @@
 set -euo pipefail
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "install.sh"
-dot::get_script_src_path "dotbot_yaml.sh" "symlinks"
-dot::get_script_src_path "symlinks.sh" "symlinks"
+dot::load_library "install.sh"
+dot::load_library "dotbot_yaml.sh" "symlinks"
+dot::load_library "symlinks.sh" "symlinks"
 
 export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 export PATH="$HOME/.cargo/bin:$PATH"

@@ -24,7 +24,11 @@ dot::load_library "init.sh"
 ##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
 docs::parse "$@"
 
+<<<<<<< HEAD
 SCRIPT_NAME="dot init status"
+=======
+SCRIPT_NAME="lazy init status"
+>>>>>>> master
 SCRIPT_VERSION="1.0.0"
 
 # Print name and version
@@ -33,7 +37,7 @@ if ${version:-}; then
   exit
 fi
 
-if [[ ${DOTLY_INIT_SCRIPTS:-true} != true ]]; then
+if [[ ${SLOTH_INIT_SCRIPTS:-true} != true ]]; then
   output::error "Init scripts are disabled"
   exit 1
 fi

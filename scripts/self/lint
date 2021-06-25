@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/core/dotly.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/core/dotly.sh"
 
 ##? Lint all dotly related bash files
 ##?

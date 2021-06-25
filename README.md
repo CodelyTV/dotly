@@ -1,26 +1,59 @@
 <p align="center">
-  <a href="https://codely.tv">
-    <img src="https://codely.tv/wp-content/uploads/2016/05/cropped-logo-codelyTV.png" width="192px" height="192px"/>
+  <a href="https://github.com/gtrabanco/sloth">
+    <img src="sloth.svg" alt="Sloth Logo" width="256px" height="256px" />
   </a>
 </p>
 
 <h1 align="center">
-  🌚<br>Simple, fast, productivity-increaser dotfiles framework
+  Dotfiles for laziness
 </h1>
 
-<p align="center">
-    <a href="https://github.com/CodelyTV"><img src="https://img.shields.io/badge/CodelyTV-OS-green.svg?style=flat-square" alt="codely.tv"/></a>
-    <a href="https://pro.codely.tv"><img src="https://img.shields.io/badge/CodelyTV-PRO-black.svg?style=flat-square" alt="CodelyTV Courses"/></a>
+<p align="right">
+  Original idea is <a href="https://github.com/codelytv/dotly" alt="Dotly repository">Dotly Framework</a> by <a href="https://github.com/rgomezcasas" alt="Dotly orginal developer">Rafa Gomez</a>
 </p>
 
-## Installation
+## INSTALLATION
+
+### Linux, macOS, FreeBSD
 
 Using wget
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
+bash <(wget -qO- https://raw.githubusercontent.com/gtrabanco/sloth/HEAD/installer)
 ```
 
 Using curl
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
+bash <(curl -s https://raw.githubusercontent.com/gtrabanco/sloth/HEAD/installer)
 ```
+
+### [WIP] Installation for Windows
+
+Using elevated PowerShell (WIP: It will be available soon):
+```powershell
+Invoke-Command ...
+```
+
+## Restoring dotfiles
+
+In your repository you see a way to restore your dotfiles, anyway you can restory by using the restoration script
+
+### Linux, macOS, FreeBSD
+
+Using wget
+```bash
+bash <(wget -qO- https://raw.githubusercontent.com/gtrabanco/sloth/HEAD/restorer)
+```
+
+Using curl
+```bash
+bash <(curl -s https://raw.githubusercontent.com/gtrabanco/sloth/HEAD/restorer)
+```
+### Windows
+
+WIP: It will be available soon
+
+<hr>
+
+## Roadmap
+
+View [Wiki](https://github.com/gtrabanco/sloth/wiki#roadmap) if you want to contribute and you do not know what to do or maybe is already a WIP (Work in Progress).

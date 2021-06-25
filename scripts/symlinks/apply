@@ -21,9 +21,13 @@ symlinks::apply() {
 ##?    apply [-v | --version]
 ##?    apply [-q | --quiet]
 ##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
 docs::parse "$@"
 
-SCRIPT_NAME="dot symlinks apply"
+SCRIPT_NAME="lazy symlinks apply"
 SCRIPT_VERSION="1.0.0"
 
 # Print name and version

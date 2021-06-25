@@ -6,4 +6,4 @@
       force: true
 
 - link:
-    ~/.dotly: os/linux/.dotly
+    ~/.sloth: os/linux/.sloth

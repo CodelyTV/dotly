@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
 
-DOTLY_SETTINGS_PATH=${2:-"${DOTFILES_PATH}/os/mac/settings"}
+DOTLY_MACOS_SETTINGS_PATH=${DOTLY_MACOS_SETTINGS_PATH:-"${DOTFILES_PATH}/os/mac/settings"}
 
 ##? Some defaults utils to view your changes, import and export.
 ##? Optional params path_to and path_from will be replaced by
@@ -10,9 +10,17 @@ DOTLY_SETTINGS_PATH=${2:-"${DOTFILES_PATH}/os/mac/settings"}
 ##?
 ##? Usage:
 ##?   defaults view_changed
-##?   defaults export [<path_to>]
-##?   defaults import [<path_from>]
+##?   defaults export [--prompt|-p|--never-prompt|-n] [<export_name>]
+##?   defaults import [--prompt|-p|--never-prompt|-n] [<import_name>]
+##?
+##? Options:
+##?   --prompt -p        You will be asked always for a file to restore in every package manager or lang
+##?   --never-prompt -n  You will never be asked for any file to restore, if there is no file with the
+##?                      same name as current hostname the package/lang is ignored and continue to try
+##?                      with next package
+##?
 docs::parse "$@"
+
 
 case $1 in
 "view_changed")
@@ -22,21 +30,48 @@ case $1 in
   git diff -w --no-index "$DOTLY_PATH/scripts/mac/utils/macos-11.0-defaults" "$current_defaults_path" | delta --side-by-side
   ;;
 "export")
-  export_plist_path="${DOTLY_SETTINGS_PATH}"
-  [[ -d "$export_plist_path" ]] || mkdir -p "$export_plist_path"
-  defaults domains | tr ", " "\n" | sed -r '/^\s*$/d' | xargs -I_ defaults export _ "$export_plist_path/_.plist"
+  if [[ -z "${export_name:-}" ]] || { ${prompt:-false} && ! ${never_prompt:-false}; }; then
+    output::question_default "Write the subfolder do you want to export" "$(hostname -s)" "export_name"
+  elif $never_prompt; then
+    export_name="$(hostname -s)"
+  fi
+
+  export_plist_path="${DOTLY_MACOS_SETTINGS_PATH}/${export_name:-}"
+  if [[ -n "${export_name}" ]] && { [[ -d "$export_plist_path" ]] || mkdir -p "$export_plist_path"; }; then 
+    defaults domains | tr ", " "\n" | sed -r '/^\s*$/d' | xargs -I_ defaults export _ "$export_plist_path/_.plist"
+    output::solution "Defaults exported to: ${export_plist_path//$DOTFILES_PATH/\$DOTFILES_PATH}"
+  else
+    output::error "Defaults could not be exported"
+  fi
   ;;
 "import")
-  import_plist_path="${DOTLY_SETTINGS_PATH}"
+  if [[ -z "${import_name:-}" ]] || { ${prompt:-false} && ! ${never_prompt:-false}; }; then
+    import_name=$(find $DOTLY_MACOS_SETTINGS_PATH/* -not -iname ".*" -not -path "$DOTLY_MACOS_SETTINGS_PATH" -type d | xargs -I _ basename _ | fzf --header "Select settings name to import")
+  elif ${never_prompt:-false}; then
+    import_name="$(hostname -s)"
+  fi
 
-  killall System\ Preferences
+  import_plist_path="${DOTLY_MACOS_SETTINGS_PATH}/${import_name:-}"
+
+  if [[ -z "${import_name:-}" ]] || [[ ! -d "$import_plist_path" ]]; then
+    output::error "No import defaults name selected or settings name does not exits."
+    exit
+  fi
+
+  killall System\ Preferences > /dev/null 2>&1
   sudo -v
 
   if [[ -d "$import_plist_path" ]]; then
     for plist in "${import_plist_path}"/*.plist; do
       defaults import "$(basename ${plist%.*})" "$plist"
     done
+    output::solution "Defaults '$import_name' imported."
   fi
+
+  killall Dock
+  killall Finder
+  output::answer "A Reboot is suggested"
+  output::yesno "Do you want to reboot now" && sudo reboot
   ;;
 *)
   exit 1

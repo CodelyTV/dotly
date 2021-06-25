@@ -1,31 +1,84 @@
 #!/usr/bin/env bash
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
-source "$DOTLY_PATH/scripts/package/src/dump.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
+dot::load_library "dump.sh"
 
 ##? Dump all installed packages from:
 ##?  * Brew
-##?  * Apt
-##?  * Snap
 ##?  * Python
 ##?  * Volta.sh or NPM
 ##?
 ##? Usage:
-##?   dump
+##?   dump [--silent|-s]
+##?
+##? Options:
+##?   --silent -s  If you use this option you won't prompted for custom file name,
+##?                the file name will be the hostname
 docs::parse "$@"
 
-platform::command_exists brew && package::brew_dump && output::answer "Brew apps dumped on $HOMEBREW_DUMP_FILE_PATH"
+HOSTNAME="$(hostname -s)"
 
-platform::command_exists apt-mark && package::apt_dump && output::answer "Apt apps dumped on $APT_DUMP_FILE_PATH"
+if ! ${silent:-false}; then
+  output::question_default "Do you want to use current hostname (if not write other name)" "$HOSTNAME" "HOSTNAME"
+  output::empty_line
+fi
 
-platform::command_exists snap && package::snap_dump && output::answer "Snap apps dumped on $SNAP_DUMP_FILE_PATH"
+HOMEBREW_DUMP_FILE_PATH="$DOTFILES_PATH/os/$(platform::os)/brew/${HOSTNAME}.txt"
+APT_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/apt/${HOSTNAME}.txt"
+SNAP_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/snap/${HOSTNAME}.txt"
+CARGO_DUMP_FILE_PATH="$DOTFILES_PATH/langs/rust/cargo/${HOSTNAME}.txt"
+PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/${HOSTNAME}.txt"
+NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/npm/${HOSTNAME}.txt"
+VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta/${HOSTNAME}.txt"
 
-platform::command_exists pip3 && package::python_dump && output::answer "Python apps dumped on $PYTHON_DUMP_FILE_PATH"
+{
+  platform::command_exists brew && \
+    package::brew_dump "$HOMEBREW_DUMP_FILE_PATH" && \
+    output::answer "${brew_title:-Brew} apps dumped on $HOMEBREW_DUMP_FILE_PATH" &&\
+    output::empty_line
+} || package::clarification "${brew_title:-Brew}"
+
+{
+  platform::command_exists apt-mark &&\
+    package::apt_dump "$APT_DUMP_FILE_PATH" &&\
+    output::answer "${apt_title:-APT} apps dumped on $APT_DUMP_FILE_PATH" &&\
+    output::empty_line
+} || package::clarification "${apt_title:-APT}"
+
+{
+  platform::command_exists snap &&\
+    package::snap_dump "$SNAP_DUMP_FILE_PATH" &&\
+    output::answer "${snap_title:-SNAP} apps dumped on $SNAP_DUMP_FILE_PATH" &&\
+    output::empty_line
+} || package::clarification "${snap_title:-SNAP}"
+
+{
+  platform::command_exists cargo &&\
+    package::cargo_dump "$CARGO_DUMP_FILE_PATH" &&\
+    output::answer "${cargo_title:-Cargo} apps dumped on $CARGO_DUMP_FILE_PATH" &&\
+    output::empty_line
+} || package::clarification "${cargo_title:-Cargo}"
+
+{
+  platform::command_exists pip3 && \
+    package::python_dump "$PYTHON_DUMP_FILE_PATH" && \
+    output::answer "${pip_title:-Python} apps dumped on $PYTHON_DUMP_FILE_PATH" &&\
+    output::empty_line
+} || package::clarification "${pip_title:-Python}"
 
 if platform::command_exists volta; then
-  package::volta_dump && output::answer "Volta apps dumped on $VOLTA_DUMP_FILE_PATH"
+  { 
+    package::volta_dump "$VOLTA_DUMP_FILE_PATH" && \
+      output::answer "${volta_title:-Volta} apps dumped on $VOLTA_DUMP_FILE_PATH" &&\
+      output::empty_line
+  } || package::clarification "${volta_title:-Volta}"
+
 elif platform::command_exists npm; then
-  package::npm_dump && output::answer "NPM apps dumped on $NPM_DUMP_FILE_PATH"
+  {
+    package::npm_dump "$NPM_DUMP_FILE_PATH" && \
+      output::answer "${npm_title:-NPM} apps dumped on $NPM_DUMP_FILE_PATH" &&\
+      output::empty_line
+  } || package::clarification "${npm_title:-NPM}"
 fi
 
 output::solution 'All packages dumped'

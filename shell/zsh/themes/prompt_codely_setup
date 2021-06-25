@@ -43,7 +43,7 @@ prompt_codely_precmd() {
 }
 
 prompt_dotly_autoupdate() {
-  if [ -f "$DOTFILES_PATH/.dotly_update_available" ]; then
+  if [ -f "$DOTFILES_PATH/.sloth_update_available" ]; then
     print -n "📥 | "
   fi
 }

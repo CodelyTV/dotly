@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Debug dotly
 ##?

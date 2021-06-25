@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 
-set -uo pipefail
+set -euo pipefail
 
+# TODO Unifi or refactor package_managers and src/package_managers libraries
+PACKAGE_MANAGERS_SRC_PATH="$(dot::get_script_path)/src/package_managers"
 . "$DOTLY_PATH/scripts/core/_main.sh"
-dot::get_script_src_path "package_managers/brew.sh"
-dot::get_script_src_path "package_managers/composer.sh"
-dot::get_script_src_path "package_managers/gem.sh"
-dot::get_script_src_path "package_managers/mas.sh"
-dot::get_script_src_path "package_managers/npm.sh"
-dot::get_script_src_path "package_managers/pip.sh"
-dot::get_script_src_path "yq.sh"
+
+dot::load_library "brew.sh" "$PACKAGE_MANAGERS_SRC_PATH"
+dot::load_library "cargo.sh" "$PACKAGE_MANAGERS_SRC_PATH"
+dot::load_library "composer.sh" "$PACKAGE_MANAGERS_SRC_PATH"
+dot::load_library "gem.sh" "$PACKAGE_MANAGERS_SRC_PATH"
+dot::load_library "mas.sh" "$PACKAGE_MANAGERS_SRC_PATH"
+dot::load_library "npm.sh" "$PACKAGE_MANAGERS_SRC_PATH"
+dot::load_library "pip.sh" "$PACKAGE_MANAGERS_SRC_PATH"
 
 ##? Update all packages
 ##?
@@ -18,21 +21,47 @@ dot::get_script_src_path "yq.sh"
 docs::parse "$@"
 
 output::h1_without_margin "♻️  Updating all the apps on your system"
-output::write "If you want to debug what's happening behind the scenes, you can execute \`dot self debug\` in parallel."
+output::clarification "If you want to debug what's happening behind the scenes, you can execute \`dot self debug\` in parallel."
 
-platform::command_exists mas && output::h2 '🍎 App Store' && mas::update_all
-platform::command_exists brew && output::h2 '🍺 Brew' && brew::update_all
-platform::command_exists pip3 && output::h2 '🐍 pip' && pip::update_all
-platform::command_exists composer && output::h2 '🐘 Composer' && composer::update_all
-platform::command_exists gem && output::h2 '♦️  gem' && gem::update_all
-platform::command_exists npm && output::h2 '🌈 npm' && npm::update_all
-platform::command_exists cargo && output::h2 '📦 cargo' && cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' | xargs -n1 cargo install
+{
+  platform::command_exists mas && output::h2 '🍎 App Store' && mas::update_all
+} || update_all_error '🍎 App Store'
 
-platform::command_exists rustup && output::h2 '☢️ Rust compiler' && rustup update
-platform::command_exists deno && output::h2 '🦕 deno' && deno upgrade
-platform::command_exists tldr && output::h2 '📜 tldr database' && tldr --update
+{
+  platform::command_exists brew && output::h2 '🍺 Brew' && brew::update_all
+} || update_all_error '🍺 Brew'
 
-[[ -f "$HOME/bin/yq" ]] && files::check_if_path_is_older "$HOME/bin/yq" "30" "days" && output::h2 "🛠 Update yq tool" && installer::update_in_home
+{
+  platform::command_exists pip3 && output::h2 '🐍 pip' && pip::update_all
+} || update_all_error '🐍 pip'
+
+{
+  platform::command_exists composer && output::h2 '🐘 Composer' && composer::update_all
+} || update_all_error '🐘 Composer'
+
+{
+  platform::command_exists gem && output::h2 '♦️  gem' && gem::update_all
+} || update_all_error '♦️  gem'
+
+{
+  platform::command_exists npm && output::h2 '🌈 npm' && npm::update_all
+} || update_all_error '🌈 npm'
+
+{
+  platform::command_exists rustup && output::h2 '☢️ Rust compiler' && rustup update
+} || update_all_error '☢️ Rust compiler'
+
+{
+  platform::command_exists cargo && output::h2 '📦 cargo' && cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' | xargs -n1 cargo install
+} || update_all_error '📦 cargo'
+
+{
+  platform::command_exists deno && output::h2 '🦕 deno' && deno upgrade
+} || update_all_error '🦕 deno'
+
+{
+  platform::command_exists tldr && output::h2 '📜 tldr database' && tldr --update
+} || update_all_error '📜 tldr database'
 
 output::h2 "Zim Framework" && zsh "$DOTLY_PATH/modules/zimfw/zimfw.zsh" upgrade 2>&1 | log::file "Updating Zim"
 

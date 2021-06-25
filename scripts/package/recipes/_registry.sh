@@ -1,3 +1,4 @@
+# TODO Maybe this file should not be here
 registry::recipe_exists() {
   local -r recipe="${1:-}"
   local recipe_path recipe_paths=()

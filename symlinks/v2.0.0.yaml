@@ -3,6 +3,6 @@
       create: true
 
 - create:
-    - $DOTLY_PATH/shell/init-scripts
-    - $DOTFILES_PATH/shell/init-scripts
-    - $DOTFILES_PATH/shell/init-scripts.enabled
+    - $DOTLY_PATH/shell/init.scripts
+    - $DOTFILES_PATH/shell/init.scripts
+    - $DOTFILES_PATH/shell/init.scripts-enabled

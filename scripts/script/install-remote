@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+[[ -z "$DOTLY_PATH" ]] && exit 1
+
+#shellcheck source=/dev/null
+. "$DOTLY_PATH/scripts/core/_main.sh"
+
+##? Install remote context or script in your $DOTFILES_PATH from url. It
+##? must be the url to the raw file.
+##? If you fill the last param <script_name>, the remote file name will be
+##? omited and renamed in your $DOTFILES_PATH/scripts/<context> folder
+##?
+##? Usage:
+##?   install-remote [ -h | --help ]
+##?   install-remote [ -v | --version ]
+##?   install-remote <context> <script_raw_url> [<script_name>]
+##?
+##? Options:
+##?   -h --help     Show this help
+##?   -v --version  Show the program version
+##?
+##?
+##? Author:
+##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
+docs::parse "$@"
+
+SCRIPT_NAME="lazy dotly install-remote"
+SCRIPT_VERSION="1.0.0"
+
+# Print name and version
+if ${version:-}; then
+  output::write "$SCRIPT_NAME v$SCRIPT_VERSION"
+  exit
+fi
+
+# Save current working directory to return user there
+STARTING_DIRECTORY="$(pwd)"
+CURL_BIN="$(which curl)"
+
+# Script name if provided if not with downloaded name
+[[ -n $script_name ]] && script_name_args="-o $script_name" || script_name_args=${script_name:-"-O"}
+
+# Download command
+download_command="$CURL_BIN -k -L -f -q $script_name_args"
+
+# Scripts context directory
+{ [[ -z "${context:-}" ]] || [[ -z "${script_raw_url:-}" ]]; } && output::error "Error no context or script name." && exit 1
+dotfiles_context="$DOTFILES_PATH/scripts/${context:-}"
+
+# Create context directory and move to it
+mkdir -p "$dotfiles_context"
+cd "$dotfiles_context" || exit 1
+
+# Download the script
+output::write "Downloading the script ⚡️"
+eval "$download_command $script_raw_url"
+if [ ! $? ] ; then
+  if [ -z "$(ls -A "$dotfiles_context" 2>/dev/null)" ]; then
+    output::error "The context '$dotfiles_context' is empty. File could not be downloaded."
+    exit 1
+  fi
+fi
+
+# Getting the name
+# FIXME SC2010
+script_name="$(ls -Art | tail -n 1)"
+
+# Applying execution rights
+chmod u+x "$dotfiles_context/$script_name"
+
+# How to use it :)
+echo
+output::solution "The script was successfully added 😀"
+output::write "You can execute the script now with:"
+output::write "dot $context $script_name"
+
+cd "$STARTING_DIRECTORY" || exit 1

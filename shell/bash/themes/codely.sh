@@ -5,12 +5,12 @@ GREEN_COLOR="32"
 RED_COLOR="31"
 
 prompt_dotly_autoupdate() {
-  if [ -f "$DOTFILES_PATH/.dotly_update_available" ] &&\
+  if [ -f "$DOTFILES_PATH/.sloth_update_available" ] &&\
      { 
         [ "$(echo "$DOTLY_AUTO_UPDATE_MODE" | tr '[:upper:]' '[:lower:]')" != "minor" ] ||\
         {
           [ "$(echo "$DOTLY_AUTO_UPDATE_MODE" | tr '[:upper:]' '[:lower:]')" == "minor" ] &&\
-          [ ! -f "$DOTFILES_PATH/.dotly_update_available_is_major" ]
+          [ ! -f "$DOTFILES_PATH/.sloth_update_available_is_major" ]
         }
      }
   then

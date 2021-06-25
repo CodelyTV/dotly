@@ -9,4 +9,4 @@
       - ~/.hushlogin
 
 - link:
-    ~/.dotly: os/mac/.dotly
+    ~/.sloth: os/mac/.sloth

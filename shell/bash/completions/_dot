@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$DOTLY_PATH/scripts/core/_main.sh"
+. "$DOTLY_PATH/scripts/core/_main.sh"
 
 _dot() {
   local suggestions=""
@@ -15,3 +15,6 @@ _dot() {
 }
 
 complete -F _dot dot
+complete -F _dot sloth
+complete -F _dot s
+complete -F _dot lazy
