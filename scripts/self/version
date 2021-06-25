@@ -9,11 +9,7 @@ set +e # Avoid crash if any function return false
 . "$DOTLY_PATH/scripts/core/templating.sh"
 dot::load_library "update.sh"
 
-<<<<<<< HEAD
-##?   Select a specific dotly version from local dotly module. If you select
-=======
 ##?   Select a specific sloth/dotly version from local dotly module. If you select
->>>>>>> master
 ##? any of: latest, stable, minor, it also modifies you 'exports.sh' file
 ##?
 ##? Usage:
@@ -31,11 +27,7 @@ dot::load_library "update.sh"
 ##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
 docs::parse "$@"
 
-<<<<<<< HEAD
-SCRIPT_NAME="dot self version"
-=======
 SCRIPT_NAME="lazy self version"
->>>>>>> master
 SCRIPT_VERSION="1.0.0"
 
 # Print name and version
