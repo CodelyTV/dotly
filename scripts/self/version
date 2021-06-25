@@ -27,7 +27,6 @@ dot::load_library "update.sh"
 ##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
 docs::parse "$@"
 
-
 SCRIPT_NAME="lazy self version"
 SCRIPT_VERSION="1.0.0"
 
