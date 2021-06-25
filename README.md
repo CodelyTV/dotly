@@ -26,16 +26,9 @@ Using curl
 bash <(curl -s https://raw.githubusercontent.com/gtrabanco/sloth/HEAD/installer)
 ```
 
-### [WIP] Installation for Windows
-
-Using elevated PowerShell (WIP: It will be available soon):
-```powershell
-Invoke-Command ...
-```
-
 ## Restoring dotfiles
 
-In your repository you see a way to restore your dotfiles, anyway you can restory by using the restoration script
+In your repository you see a way to restore your dotfiles, anyway you can restory by using the restoration script.
 
 ### Linux, macOS, FreeBSD
 
@@ -48,9 +41,6 @@ Using curl
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/gtrabanco/sloth/HEAD/restorer)
 ```
-### Windows
-
-WIP: It will be available soon
 
 <hr>
 
