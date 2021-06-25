@@ -64,6 +64,7 @@ if [ ! $? ] ; then
 fi
 
 # Getting the name
+# FIXME SC2010
 script_name="$(ls -Art | tail -n 1)"
 
 # Applying execution rights

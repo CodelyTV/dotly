@@ -9,6 +9,10 @@
 #
 export path=(
   "$HOME/bin"
+<<<<<<< HEAD
+  "$DOTLY_PATH/bin"
+=======
   "${SLOTH_PATH:-$DOTLY_PATH}/bin"
+>>>>>>> master
   "$DOTFILES_PATH/bin"
 )

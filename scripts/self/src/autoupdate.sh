@@ -15,7 +15,7 @@ autoupdate::sloth_updater() {
   [[ -f "$DOTFILES_PATH/.sloth_updated" ]] &&\
   [[ "${SLOTH_AUTO_UPDATE_MODE:-auto}" != "silent" ]] && {
     output::empty_line
-    output::write "     🥳 🎉 🍾      DOTLY UPDATED     🥳 🎉 🍾  "
+    output::write "     🥳 🎉 🍾      SLOTH UPDATED     🥳 🎉 🍾  "
     output::empty_line
     migration_script="$(uptate::migration_script_exits)"
     if [[ -n "$migration_script" ]]; then
@@ -57,7 +57,7 @@ autoupdate::sloth_success() {
       "info")
         output::empty_line
         output::write " ---------------------------------------------"
-        output::write "|  🥳🎉🍾 NEW DOTLY VERSION AVAILABLE 🥳🎉🍾  |"
+        output::write "|  🥳🎉🍾 NEW SLOTH VERSION AVAILABLE 🥳🎉🍾  |"
         output::write " ---------------------------------------------"
         output::empty_line
         ;;
@@ -65,7 +65,7 @@ autoupdate::sloth_success() {
         # Nothing to do here
         ;;
       *) # auto
-          output::answer "🚀 Updating DOTLY Automatically"
+          output::answer "🚀 Updating SLOTH Automatically"
           update::update_local_sloth_module
           output::solution "Updated, restart your terminal."
           rm -f "$DOTFILES_PATH/.sloth_update_available"

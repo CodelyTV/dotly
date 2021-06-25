@@ -45,7 +45,13 @@ else
   done
 fi
 
-SCRIPT_NAME="dot package add"
+if [[ $# -lt 1 ]]; then
+  exit 1
+fi
+
+export PATH="$HOME/.cargo/bin:$PATH"
+
+SCRIPT_NAME="lazy package add"
 SCRIPT_VERSION="3.0.0"
 
 if ${version:-}; then
@@ -55,6 +61,7 @@ elif ${help:-}; then
   grep '^##?' "$0" | tr '##?' ' '
   exit 0
 fi
+
 
 # No package
 [[ -z "${package_name:-}" ]] && exit 1

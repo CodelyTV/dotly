@@ -9,7 +9,7 @@
       - ~/.hushlogin
 
 - link:
-    ~/.dotly: os/mac/.dotly
+    ~/.sloth: os/mac/.sloth
     ~/bin/bash: /usr/local/bin/bash
     ~/bin/date: /usr/local/bin/gdate
     ~/bin/find: /usr/local/opt/findutils/bin/gfind

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 . "$DOTLY_PATH/scripts/core/_main.sh"
+dot::load_library "dump.sh" "package"
 
 ##? Some brew utils.
 ##?   - If cleanup does not receive any param will take your
@@ -9,7 +10,14 @@
 ##?
 ##? Usage:
 ##?   brew list_installed
-##?   brew cleanup [<optional_path_brewfile>]
+##?   brew cleanup [--prompt|-p|--never-prompt|-n] [<optional_path_brewfile>]
+##?
+##? Options:
+##?   --prompt -p        You will be asked always for a file to restore in every package manager or lang
+##?   --never-prompt -n  You will never be asked for any file to restore, if there is no file with the
+##?                      same name as current hostname the package/lang is ignored and continue to try
+##?                      with next package
+##?
 docs::parse "$@"
 
 case $1 in
@@ -17,18 +25,32 @@ case $1 in
   brew leaves
   ;;
 "cleanup")
-  HOMEBREW_DUMP_FILE_PATH=${optional_path_brewfile:-"$DOTFILES_PATH/os/mac/brew/Brewfile"}
-  cleanup_cmd="$(which brew) bundle --file=\"${HOMEBREW_DUMP_FILE_PATH}\" --force cleanup"
-  output::write "This will execute the command... "
-  output::write "    $cleanup_cmd"
-  if [[ -f $HOMEBREW_DUMP_FILE_PATH ]]; then
-    output::yesno "Still want to perform the action" &&\
-      $(which brew) bundle --file="${HOMEBREW_DUMP_FILE_PATH}" --force cleanup
-    output::yesno "Do you want to execute additional 'brew cleanup'" &&\
-      $(which brew) cleanup
-  else
-    output::error "No Brewfile found"
-  fi
+    BREW_PATH="${BREW_PATH:-$DOTFILES_PATH/os/mac/brew}"
+    HOMEBREW_DUMP_FILE_PATH="${optional_path_brewfile:-$(package::exists_dump_current_machine_file "$BREW_PATH")}"
+    
+    if ! ${never_prompt:-false}; then
+      [[ -z "$HOMEBREW_DUMP_FILE_PATH" ]] || ${prompt:-false} && package::which_file "$BREW_PATH" "Select Brewfile to import" "HOMEBREW_DUMP_FILE_PATH"
+    fi
+
+    if [[ -f $HOMEBREW_DUMP_FILE_PATH ]]; then
+      cleanup_cmd="$(which brew) bundle --file=\"${HOMEBREW_DUMP_FILE_PATH}\" --force cleanup"
+      output::write "This will execute the command... "
+      output::write "    $cleanup_cmd"
+
+      if output::yesno "Still want to perform the action"; then
+        $(which brew) bundle --file="${HOMEBREW_DUMP_FILE_PATH}" --force cleanup
+        output::solution "Cleanup performed, your system only have the Brewfile packages"
+      else
+        output::error "User aborted"
+        exit 1
+      fi
+
+      if output::yesno "Do you want to execute additional 'brew cleanup'"; then
+        $(which brew) cleanup
+      fi
+    else
+      output::error "No Brewfile found"
+    fi
   ;;
 *)
   exit 1

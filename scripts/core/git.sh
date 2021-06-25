@@ -136,32 +136,6 @@ git::check_file_is_modified_after_commit() {
   [[ "$file_commit_date" -gt "$commit_to_check_date" ]]
 }
 
-# PR Note to reviewer: This function could be replaced by the next one, the
-# function name that use update is this one
-# git::check_local_repo_is_updated() {
-#   local repo_path remote return_code current_dir remote_head_hash remote_head_branch local_head_remote_branch_hash
-#   remote="${1:-origin}"
-#   repo_path="${2:-.}"
-
-#   current_dir="$(pwd)"
-#   return_code=1
-
-#   cd "$repo_path" || return 1
-
-#   if git::is_in_repo; then
-#     remote_head_hash="$(git ls-remote --symref "$remote" | tail -n +2 | head -n 1 | awk '{print $1}')" # remote: HEAD
-#     remote_head_branch="$(git::remote_branch_by_hash "$remote_head_hash")"
-#     local_head_remote_branch_hash="$(git rev-parse "$remote_head_branch")"
-
-#     git::local_current_branch_commit_exists_remote "$remote" "$local_head_remote_branch_hash" && [ "$remote_head_hash" == "$local_head_remote_branch_hash" ]
-#     return_code=$?
-#   fi
-
-#   cd "$current_dir" || return $return_code
-
-#   return $return_code
-# }
-
 git::check_local_repo_is_updated() {
   git::is_in_repo && ! git status -sb 2>/dev/null | grep -q 'behind'
 }

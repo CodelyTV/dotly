@@ -24,11 +24,12 @@ package::command() {
     return 1
   fi
 
-  local -r file="$DOTLY_PATH/scripts/package/package_managers/$package_manager.sh"
+  local -r package_managers_src="${DOTLY_PATH}/scripts/package/package_managers"
+  local -r file="$package_manager.sh"
 
-  [[ ! -f "$file" ]] && exit 4
-  . "$file"
-  declare -F "$package_manager::$command" &>/dev/null && "$package_manager::$command" "${args[@]}"
+  dot::load_library "$file" "$package_managers_src"
+  # If function does not exists for the package manager it will return 0 (true) always
+  declare -F "$package_manager::$command" &>/dev/null && "$package_manager::$command" "${args[@]}" || return
 }
 
 package::is_installed() {

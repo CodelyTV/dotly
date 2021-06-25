@@ -97,7 +97,7 @@ update::check_consistency_with_sloth_version() {
 
   case "$(str::to_lower "$DOTLY_UPDATE_VERSION")" in
     "stable"|"minor")
-      if [ -z "$local_commit_tag" ] && [ ! -f "$DOTFILES_PATH/.dotly_force_current_version" ]; then
+      if [ -z "$local_commit_tag" ] && [ ! -f "$DOTFILES_PATH/.sloth_force_current_version" ]; then
         output::error "Error in your Dotly configuration, 'DOTLY_UPDATE_VERSION'"
         output::empty_line
         output::answer "You have selected to update to $DOTLY_UPDATE_VERSION but you are not"
@@ -126,7 +126,7 @@ update::update_local_sloth_module() {
   remote_sloth_tag="$(update::check_if_is_stable_update)"
 
   # No update
-  if [ ! -f "$DOTFILES_PATH/.dotly_force_current_version" ]; then
+  if [ ! -f "$DOTFILES_PATH/.sloth_force_current_version" ]; then
     return 1
   fi
 
@@ -154,10 +154,10 @@ update::update_local_sloth_module() {
       ;;
   esac
 
-  rm -f "$DOTFILES_PATH/.dotly_force_current_version"
-  rm -f "$DOTFILES_PATH/.dotly_update_available"
-  rm -f "$DOTFILES_PATH/.dotly_update_available_is_major"
-  echo "$current_sloth_hash" >| "$DOTFILES_PATH/.dotly_updated"
+  rm -f "$DOTFILES_PATH/.sloth_force_current_version"
+  rm -f "$DOTFILES_PATH/.sloth_update_available"
+  rm -f "$DOTFILES_PATH/.sloth_update_available_is_major"
+  echo "$current_sloth_hash" >| "$DOTFILES_PATH/.sloth_updated"
 }
 
 uptate::migration_script_exits() {
@@ -165,7 +165,7 @@ uptate::migration_script_exits() {
   latest_migration_script="$(find "$DOTLY_PATH/migration/" -name "*" -type f,l -executable -print0 -exec echo {} \; | sort --reverse | head -n 1 | xargs)"
 
   # No update no migration necessary
-  if [[ ! -f "$DOTFILES_PATH/.dotly_updated" ]] || [[ -z "$latest_migration_script" ]]; then
+  if [[ ! -f "$DOTFILES_PATH/.sloth_updated" ]] || [[ -z "$latest_migration_script" ]]; then
     return 1
   fi
 
@@ -176,7 +176,7 @@ uptate::migration_script_exits() {
   fi
 
   # Get previous commit and check if was added after
-  update_previous_commit="$(cat "$DOTFILES_PATH/.dotly_updated")"
+  update_previous_commit="$(cat "$DOTFILES_PATH/.sloth_updated")"
   [[ -z "$update_previous_commit" ]] && return 1 # Could not be checked if migration script should be executed
   
   git::check_file_is_modified_after_commit "$latest_migration_script" "$update_previous_commit" && echo "$latest_migration_script"

@@ -36,7 +36,7 @@ fi
 
 output::header "SLOTH migration wizard"
 
-[[ -z "${to_version:-}" ]] && [[ -f "$DOTFILES_PATH/.dotly_updated" ]] && to_version="$(uptate::migration_script_exits)"
+[[ -z "${to_version:-}" ]] && [[ -f "$DOTFILES_PATH/.sloth_updated" ]] && to_version="$(uptate::migration_script_exits)"
 
 if [[ ${to_version:-false} == false ]]; then
   to_version="$(find "$DOTLY_PATH/migration/" -name "*" -type f,l -executable -print0 -exec echo {} \; | xargs -I _ basename _ | sort --reverse | fzf --header "Select migration script version")"
