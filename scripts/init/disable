@@ -69,16 +69,14 @@ else
   output::answer "Nothing to be disabled"
 fi
 
-[[ -z "${to_disable[*]:-}" ]] && exit 0
-
 for item in "${to_disable[@]}"; do
+  [[ -z "$item" ]] && continue
 
-  init::disable "$item"
+  init::disable "$item" || true
 
   if ! init::status "$item"; then
     output::solution "Init script '$item'... Disabled"
   else
     output::error "Init script '$item'... Could not be disabled."
   fi
-
 done

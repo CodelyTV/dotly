@@ -66,15 +66,15 @@ if [[ -n "${not_enabled_scripts[*]:-}" ]]; then
 else
   output::answer "Nothing can be enabled"
 fi
-[[ -z "${to_enable:-}" ]] && exit 0
 
 for item in "${to_enable[@]}"; do
-  init::enable "$item"
+  [[ -z "$item" ]] && continue
+
+  init::enable "$item" || true
   
   if init::status "$item"; then
     output::solution "Init script '$item'...  Enabled"
   else
     output::error "Init script '$item' error... It could not be enabled."
-    exit 1
   fi
 done
