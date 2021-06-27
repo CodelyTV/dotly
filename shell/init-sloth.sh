@@ -1,4 +1,4 @@
-# Needed dotly functions
+# Needed dotly/sloth functions
 #shellcheck disable=SC2148
 function cdd() {
   #shellcheck disable=SC2012
@@ -9,7 +9,7 @@ function j() {
   fname=$(declare -f -F _z)
 
   #shellcheck source=/dev/null
-  [ -n "$fname" ] || . "$DOTLY_PATH/modules/z/z.sh"
+  [ -n "$fname" ] || . "$SLOTH_PATH/modules/z/z.sh"
 
   _z "$1"
 }
