@@ -13,7 +13,7 @@ ENABLED_INIT_SCRIPTS_PATH="$DOTFILES_PATH/shell/init.scripts-enabled"
   exit 1
 
 [[ ! -d "$SLOTH_INIT_SCRIPTS_PATH" ]] &&\
-  output::error "The init scripts of DOTLY does not exists." &&\
+  output::error "The init scripts of SLOTH does not exists." &&\
   output::write "Try with \`dot self migration v2.0.0\` first." &&\
   exit 1
 
