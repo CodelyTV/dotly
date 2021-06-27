@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-"$DOTLY_PATH/bin/dot" marketplace cache --async
