@@ -3,10 +3,12 @@
 set -uo pipefail
 set +e # Avoid crash if any function return false
 
-[[ -z "$DOTLY_PATH" ]] && exit 1
+[[ -z "$SLOTH_PATH" ]] && exit 1
 
-. "$DOTLY_PATH/scripts/core/_main.sh"
-. "$DOTLY_PATH/scripts/core/templating.sh"
+#shellcheck source=/dev/null
+. "$SLOTH_PATH/scripts/core/_main.sh"
+#shellcheck source=/dev/null
+. "$SLOTH_PATH/scripts/core/templating.sh"
 dot::load_library "update.sh"
 
 ##?   Select a specific sloth/dotly version from local dotly module. If you select

@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-[[ -z "$DOTLY_PATH" ]] && exit 1
+[[ -z "$SLOTH_PATH" ]] && exit 1
 
 #shellcheck source=/dev/null
-. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$SLOTH_PATH/scripts/core/_main.sh"
 dot::load_library "init.sh"
 
 ##? Enable init scripts
@@ -66,7 +66,7 @@ if [[ -n "${not_enabled_scripts[*]:-}" ]]; then
 else
   output::answer "Nothing can be enabled"
 fi
-[[ -z "$to_enable" ]] && exit 0
+[[ -z "${to_enable:-}" ]] && exit 0
 
 for item in "${to_enable[@]}"; do
   init::enable "$item"

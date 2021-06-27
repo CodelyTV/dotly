@@ -2,8 +2,10 @@
 
 set -euo pipefail
 
+[[ -z "$SLOTH_PATH" ]] && exit 1
+
 #shellcheck source=/dev/null
-. "$DOTLY_PATH/scripts/core/_main.sh"
+. "$SLOTH_PATH/scripts/core/_main.sh"
 dot::load_library "update.sh"
 
 ##? Update dotly/sloth to the latest stable release

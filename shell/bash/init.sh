@@ -18,7 +18,7 @@ export PATH
 
 themes_paths=(
   "$DOTFILES_PATH/shell/bash/themes"
-  "$DOTLY_PATH/shell/bash/themes"
+  "$SLOTH_PATH/shell/bash/themes"
 )
 
 # bash completion
@@ -45,7 +45,8 @@ unset COMPLETION
 
 #shellcheck disable=SC2068
 for THEME_PATH in ${themes_paths[@]}; do
-  THEME_PATH="${THEME_PATH}/${DOTLY_THEME:-codely}.sh"
+  SLOTH_THEME="${SLOTH_THEME:-DOTLY_THEME}"
+  THEME_PATH="${THEME_PATH}/${SLOTH_THEME:-codely}.sh"
   #shellcheck source=/dev/null
   [ -f "$THEME_PATH" ] && . "$THEME_PATH" && break
 done

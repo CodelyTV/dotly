@@ -81,7 +81,7 @@ elif [[ -n "${ZSH_VERSION:-}" ]]; then
   CURRENT_SHELL="zsh"
 fi
 
-if [[ "$CURRENT_SHELL" != "unknown" && -f "$DOTLY_PATH/shell/${CURRENT_SHELL}/init.sh" ]]; then
+if [[ "$CURRENT_SHELL" != "unknown" && -f "$SLOTH_PATH/shell/${CURRENT_SHELL}/init.sh" ]]; then
   #shellcheck source=/dev/null
   . "$DOTLY_PATH/shell/${CURRENT_SHELL}/init.sh"
 else

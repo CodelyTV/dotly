@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
 set -uo pipefail
-#set +e # Avoid crash if any function return false
 
-[[ -z "$DOTLY_PATH" ]] && exit 1
+[[ -z "$SLOTH_PATH" ]] && exit 1
 
-. "$DOTLY_PATH/scripts/core/_main.sh"
-. "$DOTLY_PATH/scripts/core/templating.sh"
+#shellcheck source=/dev/null
+. "$SLOTH_PATH/scripts/core/_main.sh"
+
+. "$SLOTH_PATH/scripts/core/_main.sh"
+. "$SLOTH_PATH/scripts/core/templating.sh"
 
 ##?  Executes migration scripts for dotfiles. If your dotly is updated and no
 ##? script version is provided then try to guess the latest necessary migration
@@ -39,10 +41,10 @@ output::header "SLOTH migration wizard"
 [[ -z "${to_version:-}" ]] && [[ -f "$DOTFILES_PATH/.sloth_updated" ]] && to_version="$(uptate::migration_script_exits)"
 
 if [[ ${to_version:-false} == false ]]; then
-  to_version="$(find "$DOTLY_PATH/migration/" -name "*" -type f,l -executable -print0 -exec echo {} \; | xargs -I _ basename _ | sort --reverse | fzf --header "Select migration script version")"
+  to_version="$(find "$SLOTH_PATH/migration/" -name "*" -type f,l -executable -print0 -exec echo {} \; | xargs -I _ basename _ | sort --reverse | fzf --header "Select migration script version")"
 fi
 
-if [[ -n "$to_version" ]] && [[ -x "$DOTLY_PATH/migration/$to_version" ]]; then
+if [[ -n "$to_version" ]] && [[ -x "$SLOTH_PATH/migration/$to_version" ]]; then
   output::write "You will execute migration script for '$to_version' this could"
   output::write "result in a damage of your current dotfiles if they are not"
   output::write "organized as expected."
@@ -53,12 +55,12 @@ if [[ -n "$to_version" ]] && [[ -x "$DOTLY_PATH/migration/$to_version" ]]; then
   output::empty_line
 
   #shellcheck source=/dev/null
-  . "$DOTLY_PATH/migration/$to_version" || output::error "Migration script '$to_version' could not be executed"
+  . "$SLOTH_PATH/migration/$to_version" || output::error "Migration script '$to_version' could not be executed"
 else
   output::error "There is no migration script for version '$to_version' or is not a executable file"
 fi
 
-if [[ -n "$to_version" ]] && { [[ -f "$DOTLY_PATH/symlinks/$to_version.yaml" ]] || [[ -f "$DOTLY_PATH/symlinks/$to_version.yml" ]]; }; then
+if [[ -n "$to_version" ]] && { [[ -f "$SLOTH_PATH/symlinks/$to_version.yaml" ]] || [[ -f "$DOTLY_PATH/symlinks/$to_version.yml" ]]; }; then
   output::header "Applying symlinks for '$to_version'"
-  "$DOTLY_PATH/bin/dot" symlinks update "$to_version"
+  "$SLOTH_PATH/bin/dot" symlinks update "$to_version"
 fi

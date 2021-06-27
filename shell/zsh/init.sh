@@ -37,8 +37,8 @@ ZSH_HIGHLIGHT_MAXLENGTH=300
 fpath=(
   "$DOTFILES_PATH/shell/zsh/themes"
   "$DOTFILES_PATH/shell/zsh/autocompletions"
-  "$DOTLY_PATH/shell/zsh/themes"
-  "$DOTLY_PATH/shell/zsh/completions"
+  "$SLOTH_PATH/shell/zsh/themes"
+  "$SLOTH_PATH/shell/zsh/completions"
   "${fpath[@]}"
 )
 
@@ -47,12 +47,14 @@ if type brew &>/dev/null; then
   fpath+=("$(brew --prefix)/share/zsh/site-functions")
 fi
 
+
+SLOTH_THEME="${SLOTH_THEME:-DOTLY_THEME}"
 autoload -Uz promptinit && promptinit
-prompt "${DOTLY_THEME:-codely}"
+prompt "${SLOTH_THEME:-codely}"
 
 #shellcheck source=/dev/null
-. "$DOTLY_PATH/shell/zsh/bindings/dot.zsh"
+. "$SLOTH_PATH/shell/zsh/bindings/dot.zsh"
 #shellcheck source=/dev/null
-. "$DOTLY_PATH/shell/zsh/bindings/reverse_search.zsh"
+. "$SLOTH_PATH/shell/zsh/bindings/reverse_search.zsh"
 #shellcheck source=/dev/null
 . "$DOTFILES_PATH/shell/zsh/key-bindings.zsh"
