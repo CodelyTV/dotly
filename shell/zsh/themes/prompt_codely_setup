@@ -3,11 +3,14 @@
 CODELY_THEME_MINIMAL=${CODELY_THEME_MINIMAL:-false}
 CODELY_THEME_MODE=${CODELY_THEME_MODE:-"dark"}
 CODELY_THEME_PROMPT_IN_NEW_LINE=${CODELY_THEME_PROMPT_IN_NEW_LINE:-false}
+CODELY_THEME_PWD_MODE=${CODELY_THEME_PWD_MODE:-"short"} # full, short, home_relative
+
+CODELY_THEME_STATUS_ICON_KO=${CODELY_THEME_STATUS_ICON_KO:-"▪"}
 
  [[ $(echotc Co) -gt 100 ]] && support_color_tones=true || support_color_tones=false
 
 status_icon_ok="▸"
-status_icon_ko="▪"
+status_icon_ko="$CODELY_THEME_STATUS_ICON_KO"
 git_no_changes_status="✓"
 git_dirty_status="✗"
 
@@ -30,8 +33,18 @@ else
 fi
 
 prompt_codely_pwd() {
-  local -r prompt_short_dir=$("$DOTLY_PATH/bin/dot" core short_pwd)
-  print -n "%F{$pwd_color}${prompt_short_dir}"
+  case "$CODELY_THEME_PWD_MODE" in
+    short)
+      local -r prompt_short_dir=$("$DOTLY_PATH/bin/dot" core short_pwd)
+      print -n "%F{$pwd_color}${prompt_short_dir}"
+    ;;
+    full)
+      echo "$PWD"
+    ;;
+    home_relative)
+      print -rD "$PWD"
+    ;;
+  esac
 }
 
 prompt_codely_git() {
@@ -62,7 +75,7 @@ prompt_codely_setup() {
   fi
 
   if [ "$CODELY_THEME_PROMPT_IN_NEW_LINE" = true ]; then
-    PS1="$PS1"$'\n'
+    PS1="┌$PS1"$'\n└➤ '
   fi
 
   RPS1=''
