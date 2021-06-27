@@ -12,8 +12,6 @@ _output::parse_code() {
       ;;
   esac
 
-  echo "color: $color"
-
   local -r text="${*:-}"
 
   with_code_parsed=$(echo "$text" | awk "{ORS=(NR+1)%2==0?\"${green}\":RS}1" RS="\`" | awk "{ORS=NR%1==0?\"${color}\":RS}1" RS="\`" | tr -d '\n')
