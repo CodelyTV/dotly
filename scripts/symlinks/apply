@@ -2,7 +2,8 @@
 
 set -euo pipefail
 
-. "$DOTLY_PATH/scripts/core/_main.sh"
+#shellcheck disable=SC1091
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
 
 symlinks::apply() {
   local -r CONFIG="$DOTFILES_PATH/symlinks/$1"
@@ -24,7 +25,7 @@ symlinks::apply() {
 ##?
 docs::parse "$@"
 
-SCRIPT_NAME="lazy symlinks apply"
+SCRIPT_NAME="sloth symlinks apply"
 SCRIPT_VERSION="1.0.0"
 
 # Print name and version

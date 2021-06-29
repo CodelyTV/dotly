@@ -2,7 +2,7 @@
 
 set -o pipefail
 
-. "$DOTLY_PATH/scripts/core/_main.sh"
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
 
 ##? Usage:
 ##?    dotly self-update

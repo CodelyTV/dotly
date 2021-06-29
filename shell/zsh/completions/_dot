@@ -1,6 +1,6 @@
 #compdef dot lazy=dot s=lazy
 
-. "$DOTLY_PATH/scripts/core/_main.sh"
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
 
 _dot() {
   local curcontext="$curcontext" state line

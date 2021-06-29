@@ -4,9 +4,9 @@ set -euo pipefail
 
 [[ -z "$SLOTH_PATH" ]] && exit 1
 
-#shellcheck source=/dev/null
+#shellcheck disable=SC1091
 . "$SLOTH_PATH/scripts/core/_main.sh"
-dot::load_library "update.sh"
+dot::load_library "self-update.sh"
 
 ##? Update dotly/sloth to the latest stable release
 ##?

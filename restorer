@@ -15,7 +15,7 @@ set -euo pipefail
 ##?
 
 # Script variables
-SCRIPT_NAME="Dotly dotfiles recovery"
+SCRIPT_NAME="sloth dotfiles recovery"
 SCRIPT_VERSION="v1.0.0"
 
 # Default values
@@ -59,7 +59,7 @@ IS_ICLOUD_DOTFILES=false
 # Offer restoration from iCloud
 # fzf iCloud subfolders
 # Create a symbolic link in $HOME/.dotfiles
-# Execute dot self install and all other stuff
+# Execute dot core install and all other stuff
 DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
 export DOTLY_ENV=${DOTLY_ENV:-PROD}
 export DOTLY_INSTALLER=true
@@ -343,7 +343,7 @@ _w "Please be patient this could take some time...🙏"
 # Installing default sloth/dotly tools
 PATH="$PATH:/usr/local/bin:$HOME/.cargo/bin"
 sudo -v
-"$DOTLY_PATH/bin/dot" self install || {
+"$DOTLY_PATH/bin/dot" core install || {
   _e "SLOTH/Dotly Could not be installed but your dotfiles are restored. Use:"
   _e "  tail -f $HOME/dotly.log"
   _e "To know what happened and where is the point of failure"

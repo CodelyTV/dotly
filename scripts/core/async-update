@@ -2,8 +2,9 @@
 
 set -euo pipefail
 
-. "$DOTLY_PATH/scripts/core/_main.sh"
-dot::load_library "autoupdate.sh"
+#shellcheck disable=SC1091
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
+dot::load_library "self-autoupdate.sh"
 
 ##? Async autoupdate dotly to avoid load all core functions in default bash
 ##?
