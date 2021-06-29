@@ -25,7 +25,7 @@ script::depends_on shfmt
 
 # Avoid zsh because shfmt show some errors because it do not understand some
 # valid zsh valid syntax
-mapfile -t all_files < <(dotly::list_bash_files | grep -v "$DOTLY_PATH/shell/zsh")
+mapfile -t all_files < <(dotly::list_bash_files | grep -v "${SLOTH_PATH:-$DOTLY_PATH}/shell/zsh")
 
 for file in "${all_files[@]}"; do
   unset patch_content
