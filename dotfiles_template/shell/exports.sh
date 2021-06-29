@@ -4,14 +4,13 @@
 # need to do something like JAVA_HOME here or consider to add a init-script
 # ------------------------------------------------------------------------------
 
-
 # ------------------------------------------------------------------------------
 # Sloth config
 # ------------------------------------------------------------------------------
 export SLOTH_AUTO_UPDATE_PERIOD_IN_DAYS=7
 export SLOTH_AUTO_UPDATE_MODE="auto" # silent, auto, info, prompt
 export SLOTH_UPDATE_VERSION="stable" # latest, stable, minor
-export SLOTH_INIT_SCRIPTS=true # Init scripts enabled
+export SLOTH_INIT_SCRIPTS=true       # Init scripts enabled
 
 # ------------------------------------------------------------------------------
 # Codely theme config

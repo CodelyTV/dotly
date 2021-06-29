@@ -14,24 +14,29 @@
 #
 # This will print:
 #   "Those are my family names: Miguel Manuel"
-templating::replace_var () {
+templating::replace_var() {
   local file_path string var_name value
 
   [[ $# -lt 2 ]] && return 1
 
   # Replacer
   if [[ -t 0 ]] && [[ -f "$1" ]]; then
-    file_path="$1"; shift
-    var_name="XXX_$(str::to_upper "$1" | tr '-' '_')_XXX"; shift
+    file_path="$1"
+    shift
+    var_name="XXX_$(str::to_upper "$1" | tr '-' '_')_XXX"
+    shift
     value="${*:-}"
     sed -i -e "s|${var_name}|${value}|g" "$file_path"
   elif [[ -t 0 ]]; then
-    string="$1"; shift
-    var_name="XXX_$(str::to_upper "$1" | tr '-' '_')_XXX"; shift
+    string="$1"
+    shift
+    var_name="XXX_$(str::to_upper "$1" | tr '-' '_')_XXX"
+    shift
     value="${*:-}"
     echo "${string//$var_name/$value}"
   else
-    var_name="XXX_$(str::to_upper "$1" | tr '-' '_')_XXX"; shift
+    var_name="XXX_$(str::to_upper "$1" | tr '-' '_')_XXX"
+    shift
     value="${*:-}"
     sed -e "s|${var_name}|${value}|g" </dev/stdin
   fi
@@ -53,14 +58,18 @@ templating::replace_var_join() {
   { [[ -t 0 && $# -lt 3 ]] || [[ $# -lt 2 ]]; } && return 1
 
   if [[ -t 0 ]]; then
-    string="$1"; 
-    var_name="$1"; shift
-    glue="$1"; shift
+    string="$1"
+    var_name="$1"
+    shift
+    glue="$1"
+    shift
     joined_str="$(str::join "$glue" "$@")"
     templating::replace_var "$string" "$var_name" "$joined_str"
   else
-    var_name="$1"; shift
-    glue="$1"; shift
+    var_name="$1"
+    shift
+    glue="$1"
+    shift
     joined_str="$(str::join "$glue" "$@")"
     templating::replace_var "$var_name" "$joined_str" </dev/stdin
   fi
@@ -81,31 +90,35 @@ templating::replace_var_join() {
 templating::replace() {
   local var_name var_value output
   case "${1:-}" in
-    --*=*|--*)
-      output=$(</dev/stdin)
-      ;;
-    *)
-      output="$1"
-      shift
-      ;;
+  --*=* | --*)
+    output=$(</dev/stdin)
+    ;;
+  *)
+    output="$1"
+    shift
+    ;;
   esac
 
   while [ $# -gt 0 ]; do
     case ${1:-} in
-      --*=*)
-        var_name="$(echo "$1" | awk -F '=' '{print $1}' | sed 's/^\-\-//')";
-        var_value="$(echo "$1" | awk -F '=' '{print $2}')";
-        shift
-        ;;
-      --*)
-        #shellcheck disable=SC2001
-        var_name="$(echo "$1" | sed 's/\-\-//')"; shift
-        var_value="${1:-}"; shift
-        ;;
-      *)
-        var_name="${1:-}"; shift
-        var_value="${1:-}"; shift
-        ;;
+    --*=*)
+      var_name="$(echo "$1" | awk -F '=' '{print $1}' | sed 's/^\-\-//')"
+      var_value="$(echo "$1" | awk -F '=' '{print $2}')"
+      shift
+      ;;
+    --*)
+      #shellcheck disable=SC2001
+      var_name="$(echo "$1" | sed 's/\-\-//')"
+      shift
+      var_value="${1:-}"
+      shift
+      ;;
+    *)
+      var_name="${1:-}"
+      shift
+      var_value="${1:-}"
+      shift
+      ;;
     esac
 
     if [[ -f "$output" ]]; then

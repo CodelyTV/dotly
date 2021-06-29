@@ -4,7 +4,7 @@ set -euo pipefail
 
 [[ -z "$DOTLY_PATH" ]] && exit 1
 
-#shellcheck source=/dev/null
+#shellcheck disable=SC1091
 . "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Install remote context or script in your $DOTFILES_PATH from url. It
@@ -56,7 +56,7 @@ cd "$dotfiles_context" || exit 1
 # Download the script
 output::write "Downloading the script ⚡️"
 eval "$download_command $script_raw_url"
-if [ ! $? ] ; then
+if [ ! $? ]; then
   if [ -z "$(ls -A "$dotfiles_context" 2>/dev/null)" ]; then
     output::error "The context '$dotfiles_context' is empty. File could not be downloaded."
     exit 1
@@ -64,7 +64,8 @@ if [ ! $? ] ; then
 fi
 
 # Getting the name
-# FIXME SC2010
+# FIXME SC2012
+#shellcheck disable=SC2012
 script_name="$(ls -Art | tail -n 1)"
 
 # Applying execution rights

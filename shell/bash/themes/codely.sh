@@ -5,15 +5,14 @@ GREEN_COLOR="32"
 RED_COLOR="31"
 
 prompt_dotly_autoupdate() {
-  if [ -f "$DOTFILES_PATH/.sloth_update_available" ] &&\
-     { 
-        [ "$(echo "$DOTLY_AUTO_UPDATE_MODE" | tr '[:upper:]' '[:lower:]')" != "minor" ] ||\
+  if [ -f "$DOTFILES_PATH/.sloth_update_available" ] &&
+    {
+      [ "$(echo "$DOTLY_AUTO_UPDATE_MODE" | tr '[:upper:]' '[:lower:]')" != "minor" ] ||
         {
-          [ "$(echo "$DOTLY_AUTO_UPDATE_MODE" | tr '[:upper:]' '[:lower:]')" == "minor" ] &&\
-          [ ! -f "$DOTFILES_PATH/.sloth_update_available_is_major" ]
+          [ "$(echo "$DOTLY_AUTO_UPDATE_MODE" | tr '[:upper:]' '[:lower:]')" == "minor" ] &&
+            [ ! -f "$DOTFILES_PATH/.sloth_update_available_is_major" ]
         }
-     }
-  then
+    }; then
     print -n "📥  | "
   fi
 }

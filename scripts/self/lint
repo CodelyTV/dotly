@@ -1,15 +1,39 @@
 #!/usr/bin/env bash
 
+#shellcheck disable=SC1091
 . "$DOTLY_PATH/scripts/core/_main.sh"
+#shellcheck disable=SC1091
 . "$DOTLY_PATH/scripts/core/dotly.sh"
 
 ##? Lint all dotly related bash files
 ##?
 ##? Usage:
+##?    lint [ --patch | -p ]
 ##?    lint
+##?
+##? Options:
+##?    --patch -p  Apply a patch
 if [ "$1" == "-h" ] || [ "$1" = "--help" ]; then
   docs::parse "$@"
 fi
+apply=false
+
+if [[ "${1:-}" == "--patch" || "${1:-}" == "-p" ]]; then
+  apply=true
+fi
+
 script::depends_on shfmt
 
-dotly::list_bash_files | xargs shfmt -i 2 -d
+# Avoid zsh because shfmt show some errors because it do not understand some
+# valid zsh valid syntax
+mapfile -t all_files < <(dotly::list_bash_files | grep -v "$DOTLY_PATH/shell/zsh")
+
+for file in "${all_files[@]}"; do
+  unset patch_content
+  patch_content="$(shfmt -ln bash -i 2 -d "$file")"
+  if [[ $? -eq 1 && -n "$patch_content" ]] && $apply; then
+    echo "$patch_content" | patch "$file"
+  elif [[ $? -eq 1 && -n "$patch_content" ]]; then
+    echo "$patch_content"
+  fi
+done

@@ -10,7 +10,7 @@ dnf::is_installed() {
         return 1
       fi
     done
-    
+
     return 0
   else
     [[ -n "${1:-}" ]] && rpm -qa | grep -qw "${1:-}"

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+#shellcheck disable=SC1091
 . "$DOTLY_PATH/scripts/core/_main.sh"
 dot::load_library "dump.sh"
 
@@ -32,51 +33,51 @@ NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/npm/${HOSTNAME}.txt"
 VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta/${HOSTNAME}.txt"
 
 {
-  platform::command_exists brew && \
-    package::brew_dump "$HOMEBREW_DUMP_FILE_PATH" && \
-    output::answer "${brew_title:-Brew} apps dumped on $HOMEBREW_DUMP_FILE_PATH" &&\
+  platform::command_exists brew &&
+    package::brew_dump "$HOMEBREW_DUMP_FILE_PATH" &&
+    output::answer "${brew_title:-Brew} apps dumped on $HOMEBREW_DUMP_FILE_PATH" &&
     output::empty_line
 } || package::clarification "${brew_title:-Brew}"
 
 {
-  platform::command_exists apt-mark &&\
-    package::apt_dump "$APT_DUMP_FILE_PATH" &&\
-    output::answer "${apt_title:-APT} apps dumped on $APT_DUMP_FILE_PATH" &&\
+  platform::command_exists apt-mark &&
+    package::apt_dump "$APT_DUMP_FILE_PATH" &&
+    output::answer "${apt_title:-APT} apps dumped on $APT_DUMP_FILE_PATH" &&
     output::empty_line
 } || package::clarification "${apt_title:-APT}"
 
 {
-  platform::command_exists snap &&\
-    package::snap_dump "$SNAP_DUMP_FILE_PATH" &&\
-    output::answer "${snap_title:-SNAP} apps dumped on $SNAP_DUMP_FILE_PATH" &&\
+  platform::command_exists snap &&
+    package::snap_dump "$SNAP_DUMP_FILE_PATH" &&
+    output::answer "${snap_title:-SNAP} apps dumped on $SNAP_DUMP_FILE_PATH" &&
     output::empty_line
 } || package::clarification "${snap_title:-SNAP}"
 
 {
-  platform::command_exists cargo &&\
-    package::cargo_dump "$CARGO_DUMP_FILE_PATH" &&\
-    output::answer "${cargo_title:-Cargo} apps dumped on $CARGO_DUMP_FILE_PATH" &&\
+  platform::command_exists cargo &&
+    package::cargo_dump "$CARGO_DUMP_FILE_PATH" &&
+    output::answer "${cargo_title:-Cargo} apps dumped on $CARGO_DUMP_FILE_PATH" &&
     output::empty_line
 } || package::clarification "${cargo_title:-Cargo}"
 
 {
-  platform::command_exists pip3 && \
-    package::python_dump "$PYTHON_DUMP_FILE_PATH" && \
-    output::answer "${pip_title:-Python} apps dumped on $PYTHON_DUMP_FILE_PATH" &&\
+  platform::command_exists pip3 &&
+    package::python_dump "$PYTHON_DUMP_FILE_PATH" &&
+    output::answer "${pip_title:-Python} apps dumped on $PYTHON_DUMP_FILE_PATH" &&
     output::empty_line
 } || package::clarification "${pip_title:-Python}"
 
 if platform::command_exists volta; then
-  { 
-    package::volta_dump "$VOLTA_DUMP_FILE_PATH" && \
-      output::answer "${volta_title:-Volta} apps dumped on $VOLTA_DUMP_FILE_PATH" &&\
+  {
+    package::volta_dump "$VOLTA_DUMP_FILE_PATH" &&
+      output::answer "${volta_title:-Volta} apps dumped on $VOLTA_DUMP_FILE_PATH" &&
       output::empty_line
   } || package::clarification "${volta_title:-Volta}"
 
 elif platform::command_exists npm; then
   {
-    package::npm_dump "$NPM_DUMP_FILE_PATH" && \
-      output::answer "${npm_title:-NPM} apps dumped on $NPM_DUMP_FILE_PATH" &&\
+    package::npm_dump "$NPM_DUMP_FILE_PATH" &&
+      output::answer "${npm_title:-NPM} apps dumped on $NPM_DUMP_FILE_PATH" &&
       output::empty_line
   } || package::clarification "${npm_title:-NPM}"
 fi

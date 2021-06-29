@@ -26,7 +26,7 @@ git::local_current_branch_commit_exists_remote() {
   branch="${2:-master}"
   local_commit="$(git::get_local_HEAD_hash "$branch")"
 
-  [ -n "$local_commit" ] &&\
+  [ -n "$local_commit" ] &&
     git::is_in_repo &&
     git ls-remote --symref "$remote" | tail -n +2 | grep -q "$local_commit"
 }
@@ -98,7 +98,8 @@ git::get_submodule_property() {
   local gitmodules_path submodule_directory property
 
   if [ $# -gt 2 ]; then
-    gitmodules_path="$1"; shift
+    gitmodules_path="$1"
+    shift
     submodule_directory="$1"
   fi
 
@@ -110,7 +111,7 @@ git::get_submodule_property() {
 }
 
 git::check_file_exists_in_previous_commit() {
-  [[ -n "${1:-}" ]] && ! git rev-parse @~:"${1:-}" > /dev/null 2>&1
+  [[ -n "${1:-}" ]] && ! git rev-parse @~:"${1:-}" >/dev/null 2>&1
 }
 
 git::get_file_last_commit_timestamp() {

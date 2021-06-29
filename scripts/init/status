@@ -9,7 +9,7 @@ set -euo pipefail
 dot::load_library "init.sh"
 
 ##? Check iinit-script status
-##? 
+##?
 ##?
 ##? Usage:
 ##?   status [-h | --help]
@@ -57,8 +57,8 @@ else
   for item in "${init_scripts[@]}"; do
     {
 
-      init::status "$item" &&\
-      output::solution "'$item'... Enabled."
+      init::status "$item" &&
+        output::solution "'$item'... Enabled."
 
     } || output::error "'$item'... Disabled."
   done

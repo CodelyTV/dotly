@@ -51,7 +51,7 @@ case $1 in
   ;;
 "fix_permissions")
   sudo -v
-  sudo chown -R $(whoami) /usr/local/share/zsh /usr/local/share/zsh/site-functions
+  sudo chown -R "$(whoami)" /usr/local/share/zsh /usr/local/share/zsh/site-functions
   chmod u+w /usr/local/share/zsh /usr/local/share/zsh/site-functions
   ;;
 *)

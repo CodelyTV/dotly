@@ -36,11 +36,19 @@ dot::list_scripts_path() {
 }
 
 dot::get_script_path() {
-  echo "$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+  #shellcheck disable=SC2164
+  echo "$(
+    cd -- "$(dirname "$0")" >/dev/null 2>&1
+    pwd -P
+  )"
 }
 
 dot::get_full_script_path() {
-  echo "$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )/$(basename "$0")"
+  #shellcheck disable=SC2164
+  echo "$(
+    cd -- "$(dirname "$0")" >/dev/null 2>&1
+    pwd -P
+  )/$(basename "$0")"
 }
 
 # Old name: dot::get_script_src_path
@@ -60,19 +68,19 @@ dot::load_library() {
         "$(dot::get_script_path)/src"
       )
     fi
-    
+
     lib_paths+=(
       "$DOTLY_PATH/scripts/core"
       "."
     )
 
     for lib_path in "${lib_paths[@]}"; do
-      [[ -f "$lib_path/$lib" ]] &&\
-        lib_full_path="$lib_path/$lib" &&\
+      [[ -f "$lib_path/$lib" ]] &&
+        lib_full_path="$lib_path/$lib" &&
         break
 
-      [[ -f "$lib_path/$lib.sh" ]] &&\
-        lib_full_path="$lib_path/$lib.sh" &&\
+      [[ -f "$lib_path/$lib.sh" ]] &&
+        lib_full_path="$lib_path/$lib.sh" &&
         break
     done
 
@@ -92,7 +100,7 @@ dot::load_library() {
       exit 4
     fi
   fi
-  
+
   # No arguments
   return 1
 }

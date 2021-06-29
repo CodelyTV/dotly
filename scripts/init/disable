@@ -9,7 +9,7 @@ set -euo pipefail
 dot::load_library "init.sh"
 
 ##? Disable init scripts
-##? 
+##?
 ##?
 ##? Usage:
 ##?   disable [-h | --help]

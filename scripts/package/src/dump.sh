@@ -2,6 +2,7 @@
 #. "$DOTLY_PATH/scripts/core/platform.sh"
 
 apt_title='@ APT'
+cargo_title='📦 Cargo'
 brew_title='🍺 Brew'
 pip_title='🐍 pip'
 npm_title='🌈 npm'
@@ -54,9 +55,8 @@ package::common_dump_check() {
   file_path="${2:-}"
 
   if [[ -n "${command_check:-}" ]] &&
-      [[ -n "$file_path" ]] &&
-      platform::command_exists "$command_check"
-  then
+    [[ -n "$file_path" ]] &&
+    platform::command_exists "$command_check"; then
     mkdir -p "$(dirname "$file_path")"
   fi
 }
@@ -66,9 +66,9 @@ package::common_import_check() {
   command_check="${1:-}"
   file_path="${2:-}"
 
-  [[ -n "${command_check:-}" ]] &&\
-    [[ -n "$file_path" ]] &&\
-    platform::command_exists "$command_check" &&\
+  [[ -n "${command_check:-}" ]] &&
+    [[ -n "$file_path" ]] &&
+    platform::command_exists "$command_check" &&
     [[ -f "$file_path" ]]
 }
 
@@ -105,7 +105,7 @@ package::apt_dump() {
 
   if package::common_dump_check apt "$APT_DUMP_FILE_PATH"; then
     output::write "🚀 Starting APT dump to '$APT_DUMP_FILE_PATH'"
-    apt-mark showmanual >|"$APT_DUMP_FILE_PATH" | log::file "Exporting $apt_title packages"
+    apt-mark showmanual | tee "$APT_DUMP_FILE_PATH" | log::file "Exporting $apt_title packages"
 
     return 0
   fi
@@ -127,7 +127,7 @@ package::snap_dump() {
 
   if package::common_dump_check snap "$SNAP_DUMP_FILE_PATH"; then
     output::write "🚀 Starting SNAP dump to '$SNAP_DUMP_FILE_PATH'"
-    snap list | tail -n +2 | awk '{ print $1 }' >|"$SNAP_DUMP_FILE_PATH" | log::file "Exporting $snap_title containers"
+    snap list | tail -n +2 | awk '{ print $1 }' | tee "$SNAP_DUMP_FILE_PATH" | log::file "Exporting $snap_title containers"
 
     return 0
   fi
@@ -149,7 +149,7 @@ package::python_dump() {
 
   if package::common_dump_check pip3 "$PYTHON_DUMP_FILE_PATH"; then
     output::write "🚀 Starting Python dump to '$PYTHON_DUMP_FILE_PATH'"
-    pip3 freeze >"$PYTHON_DUMP_FILE_PATH" | log::file "Exporting $pip_title packages"
+    pip3 freeze | tee "$PYTHON_DUMP_FILE_PATH" | log::file "Exporting $pip_title packages"
 
     return 0
   fi
@@ -175,7 +175,7 @@ package::npm_dump() {
 
   if package::common_dump_check npm "$NPM_DUMP_FILE_PATH"; then
     output::write "🚀 Starting NPM dump to '$NPM_DUMP_FILE_PATH'"
-    ls -1 /usr/local/lib/node_modules | grep -v npm >|"$NPM_DUMP_FILE_PATH" | log::file "Exporting $npm_title packages"
+    ls -1 /usr/local/lib/node_modules | grep -v npm | tee "$NPM_DUMP_FILE_PATH" | log::file "Exporting $npm_title packages"
 
     return 0
   fi
@@ -188,7 +188,7 @@ package::npm_import() {
 
   if package::common_import_check npm "$NPM_DUMP_FILE_PATH"; then
     output::write "🚀 Importing NPM packages from '$NPM_DUMP_FILE_PATH'"
-    xargs -I_ npm install -g "_" < "$NPM_DUMP_FILE_PATH" | log::file "Importing $npm_title packages"
+    xargs -I_ npm install -g "_" <"$NPM_DUMP_FILE_PATH" | log::file "Importing $npm_title packages"
   fi
 
   return 1
@@ -199,7 +199,7 @@ package::volta_dump() {
 
   if package::common_dump_check volta "$VOLTA_DUMP_FILE_PATH"; then
     output::write "🚀 Starting VOLTA packages from '$VOLTA_DUMP_FILE_PATH'"
-    volta list all --format plain | awk '{print $2}' >|"$VOLTA_DUMP_FILE_PATH" | log::file "Exporting $volta_title packages"
+    volta list all --format plain | awk '{print $2}' | tee "$VOLTA_DUMP_FILE_PATH" | log::file "Exporting $volta_title packages"
 
     return 0
   fi
@@ -224,7 +224,7 @@ package::cargo_dump() {
   CARGO_DUMP_FILE_PATH="${1:-$CARGO_DUMP_FILE_PATH}"
 
   if package::common_dump_check cargo "$CARGO_DUMP_FILE_PATH"; then
-    cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' >|"$CARGO_DUMP_FILE_PATH" | log::file "Exporting $cargo_title packages"
+    cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' | tee "$CARGO_DUMP_FILE_PATH" | log::file "Exporting $cargo_title packages"
 
     return 0
   fi
@@ -236,7 +236,7 @@ package::cargo_import() {
   CARGO_DUMP_FILE_PATH="${1:-$VOLTA_DUMP_FILE_PATH}"
 
   if package::common_import_check cargo "$CARGO_DUMP_FILE_PATH"; then
-    xargs -I_ cargo install < "$CARGO_DUMP_FILE_PATH" | log::file "Importing $cargo_title packages"
+    xargs -I_ cargo install <"$CARGO_DUMP_FILE_PATH" | log::file "Importing $cargo_title packages"
 
     return 0
   fi

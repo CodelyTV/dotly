@@ -23,24 +23,28 @@ else
   recipe_path="$(dot::get_script_path)/recipes/"
   while $# -gt 0; do
     case "$1" in
-      --recipe-path)
-        if [[ "$2" != "_registry" ]]; then
-          recipe_path="$2"
-        fi
-        shift 2
-        ;;
-      --skip-recipe)
-        skip_recipe=true; shift
-        ;;
-      --version|-v)
-        version=true; shift
-        ;;
-      --help|-h)
-        help=true; shift
-        ;;
-      *)
-        package_name="$1"; shift
-        ;;
+    --recipe-path)
+      if [[ "$2" != "_registry" ]]; then
+        recipe_path="$2"
+      fi
+      shift 2
+      ;;
+    --skip-recipe)
+      skip_recipe=true
+      shift
+      ;;
+    --version | -v)
+      version=true
+      shift
+      ;;
+    --help | -h)
+      help=true
+      shift
+      ;;
+    *)
+      package_name="$1"
+      shift
+      ;;
     esac
   done
 fi
@@ -63,11 +67,10 @@ fi
 
 package::is_installed "$package_name" && log::success "$package_name already installed" && exit 0
 
-if [[ -z "$skip_recipe" ]] &&\
-   [[ -n "$(registry::recipe_exists "$package_name" "${recipe_path:-}")" ]] &&\
-   registry::install "$package_name" "${recipe_path:-}" &&\
-   registry::is_installed "$package_name" "${recipe_path:-}"
-then
+if [[ -z "$skip_recipe" ]] &&
+  [[ -n "$(registry::recipe_exists "$package_name" "${recipe_path:-}")" ]] &&
+  registry::install "$package_name" "${recipe_path:-}" &&
+  registry::is_installed "$package_name" "${recipe_path:-}"; then
   output::write "✅ \`$package_name\` installed"
 
   exit 0

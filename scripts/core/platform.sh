@@ -20,7 +20,7 @@ platform::is_wsl() {
 
 platform::os() {
   local os="unknown"
-  
+
   if platform::is_macos; then
     os="mac"
   elif platform::is_linux; then
@@ -100,8 +100,8 @@ platform::semver_is_minor_or_patch_update() {
   compare_minor="$(platform::compare_ver "$minor1" "$minor2")"
   compare_patch="$(platform::compare_ver "$patch1" "$patch2")"
 
-  [[ $compare_major -eq 0 ]] && { # Only equals major are minor or patch updates
-    [[ $compare_minor -eq -1 ]] || { # If minor is over current minor is and update
+  [[ $compare_major -eq 0 ]] && {                               # Only equals major are minor or patch updates
+    [[ $compare_minor -eq -1 ]] || {                            # If minor is over current minor is and update
       [[ $compare_minor -eq 0 ]] && [[ $compare_patch -eq -1 ]] # If minor is equal and patch is greater
     }
   }

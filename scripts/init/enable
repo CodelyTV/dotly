@@ -9,7 +9,7 @@ set -euo pipefail
 dot::load_library "init.sh"
 
 ##? Enable init scripts
-##? 
+##?
 ##?
 ##? Usage:
 ##?   enable [-h | --help]
@@ -71,7 +71,7 @@ for item in "${to_enable[@]}"; do
   [[ -z "$item" ]] && continue
 
   init::enable "$item" || true
-  
+
   if init::status "$item"; then
     output::solution "Init script '$item'...  Enabled"
   else

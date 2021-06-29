@@ -38,15 +38,18 @@ log::ansi() {
 }
 
 if [ -z ${DOT_LOG_FILE+x} ]; then
-  readonly DOT_LOG_FILE="/tmp/$(basename "$0").log"
+  DOT_LOG_FILE="/tmp/$(basename "$0").log"
+  readonly DOT_LOG_FILE
 fi
 
 _log() {
-  local template=$1
+  local template="$1"
   shift
   if ${log_to_file:-false}; then
+    #shellcheck disable=SC2059
     echoerr -e "$(printf "$template" "$@")" | tee -a "$DOT_LOG_FILE" >&2
   else
+    #shellcheck disable=SC2059
     echoerr -e "$(printf "$template" "$@")"
   fi
 }
@@ -55,10 +58,12 @@ _header() {
   local TOTAL_CHARS=60
   local total=$TOTAL_CHARS-2
   local size=${#1}
-  local left=$((($total - $size) / 2))
-  local right=$(($total - $size - $left))
+  local left=$(((total - size) / 2))
+  local right=$((total - size - left))
+  #shellcheck disable=SC2059
   printf "%${left}s" '' | tr ' ' =
-  printf " $1 "
+  printf " %s " "${1:-}"
+  #shellcheck disable=SC2059
   printf "%${right}s" '' | tr ' ' =
 }
 

@@ -50,7 +50,7 @@ if [[ -n "$to_version" ]] && [[ -x "$SLOTH_PATH/migration/$to_version" ]]; then
   output::write "organized as expected."
   output::write "PLEASE PERFORM A BACKUP OF YOUR DOTFILES BEFORE CONTINUE"
   output::empty_line
-  
+
   ! output::yesno "Sure you want to continue" && exit 1
   output::empty_line
 

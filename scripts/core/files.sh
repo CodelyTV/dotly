@@ -14,9 +14,8 @@ files::backup_if_file_exists() {
   bk_suffix="${2:-$(date +%s)}"
   bk_file_path="$file_path.${bk_suffix}"
 
-  if [[ -n "$file_path" ]] &&\
-    { [[ -f "$file_path" ]] || [[ -d "$file_path" ]]; }
-  then
+  if [[ -n "$file_path" ]] &&
+    { [[ -f "$file_path" ]] || [[ -d "$file_path" ]]; }; then
     eval mv "$file_path" "$bk_file_path" && echo "$bk_file_path" && return 1
   fi
 

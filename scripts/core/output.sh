@@ -6,10 +6,10 @@ normal='\033[0m'
 _output::parse_code() {
   local color="$normal"
   case "${1:-}" in
-    --color)
-      color="$2"
-      shift 2
-      ;;
+  --color)
+    color="$2"
+    shift 2
+    ;;
   esac
 
   local -r text="${*:-}"
@@ -23,10 +23,10 @@ output::write() {
   local with_code_parsed color
   color="$normal"
   case "${1:-}" in
-    --color)
-      color="$2"
-      shift 2
-      ;;
+  --color)
+    color="$2"
+    shift 2
+    ;;
   esac
 
   local -r text="${*:-}"
@@ -37,12 +37,12 @@ output::answer() {
   local color
   color="$normal"
   case "${1:-}" in
-    --color)
-      color="$2"
-      shift 2
-      ;;
+  --color)
+    color="$2"
+    shift 2
+    ;;
   esac
-  output::write --color "${color}" " > ${*:-}";
+  output::write --color "${color}" " > ${*:-}"
 }
 output::error() { output::answer --color "${red}" "${red}${*:-}${normal}"; }
 output::solution() { output::answer --color "${green}" "${green}${*:-}${normal}"; }
@@ -50,10 +50,10 @@ output::question() {
   local with_code_parsed color
   color="$normal"
   case "${1:-}" in
-    --color)
-      color="$2"
-      shift 2
-      ;;
+  --color)
+    color="$2"
+    shift 2
+    ;;
   esac
   with_code_parsed="$(_output::parse_code --color "${color}" "${1:-}")"
 
@@ -77,10 +77,10 @@ output::question_default() {
   local with_code_parsed color question default_value var_name
   color="$normal"
   case "${1:-}" in
-    --color)
-      color="$2"
-      shift 2
-      ;;
+  --color)
+    color="$2"
+    shift 2
+    ;;
   esac
 
   [[ $# -lt 3 ]] && return 1
@@ -99,10 +99,10 @@ output::yesno() {
   local with_code_parsed color question default PROMPT_REPLY values
   color="$normal"
   case "${1:-}" in
-    --color)
-      color="$2"
-      shift 2
-      ;;
+  --color)
+    color="$2"
+    shift 2
+    ;;
   esac
 
   [[ $# -eq 0 ]] && return 1

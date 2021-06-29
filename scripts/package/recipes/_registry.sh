@@ -11,7 +11,7 @@ registry::recipe_exists() {
     "$DOTFILES_PATH/recipes/${recipe}.sh"
   )
   [[ -z "$recipe" ]] && return
-  
+
   for recipe_path in "${recipe_paths[@]}"; do
     [[ -f "$recipe_path" ]] && break
   done
@@ -23,7 +23,7 @@ registry::install() {
   local -r recipe="${1:-}"
   local -r install_command="${recipe}::install"
   local -r recipe_path="$(registry::recipe_exists "$recipe" "${2:-}" || echo -n "")"
-  
+
   [[ -z "$recipe" || -z "$recipe_path" || ! -f "$recipe_path" ]] && return 1
 
   dot::load_library "${recipe}.sh" "$(dirname "$recipe_path")"

@@ -211,7 +211,7 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
   else
     options=("GitHub" "Keybase" "Other Git alternative" "Quit")
   fi
-  
+
   GIT_URL=""
   select opt in "${options[@]}"; do
     case $opt in
@@ -271,7 +271,7 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
       _q "Which is the name of your iCloud dotfiles folder? [.dotfiles]" "ICLOUD_DOTFILES_PATH_NAME"
       ICLOUD_DOTFILES_PATH="$ICLOUD_PATH/${ICLOUD_DOTFILES_PATH_NAME:-.dotfiles}"
       DOTFILES_PATH="$HOME/$ICLOUD_DOTFILES_PATH_NAME"
-      
+
       if [[ ! -d "$ICLOUD_DOTFILES_PATH" ]]; then
         _e "Dotfiles folder were not found in iCloud Drive"
         exit 5

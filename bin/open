@@ -4,7 +4,7 @@
 SCRIPT_PATH="$(cd -- "$(dirname "$0")" && pwd -P)"
 FULL_SCRIPT_PATH="$SCRIPT_PATH/$(basename "$0")"
 
-mapfile -c 1 -t < <( which -a open | grep -v "$FULL_SCRIPT_PATH" )
+mapfile -c 1 -t < <(which -a open | grep -v "$FULL_SCRIPT_PATH")
 OPEN_BIN=""
 if [[ "${#MAPFILE[@]}" -gt 0 ]]; then
   OPEN_BIN="${MAPFILE[0]}"
@@ -13,38 +13,38 @@ fi
 os=$(uname | tr '[:upper:]' '[:lower:]')
 
 case "$os" in
-  *darwin*)
-    if [[ -n "$OPEN_BIN" && -x "$OPEN_BIN" ]]; then
-      "$OPEN_BIN" "$@"
-    else
-      echo -e "\033[0;31mNot possible to use \`open\` command in this system\033[0m"
-      exit 4
-    fi
-    ;;
-  *linux*)
-    if grep -q Microsoft /proc/version; then
-      cmd.exe /C start "$@"
-    elif [[ -n "$OPEN_BIN" && -x "$OPEN_BIN" ]]; then
-      "$OPEN_BIN" "$@"
-    elif ! which xdg-open | grep 'not found'; then
-      xdg-open "$@"
-    elif ! which gnome-open | grep 'not found'; then
-      gnome-open "$@"
-    else
-      echo -e "\033[0;31mNot possible to use \`open\` command in this system\033[0m"
-      exit 4
-    fi
-    ;;
-  *cygwin*)
-    if command -v realpath &>/dev/null; then
-      cygstart "$@"
-    else
-      echo -e "\033[0;31mNot possible to use \`open\` command in this system\033[0m"
-      exit 4
-    fi
-    ;;
-  *)
-    echo -e "\033[0;31m\`open\` command or any other known alternative does not exists in this system\033[0m"
-    exit 1
-    ;;
+*darwin*)
+  if [[ -n "$OPEN_BIN" && -x "$OPEN_BIN" ]]; then
+    "$OPEN_BIN" "$@"
+  else
+    echo -e "\033[0;31mNot possible to use \`open\` command in this system\033[0m"
+    exit 4
+  fi
+  ;;
+*linux*)
+  if grep -q Microsoft /proc/version; then
+    cmd.exe /C start "$@"
+  elif [[ -n "$OPEN_BIN" && -x "$OPEN_BIN" ]]; then
+    "$OPEN_BIN" "$@"
+  elif ! which xdg-open | grep 'not found'; then
+    xdg-open "$@"
+  elif ! which gnome-open | grep 'not found'; then
+    gnome-open "$@"
+  else
+    echo -e "\033[0;31mNot possible to use \`open\` command in this system\033[0m"
+    exit 4
+  fi
+  ;;
+*cygwin*)
+  if command -v realpath &>/dev/null; then
+    cygstart "$@"
+  else
+    echo -e "\033[0;31mNot possible to use \`open\` command in this system\033[0m"
+    exit 4
+  fi
+  ;;
+*)
+  echo -e "\033[0;31m\`open\` command or any other known alternative does not exists in this system\033[0m"
+  exit 1
+  ;;
 esac

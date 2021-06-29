@@ -8,7 +8,7 @@ set -euo pipefail
 . "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Something went terribly wrong
-##? 
+##?
 ##?
 ##? Usage:
 ##?   wrong [-h | --help]

@@ -10,7 +10,7 @@ yum::is_installed() {
         return 1
       fi
     done
-    
+
     return 0
   else
     [[ -n "${1:-}" ]] && sudo yum list --installed | grep -q "$2"

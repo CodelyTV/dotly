@@ -2,20 +2,21 @@
 
 set -euo pipefail
 
-. "$DOTLY_PATH/scripts/core/_main.sh"
+#shellcheck source=/dev/null
+. "${DOTLY_PATH:-$SLOTH_PATH}/scripts/core/_main.sh"
 
 symlinks::get_files() {
-  [[ -d "$DOTLY_PATH/symlinks" ]] &&\
-    find "$DOTLY_PATH/symlinks" -name "*.yaml" -type f,l -print0 -exec echo {} \; |\
-    xargs -I _ basename _ | sort
+  [[ -d "$DOTLY_PATH/symlinks" ]] &&
+    find "$DOTLY_PATH/symlinks" -name "*.yaml" -type f,l -print0 |
+    xargs -0 -I _ basename _ | sort
 }
 
 symlinks::fzf() {
   local piped_values
-  piped_values="$(</dev/stdin)"
+  piped_values=("$(</dev/stdin)")
 
-  printf "%s\n" ${piped_values[@]} | fzf --extended \
-    --header "Select file to apply symlinks update"\
+  printf "%s\n" "${piped_values[@]}" | fzf --extended \
+    --header "Select file to apply symlinks update" \
     --preview "echo 'Press Ctrl+C to exit with no selection.'"
 }
 
@@ -41,7 +42,6 @@ if ${version:-false}; then
   exit
 fi
 
-
 if [[ -z "$symlinks_file" ]]; then
   symlinks_file="$(symlinks::get_files | symlinks::fzf)"
   [[ -z "$symlinks_file" ]] && exit 0
@@ -50,7 +50,7 @@ else
   for f in "$symlinks_file" "$symlinks_file.yaml" "$symlinks_file.yml"; do
     [[ -e "$f" ]] && symlinks_file="$f" && break
   done
-  
+
   if [[ ! -e "$symlinks_file" ]]; then
     output::error "The file does not exists"
     exit 1
@@ -70,4 +70,3 @@ output::empty_line
 
 output::write "Remember to merge this symlinks file to yours in:"
 output::answer "$DOTFILES_PATH/symlinks/conf.yaml"
-  

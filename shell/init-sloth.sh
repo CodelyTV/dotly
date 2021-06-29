@@ -59,10 +59,10 @@ export GPG_TTY
 # Brew add gnutools in macos only
 # UNAME_BIN and BREW_BIN are necessary because paths are not yet loaded
 UNAME_BIN="${UNAME_BIN:-/usr/bin/uname}"
-if [[ -x "$UNAME_BIN" &&  "$("$UNAME_BIN" -s)" == "Darwin" ]]; then
+if [[ -x "$UNAME_BIN" && "$("$UNAME_BIN" -s)" == "Darwin" ]]; then
   BREW_BIN="${BREW_BIN:-$(which brew)}"
   [[ ! -x "$BREW_BIN" && -x "/usr/local/bin/brew" ]] && BREW_BIN="/usr/local/bin/brew"
-  
+
   if [[ -d "$("$BREW_BIN" --prefix)" ]]; then
     export path=(
       "$("$BREW_BIN" --prefix)/opt/coreutils/libexec/gnubin"
@@ -98,7 +98,6 @@ fi
 
 #shellcheck source=/dev/null
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
-
 
 # Auto Init scripts at the end
 init_scripts_path="$DOTFILES_PATH/shell/init.scripts-enabled"
