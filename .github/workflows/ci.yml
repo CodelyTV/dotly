@@ -14,7 +14,6 @@ jobs:
       matrix:
         os:
           - macos-10.15
-          - macos-11.0
           - ubuntu-18.04
           - ubuntu-20.04
 
@@ -27,7 +26,7 @@ jobs:
 
       - name: Set current repository and branch
         run: |
-          echo "DOTLY_REPOSITORY=${DOTLY_PR_REPOSITORY:-CodelyTV/dotly}" >> $GITHUB_ENV
+          echo "DOTLY_REPOSITORY=${DOTLY_PR_REPOSITORY:-gtrabanco/sloth}" >> $GITHUB_ENV
           echo "DOTLY_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
           echo "DOTLY_ENV=CI" >> $GITHUB_ENV
 
@@ -69,5 +68,10 @@ jobs:
       - name: 📥 Install shfmt
         run: go get mvdan.cc/sh/v3/cmd/shfmt
 
-      - name: 💅 Lint bash files
-        run: bash scripts/self/lint
+      - name: 💅 Lint bash files and apply linting patches
+        run: |
+          bash scripts/self/lint || {
+            . "scripts/core/_main.sh"
+            output::write "Apply patches by using \`lazy self lint\`"
+            exit 1
+          }
