@@ -137,9 +137,9 @@ package_install() {
   elif command_exists pacman; then
     _a "Installing '${*}' using pacman"
     sudo pacman -S --noconfirm "${*}" >/dev/null 2>&1 | _log "Installign '${*}' using pacman"
-  elif command_exists apt; then
+  elif command_exists apt-get; then
     _a "Installing '${*}' using apt"
-    sudo apt -y install "${*}" >/dev/null 2>&1 | _log "Installign '${*}' using apt"
+    sudo apt-get -y install "${*}" >/dev/null 2>&1 | _log "Installign '${*}' using apt"
   else
     _e "Could not install '${*}', no package provider found"
     return 1
@@ -326,25 +326,25 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
   fi
 fi
 
-# Update DOTLY submodule
+# Update SLOTH/DOTLY submodule
 cd "${DOTFILES_PATH}"
-# Only dotly submodule must be updated recursively because we do not know if
+# Only sloth/dotly submodule must be updated recursively because we do not know if
 # user has added any other submodules that are privated and maybe the user
 # needs to configure something to access those repositories
-git submodule update --init --recursive "$dotly_inner_path" 2>&1 | _log "Downloading dotly and submodules" || {
+git submodule update --init --recursive "$dotly_inner_path" 2>&1 | _log "Downloading sloth/dotly and submodules" || {
   _e "Downloading dotly failed. See for more details:"
   _e "  tail -f $HOME/dotly.log"
   _w
   exit 1
 }
 
-_w "Installing dotly default tools"
+_w "Installing sloth/dotly default tools"
 _w "Please be patient this could take some time...🙏"
-# Installing default dotly tools
+# Installing default sloth/dotly tools
 PATH="$PATH:/usr/local/bin:$HOME/.cargo/bin"
 sudo -v
 "$DOTLY_PATH/bin/dot" self install || {
-  _e "Dotly Could not be installed but your dotfiles are restored. Use:"
+  _e "SLOTH/Dotly Could not be installed but your dotfiles are restored. Use:"
   _e "  tail -f $HOME/dotly.log"
   _e "To know what happened and where is the point of failure"
   _w

@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+#shellcheck disable=SC1091
 . "$DOTLY_PATH/scripts/core/_main.sh"
 dot::load_library "install.sh"
 
@@ -19,7 +20,11 @@ script::depends_on docpars fzf zsh python
 ##?
 ##? Usage:
 ##?    install
-docs::parse "$@"
+if ! ${DOTLY_INSTALLER:-false}; then
+  docs::parse "$@"
+elif [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+  grep '^##?' "$0" | tr '##? ' ' '
+fi
 
 output::answer "Creating dotfiles structure"
 "$DOTLY_PATH/bin/dot" dotfiles create | log::file "Creating dotfiles structure" || exit 1
@@ -37,8 +42,13 @@ fi
 output::answer "Installing zim"
 zsh "$ZIM_HOME/zimfw.zsh" install | log::file "Installing zim"
 
-output::answer "Installing completions"
-"$DOTLY_PATH/bin/dot" shell zsh reload_completions
+if [[ "${DOTLY_ENV:-PROD}" != "CI" ]] && [[ "$SHELL" =~ zsh$ ]]; then
+  output::answer "Installing completions"
+  {
+    zsh "$DOTLY_PATH/bin/dot" shell zsh reload_completions &>/dev/null &&
+      output::solution '✅ ZSH Completions realoaded'
+  } || output::error '❌ Error reloading completions'
+fi
 
 output::answer "Executing custom restoration scripts"
 install_scripts_path="$DOTFILES_PATH/restoration_scripts"
@@ -46,8 +56,12 @@ if [ -d "$install_scripts_path" ]; then
   find "$install_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*.sh' |
     sort |
     while read -r install_script; do
+      #shellcheck disable=SC1090
       { [[ -x "$install_script" ]] && . "$install_script" | log::file "Executing afterinstall: $(basename "$install_script")"; } || {
         output::error "Install script error in $(basename "$install_script")"
       }
     done
 fi
+
+output::answer '🥳 🎉 SLOTH installed sucessfully'
+output::solution 'Now restart your terminal'

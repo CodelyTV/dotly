@@ -65,9 +65,9 @@ command_exists() {
   type "$1" >/dev/null 2>&1
 }
 
-_w "  ┌────────────────────────────────────┐"
-_w "~ │ 🚀 Welcome to the ${green}sloth${normal} installer! │ ~"
-_w "  └────────────────────────────────────┘"
+_w "  ┌──────────────────────────────────────────┐"
+_w "~ │ 🚀 Welcome to the ${green}sloth/dotly${normal} installer! │ ~"
+_w "  └──────────────────────────────────────────┘"
 _w
 
 if [[ "$OSTYPE" =~ ^[darwin] ]] && [[ -d "$ICLOUD_PATH" ]]; then
@@ -96,9 +96,9 @@ cd "$DOTFILES_PATH"
 if ! command_exists git; then
   _e "git not installed, trying to install"
 
-  if command_exists apt; then
+  if command_exists apt-get; then
     _a "Installing using apt"
-    sudo apt -y install git 2>&1 | _log "Installing git"
+    sudo apt-get -y install git 2>&1 | _log "Installing git"
   elif command_exists dnf; then
     _a "Installing using dnf"
     sudo dnf -y install git 2>&1 | _log "Installing git"
@@ -158,11 +158,11 @@ fi
 _a "Initializing your dotfiles git repository"
 git init 2>&1 | _log "Initializing repository"
 
-_a "Cloning dotly"
-git submodule add -b "$DOTLY_BRANCH" "https://github.com/$DOTLY_REPOSITORY.git" "$dotly_inner_path" 2>&1 | _log "Adding dotly submodule"
+_a "Cloning sloth/dotly"
+git submodule add -b "$DOTLY_BRANCH" "https://github.com/$DOTLY_REPOSITORY.git" "$dotly_inner_path" 2>&1 | _log "Adding sloth submodule"
 
-_a "Installing dotly dependencies"
-git submodule update --init --recursive 2>&1 | _log "Installing dotly dependencies"
+_a "Installing sloth/dotly dependencies"
+git submodule update --init --recursive 2>&1 | _log "Installing dependencies"
 
 cd "$DOTLY_PATH"
 
@@ -177,5 +177,5 @@ fi
 
 "$PWD/bin/dot" self install
 
-_a "🎉 dotly installed correctly! 🎉"
+_a "🎉 sloth/dotly installed correctly! 🎉"
 _a "Please, restart your terminal to see the changes"

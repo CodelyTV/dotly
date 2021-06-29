@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
+#shellcheck disable=2016
 
 set -o pipefail
 
+#shellcheck disable=SC1091
 . "$DOTLY_PATH/scripts/core/_main.sh"
 
 ##? Usage:
@@ -9,7 +11,7 @@ set -o pipefail
 ##?    dot <context>
 ##?    dot <context> <script> [<args>...]
 ##?    dot -h | --help
-if [ "$1" == "-h" ] || [ "$1" = "--help" ]; then
+if [[ "$1" == "-h" || "$1" = "--help" ]]; then
   docs::parse "$@"
 fi
 

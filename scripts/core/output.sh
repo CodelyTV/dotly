@@ -57,7 +57,7 @@ output::question() {
   esac
   with_code_parsed="$(_output::parse_code --color "${color}" "${1:-}")"
 
-  if [ "${DOTLY_ENV:-PROD}" == "CI" ] || [ "${DOTLY_INSTALLER:-false}" = true ]; then
+  if [[ "${DOTLY_ENV:-PROD}" == "CI" ]] || [[ "${DOTLY_INSTALLER:-false}" = true ]]; then
     answer="y"
   else
     read -rp "🤔 $with_code_parsed: " "answer"
@@ -91,7 +91,12 @@ output::question_default() {
 
   with_code_parsed="$(_output::parse_code --color "${color}" "$question")"
 
-  read -rp "🤔 $with_code_parsed ? [$default_value]: " PROMPT_REPLY
+  if [[ "${DOTLY_ENV:-PROD}" == "CI" ]] || [[ "${DOTLY_INSTALLER:-false}" == true ]]; then
+    echo "🤔 $with_code_parsed ? [$default_value]:"
+  else
+    read -rp "🤔 $with_code_parsed ? [$default_value]: " PROMPT_REPLY
+  fi
+
   eval "$var_name=\"${PROMPT_REPLY:-$default_value}\""
 }
 
