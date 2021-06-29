@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #shellcheck disable=SC1091
-. "$DOTLY_PATH/scripts/core/_main.sh"
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
 dot::load_library "package.sh"
 dot::load_library "_registry.sh" "$(dot::get_script_path)/recipes/"
 
@@ -47,7 +47,7 @@ else
   done
 fi
 
-SCRIPT_NAME="lazy package add"
+SCRIPT_NAME="sloth package add"
 SCRIPT_VERSION="3.0.0"
 package_name="$(str::to_lower "$package_name")"
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+#shellcheck disable=SC1091
 . "$DOTLY_PATH/scripts/self/src/update.sh"
 
 autoupdate::sloth_updater() {

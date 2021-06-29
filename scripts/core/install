@@ -3,8 +3,8 @@
 set -euo pipefail
 
 #shellcheck disable=SC1091
-. "$DOTLY_PATH/scripts/core/_main.sh"
-dot::load_library "install.sh"
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
+dot::load_library "self-install.sh"
 
 export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
 export PATH="$HOME/.cargo/bin:$PATH"

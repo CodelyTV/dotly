@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #shellcheck disable=SC1091
-. "$DOTLY_PATH/scripts/core/_main.sh"
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
 
 DOTLY_MACOS_SETTINGS_PATH=${DOTLY_MACOS_SETTINGS_PATH:-"${DOTFILES_PATH}/os/mac/settings"}
 

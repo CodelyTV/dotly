@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-[[ -z "$DOTLY_PATH" ]] && exit 1
+[[ -z "${SLOTH_PATH:-$DOTLY_PATH}" ]] && exit 1
 
 #shellcheck disable=SC1091
-. "$DOTLY_PATH/scripts/core/_main.sh"
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
 dot::load_library "templating.sh"
 
 ##? Dotly script creator
@@ -36,7 +36,7 @@ dot::load_library "templating.sh"
 ##?
 docs::parse "$@"
 
-SCRIPT_NAME="lazy script create"
+SCRIPT_NAME="sloth script create"
 SCRIPT_VERSION="1.1.0"
 
 # Print name and version
@@ -70,7 +70,7 @@ case "${1:-}" in
   printf "#!/usr/bin/env bash\n\n" >>"$new_script_path"
   printf "set -euo pipefail\n" >>"$new_script_path"
   #shellcheck disable=SC2016
-  printf '. "$DOTLY_PATH/scripts/core/_main.sh"\n' >>"$new_script_path"
+  printf '. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"\n' >>"$new_script_path"
 
   chmod u+x "$new_script_path"
 

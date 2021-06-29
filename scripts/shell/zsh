@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-. "$DOTLY_PATH/scripts/core/_main.sh"
+#shellcheck disable=SC1091
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
 
 ##? ZSH helpers
 ##?

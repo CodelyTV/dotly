@@ -2,15 +2,20 @@
 
 set -euo pipefail
 
-. "$DOTLY_PATH/scripts/core/_main.sh"
-. "$DOTLY_PATH/scripts/core/templating.sh"
+#shellcheck disable=SC1091
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
+dot::load_library "templating.sh"
 
 ##? Create the dotfiles structure
 ##?
 ##? Usage:
-##?    create [dotfiles_path]
+##?    create [<dotfiles_path>]
 ##?
 docs::parse "$@"
+
+DOTFILES_PATH="${2:-$DOTFILES_PATH}"
+
+[[ -z "$DOTFILES_PATH" ]] && output::error "DOTFILES_PATH not found" && exit 1
 
 dotfiles::apply_templating() {
   local tpl_files=(

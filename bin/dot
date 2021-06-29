@@ -4,7 +4,7 @@
 set -o pipefail
 
 #shellcheck disable=SC1091
-. "$DOTLY_PATH/scripts/core/_main.sh"
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
 
 ##? Usage:
 ##?    dot

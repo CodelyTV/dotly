@@ -4,7 +4,7 @@ set -euo pipefail
 
 [[ -z "$SLOTH_PATH" ]] && exit 1
 
-#shellcheck source=/dev/null
+#shellcheck disable=SC1091
 . "$SLOTH_PATH/scripts/core/_main.sh"
 dot::load_library "init.sh"
 
@@ -24,7 +24,7 @@ dot::load_library "init.sh"
 ##?   Gabriel Trabanco Llano <gtrabanco@users.noreply.github.com>
 docs::parse "$@"
 
-SCRIPT_NAME="lazy init disable"
+SCRIPT_NAME="sloth init disable"
 SCRIPT_VERSION="1.0.0"
 
 # Print name and version

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-. "$DOTLY_PATH/scripts/core/_main.sh"
-. "$DOTLY_PATH/scripts/core/dotly.sh"
+#shellcheck disable=SC1091
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
+dot::load_library "dotly.sh"
 
 ##? Static analysis of all dotly related bash files
 ##?

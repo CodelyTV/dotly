@@ -70,7 +70,7 @@ dot::load_library() {
     fi
 
     lib_paths+=(
-      "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core"
+      "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src"
       "."
     )
 

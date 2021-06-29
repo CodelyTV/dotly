@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-. "$DOTLY_PATH/scripts/core/_main.sh"
+. "${SLOTH_PATH:-$DOTLY_PATH}/scripts/core/src/_main.sh"
 
 ##? Short the current $PWD
 ##?

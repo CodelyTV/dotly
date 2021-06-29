@@ -175,7 +175,7 @@ if [[ ${IS_ICLOUD_DOTFILES:-true} == true ]]; then
   fi
 fi
 
-"$PWD/bin/dot" self install
+"$PWD/bin/dot" core install
 
 _a "🎉 sloth/dotly installed correctly! 🎉"
 _a "Please, restart your terminal to see the changes"
