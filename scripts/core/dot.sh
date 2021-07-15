@@ -8,8 +8,8 @@ dot::list_contexts() {
 dot::list_context_scripts() {
   context="$1"
 
-  dotly_scripts=$(ls -p "$DOTLY_PATH/scripts/$context" 2>/dev/null | grep -v '/')
-  dotfiles_scripts=$(ls -p "$DOTFILES_PATH/scripts/$context" 2>/dev/null | grep -v '/')
+  dotly_scripts=$(ls -p "$DOTLY_PATH/scripts/$context" 2>/dev/null | grep -v '/' | sed 's/\.ts//g')
+  dotfiles_scripts=$(ls -p "$DOTFILES_PATH/scripts/$context" 2>/dev/null | grep -v '/' | sed 's/\.ts//g')
 
   echo "$dotly_scripts" "$dotfiles_scripts" | sort -u
 }
@@ -25,8 +25,8 @@ dot::list_scripts() {
 }
 
 dot::list_scripts_path() {
-  dotly_contexts=$(find "$DOTLY_PATH/scripts" -maxdepth 2 -perm /+111 -type f | grep -v "$DOTLY_PATH/scripts/core")
-  dotfiles_contexts=$(find "$DOTFILES_PATH/scripts" -maxdepth 2 -perm /+111 -type f)
+  dotly_contexts=$(find "$DOTLY_PATH/scripts" -maxdepth 2 -perm /+111 -type f | grep -v "$DOTLY_PATH/scripts/core" | sed 's/\.ts//g')
+  dotfiles_contexts=$(find "$DOTFILES_PATH/scripts" -maxdepth 2 -perm /+111 -type f | sed 's/\.ts//g')
 
   printf "%s\n%s" "$dotly_contexts" "$dotfiles_contexts" | sort -u
 }
