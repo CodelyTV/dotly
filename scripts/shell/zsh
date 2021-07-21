@@ -28,13 +28,14 @@ case $1 in
   ;;
 "test_performance")
   script::depends_on hyperfine
+  HOMBREW_PREFIX="${HOMBREW_PREFIX:-$(brew --prefix)}"
 
-  hyperfine '/bin/zsh -i -c exit' '/opt/homebrew/bin/zsh -i -c exit' --warmup 1
+  hyperfine '/bin/zsh -i -c exit' "${HOMBREW_PREFIX}/bin/zsh -i -c exit" --warmup 1
 
   echo ""
   echo "ZSH INFO:"
   echo "  🍎 macOS ZSH 📂 /bin/zsh              - $(/bin/zsh --version)"
-  echo "  🍺 Brew ZSH  📂 /opt/homebrew/bin/zsh - $(/opt/homebrew/bin/zsh --version)"
+  echo "  🍺 Brew ZSH  📂 ${HOMBREW_PREFIX}/bin/zsh - $("${HOMBREW_PREFIX}/bin/zsh" --version)"
 
   echo ""
   echo "✨ Currently using $(command -v zsh) ✨"
