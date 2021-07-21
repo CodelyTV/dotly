@@ -9,6 +9,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?   zsh test_performance
 ##?   zsh reload_completions
 ##?   zsh clean_cache
+##?   zsh fix_permissions
 docs::parse "$@"
 
 case $1 in
@@ -44,10 +45,14 @@ case $1 in
   find "$HOME" -name '*.zwc' -delete
   ;;
 "reload_completions")
+  compaudit 2> /dev/null | xargs chmod -R go-w
   zsh -i -c "autoload -U compaudit && autoload -Uz compinit && compinit"
 
   output::empty_line
   output::answer 'Now restart your terminal'
+  ;;
+"fix_permissions")
+  compaudit 2> /dev/null | xargs chmod -R go-w
   ;;
 *)
   exit 1
