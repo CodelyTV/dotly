@@ -31,12 +31,19 @@ case $1 in
   script::depends_on hyperfine
   HOMBREW_PREFIX="${HOMBREW_PREFIX:-$(brew --prefix)}"
 
-  hyperfine '/bin/zsh -i -c exit' "${HOMBREW_PREFIX}/bin/zsh -i -c exit" --warmup 1
+  if [[ -n "$HOMEBREW_PREFIX" && -x "${HOMBREW_PREFIX}/bin/zsh" ]]; then
+    hyperfine '/bin/zsh -i -c exit' "${HOMBREW_PREFIX}/bin/zsh -i -c exit" --warmup 1
+  else
+    hyperfine '/bin/zsh -i -c exit' --warmup 1
+  fi
 
   echo ""
   echo "ZSH INFO:"
-  echo "  🍎 macOS ZSH 📂 /bin/zsh              - $(/bin/zsh --version)"
-  echo "  🍺 Brew ZSH  📂 ${HOMBREW_PREFIX}/bin/zsh - $("${HOMBREW_PREFIX}/bin/zsh" --version)"
+  echo "  💾 System ZSH 📂 /bin/zsh              - $(/bin/zsh --version)"
+
+  if [[ -n "$HOMEBREW_PREFIX" && -x "${HOMBREW_PREFIX}/bin/zsh" ]]; then
+    echo "  🍺 Brew ZSH  📂 ${HOMBREW_PREFIX}/bin/zsh  - $("${HOMBREW_PREFIX}/bin/zsh" --version)"
+  fi
 
   echo ""
   echo "✨ Currently using $(command -v zsh) ✨"
