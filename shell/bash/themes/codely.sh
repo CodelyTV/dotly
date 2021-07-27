@@ -6,7 +6,6 @@ GREEN_COLOR="32"
 RED_COLOR="31"
 
 codely_theme() {
-  LAST_CODE="$?"
   current_dir=$(dot core short_pwd)
   STATUS_COLOR=$GREEN_COLOR
 
