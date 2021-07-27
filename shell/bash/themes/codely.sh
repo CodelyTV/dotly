@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 PROMPT_COMMAND="codely_theme"
 
 MIDDLE_CHARACTER="◂"

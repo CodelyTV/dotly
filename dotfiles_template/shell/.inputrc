@@ -1,6 +1,11 @@
 $if Bash
-    "\C-l": redraw-current-line
-    "\e\C-j": accept-line
-    "\C-j": "\C-l\e\C-j"
-    "\C-m": "\C-l\e\C-j"
+  "\C-l": clear-screen
+  "\C-b": redraw-current-line
+  "\e\C-j": accept-line
+  "\C-j": "\C-b\e\C-j"
+  "\C-m": "\C-b\e\C-j"
+  "\C-p":previous-history
+  "\C-n":next-history
+  "\C-a.":beginning-of-line
+  "\C-e.":end-of-line
 $endif

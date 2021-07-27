@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 # Uncomment for debuf with `zprof`
 # zmodload zsh/zprof
 
