@@ -29,7 +29,7 @@ case $1 in
   ;;
 "test_performance")
   script::depends_on hyperfine
-  HOMBREW_PREFIX="${HOMBREW_PREFIX:-$(brew --prefix)}"
+  HOMEBREW_PREFIX="${HOMBREW_PREFIX:-$(brew --prefix)}"
 
   if [[ -n "$HOMEBREW_PREFIX" && -x "${HOMBREW_PREFIX}/bin/zsh" ]]; then
     hyperfine '/bin/zsh -i -c exit' "${HOMBREW_PREFIX}/bin/zsh -i -c exit" --warmup 1
