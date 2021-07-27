@@ -6,10 +6,11 @@ GREEN_COLOR="32"
 RED_COLOR="31"
 
 codely_theme() {
+  local current_dir STATUS_COLOR="$GREEN_COLOR" LAST_CODE=$?
   current_dir=$(dot core short_pwd)
   STATUS_COLOR=$GREEN_COLOR
 
-  if [ $LAST_CODE -ne 0 ]; then
+  if [[ $LAST_CODE -ne 0 ]]; then
     STATUS_COLOR=$RED_COLOR
     MIDDLE_CHARACTER="▪"
   fi

@@ -22,7 +22,11 @@ done
 
 if [[ "$(ps -p $$ -ocomm=)" =~ (bash$) ]]; then
   __right_prompt() {
-    export LAST_CODE=$?
+    local LAST_CODE="$?"
+    return_code() {
+      return "${1:-0}"
+    }
+
     RIGHT_PROMPT=""
     [[ -n $RPS1 ]] && RIGHT_PROMPT=$RPS1 || RIGHT_PROMPT=$RPROMPT
     if [[ -n $RIGHT_PROMPT ]]; then
@@ -34,6 +38,7 @@ if [[ "$(ps -p $$ -ocomm=)" =~ (bash$) ]]; then
       [[ -n "${THEME_COMMAND:-}" ]] &&
       declare -F "${THEME_COMMAND:-}" &> /dev/null
     then
+      return_code "${LAST_CODE:-0}"
       "${THEME_COMMAND:-}"
     fi
   }
