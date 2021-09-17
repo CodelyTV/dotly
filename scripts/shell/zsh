@@ -23,6 +23,7 @@ case $1 in
   find "$DOTLY_PATH/modules/zimfw" -name '*.old' -exec rm -rf {} \;
 
   /bin/zsh -c "source ${ZDOTDIR:-${HOME}}/.zlogin"
+  /bin/zsh -c "source ${ZDOTDIR:-${HOME}}/.zlogin"
 
   "$DOTLY_PATH/bin/dot" shell zsh reload_completions
   ;;
