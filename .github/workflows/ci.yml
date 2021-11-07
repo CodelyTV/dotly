@@ -60,6 +60,9 @@ jobs:
     name: 💅 Lint
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16.1'
 
       - name: Set needed environment variables
         run: |
@@ -67,7 +70,7 @@ jobs:
           echo "PATH=$PATH:$HOME/go/bin" >> $GITHUB_ENV
 
       - name: 📥 Install shfmt
-        run: go get mvdan.cc/sh/v3/cmd/shfmt
+        run: go install mvdan.cc/sh/v3/cmd/shfmt@latest
 
       - name: 💅 Lint bash files
         run: bash scripts/self/lint
