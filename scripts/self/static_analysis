@@ -6,7 +6,7 @@ source "$DOTLY_PATH/scripts/core/dotly.sh"
 ##? Static analysis of all dotly related bash files
 ##?
 ##? Usage:
-##?    lint
+##?    static_analysis
 if [ "$1" == "-h" ] || [ "$1" = "--help" ]; then
   docs::parse "$@"
 fi
