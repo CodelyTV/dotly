@@ -2,8 +2,6 @@
 zmodule zimfw/environment
 zmodule zimfw/git-info
 zmodule zimfw/input
-zmodule zsh-users/zsh-autosuggestions
-zmodule zsh-users/zsh-syntax-highlighting
 zmodule zimfw/completion
-
-zhighlighters=(main brackets)
+zmodule zsh-users/zsh-syntax-highlighting
+zmodule zsh-users/zsh-autosuggestions

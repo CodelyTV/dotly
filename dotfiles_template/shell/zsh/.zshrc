@@ -8,7 +8,9 @@ setopt HIST_FCNTL_LOCK
 setopt +o nomatch
 # setopt autopushd
 
-# Start zim
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+# Start Zim
 source "$ZIM_HOME/init.zsh"
 
 # Async mode for autocompletion

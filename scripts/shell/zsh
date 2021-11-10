@@ -17,12 +17,7 @@ case $1 in
   sudo sh -c "echo '$asl_conf' > /etc/asl.conf"
   echo "ASL only storing critical files!"
 
-  find "$DOTFILES_PATH/shell/zsh" -name '*.zwc' -exec rm -rf {} \;
-  find "$DOTFILES_PATH/shell/zsh" -name '*.old' -exec rm -rf {} \;
-  find "$DOTLY_PATH/modules/zimfw" -name '*.zwc' -exec rm -rf {} \;
-  find "$DOTLY_PATH/modules/zimfw" -name '*.old' -exec rm -rf {} \;
-
-  /bin/zsh -c "source ${ZDOTDIR:-${HOME}}/.zlogin"
+  zsh "$ZIM_HOME/zimfw.zsh" clean-compiled && zsh "$ZIM_HOME/zimfw.zsh" compile
 
   "$DOTLY_PATH/bin/dot" shell zsh reload_completions
   ;;
