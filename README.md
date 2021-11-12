@@ -79,12 +79,23 @@ Usage:
 
 dotly facilites you to version your apps config files. Once you've found the config to version you should:
 
-1. Copy your config file inside your dotfiles so this will be the source of truth
+1. Copy your config file inside your dotfiles so this will be the source of truth.
    E.g. `cp ~/Library/Application Support/Code/User/settings.json $DOTFILES_PATH/editors/code/settings.json`
 2. Symlink this file. To do this you should edit your `$DOTFILES_PATH/symlinks/conf.YOUR-OS.yaml` and add it.
    E.g. `~/Library/Application Support/Code/User/settings.json: editors/code/settings.json`
 
 ### 🎨 Customization
+
+dotly includes am opinionated, minimal, very fast and powerful theme by default. You can configure it using the
+following parameters in your `shell/exports.sh`:
+
+```bash
+CODELY_THEME_MINIMAL=false|true  # If true the theme will only show the prompt status 
+CODELY_THEME_MODE="dark"|"light" # Use dark if you use dark colors, light if light
+CODELY_THEME_PROMPT_IN_NEW_LINE=false|true           # If true the prompt will be in a newline 
+CODELY_THEME_PWD_MODE="short"|"full"|"home_relative" # short will show the first letter of each directory, full the full path and home_relative the full path relative to the $HOME dir
+CODELY_THEME_STATUS_ICON_KO="▪" # The icon to show if the previous command failed. Useful if you're color blind
+```
 
 ### 💾 Default scripts
 
