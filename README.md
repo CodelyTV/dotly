@@ -51,6 +51,19 @@ It's recommended to commit every time you add/modify a config or script.
 `dot` is the core command of dotly.
 
 ### 🌴 Understanding the folders structure
+```
+.
+├── bin -> Folder for external binaries. This folder has preference in your $PATH
+├── doc -> Documentation of your dotfiles
+├── editors -> Settings of your editors (vscode, IDEA, …)
+├── git -> git config
+├── langs -> Config for programming languages/libraries
+├── os -> Specific config of your Operative System or apps
+├── restoration_scripts -> This will be execute when you restore your dotfiles in another computer/installation
+├── scripts -> Your custom scripts
+├── shell -> Bash/Zsh/Fish?… configuration files
+└── symlinks -> The config of your symlinks
+```
 
 ### ⚙️ Versioning configs
 
