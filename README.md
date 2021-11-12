@@ -130,7 +130,7 @@ CODELY_THEME_STATUS_ICON_KO="▪" # The icon to show if the previous command fai
 │  └── zsh # ZSH helpers
 └── 📁 symlinks # Apply all symlinks
     └── apply
-    ```
+```
 ### 💽 Alias
 
 ## ⁉️ Troubleshooting
