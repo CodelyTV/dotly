@@ -35,8 +35,8 @@ bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 
 ### 🚶 First steps
 
-Once dotly is installed, the next step is to commit and push your dotfiles. Create your dotfiles repository in
-GitHub and then copy the url. Then go to your dotfiles (`cd "$DOTFILES_PATH"`) and execute:
+Once dotly is installed, the next step is to commit and push your dotfiles. Create a new repository in your GitHub
+named `dotfiles` and then copy the url. Then go to your dotfiles (`cd "$DOTFILES_PATH"`) and execute:
 
 ```bash
 git remote add origin YOUR_DOTFILES_REPO_URL &&
@@ -48,6 +48,7 @@ git push origin main
 It's recommended to commit every time you add/modify a config or script.
 
 ### 🌚 The `dot` command
+The `dot` is the core command of dotly.
 
 ### 🌴 Understanding the folders structure
 
@@ -56,8 +57,6 @@ It's recommended to commit every time you add/modify a config or script.
 ### 🎨 Customization
 
 ### 💾 Default scripts
-
-## 🧪 Test
 
 ## ⁉️ Troubleshooting
 
