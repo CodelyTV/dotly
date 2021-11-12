@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://codely.tv">
-    <img src="https://user-images.githubusercontent.com/1331435/141506123-351a4eb5-2e0d-4c43-91c7-7e9d40d253d4.png" />
+    <img src="https://user-images.githubusercontent.com/1331435/141519469-0c0346ea-d8e3-4cc2-b772-e56d3334dcd7.png" />
   </a>
 </p>
 
@@ -12,6 +12,7 @@
 <p align="center">
     <a href="https://github.com/CodelyTV"><img src="https://img.shields.io/badge/CodelyTV-OS-green.svg?style=flat-square" alt="codely.tv"/></a>
     <a href="https://pro.codely.tv"><img src="https://img.shields.io/badge/CodelyTV-PRO-black.svg?style=flat-square" alt="CodelyTV Courses"/></a>
+    <a href="https://github.com/CodelyTV/dotly/actions"><img src="https://github.com/CodelyTV/dotly/workflows/CI/badge.svg" alt="CI pipeline status"/></a>
 </p>
 
 dotly is a dotfiles framework built on top of [zim](https://github.com/zimfw/zimfw), one of the fastest zsh existing frameworks.
