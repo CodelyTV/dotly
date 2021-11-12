@@ -4,9 +4,10 @@
   </a>
 </p>
 
-<h1 align="center">
-  Simple, fast, productivity-increaser dotfiles framework
-</h1>
+<div align="center">
+  <h1>Simple and fast dotfiles framework</h1>
+  <strong>The path to increasing your productivity</strong>
+</div>
 
 <p align="center">
     <a href="https://github.com/CodelyTV"><img src="https://img.shields.io/badge/CodelyTV-OS-green.svg?style=flat-square" alt="codely.tv"/></a>
