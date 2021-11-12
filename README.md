@@ -21,13 +21,13 @@ In works on macOS, Linux and WLS.
 
 ## 🚀 Installation
 
-<sub>Using wget</sub>
+<sub>Using wget:</sub>
 
 ```bash
 bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 ```
 
-<sub>Or using curl</sub>
+<sub>Using curl:</sub>
 
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
