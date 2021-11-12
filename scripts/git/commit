@@ -4,7 +4,7 @@ set -euo pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
-##? Add all files and then a commit
+##? Add all files and then commit
 #?? 1.0.0
 ##?
 ##? Usage:

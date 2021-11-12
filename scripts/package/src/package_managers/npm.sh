@@ -17,7 +17,7 @@ npm::update_all() {
       output::write "└ $url"
       output::empty_line
 
-      npm install -g "$package" 2>&1 | log::file "Updating npm app: $package"
+      sudo npm install -g "$package" 2>&1 | log::file "Updating npm app: $package"
     done
   else
     output::answer "Already up-to-date"
