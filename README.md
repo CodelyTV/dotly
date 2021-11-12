@@ -1,11 +1,11 @@
 <p align="center">
   <a href="https://codely.tv">
-    <img src="https://codely.tv/wp-content/uploads/2016/05/cropped-logo-codelyTV.png" width="192px" height="192px"/>
+    <img src="https://user-images.githubusercontent.com/1331435/141505807-90cd6a32-e648-42d1-8dcb-51c276effd3d.png" />
   </a>
 </p>
 
 <h1 align="center">
-  🌚<br>Simple, fast, productivity-increaser dotfiles framework
+  Simple, fast, productivity-increaser dotfiles framework
 </h1>
 
 <p align="center">
