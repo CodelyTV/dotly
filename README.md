@@ -48,7 +48,7 @@ git push origin main
 It's recommended to commit every time you add/modify a config or script.
 
 ### 🌚 The `dot` command
-The `dot` is the core command of dotly.
+`dot` is the core command of dotly.
 
 ### 🌴 Understanding the folders structure
 
