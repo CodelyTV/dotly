@@ -149,6 +149,10 @@ You can execute `dot self debug` in parallel with another command to see the err
 
 * If you want to implement a new feature/script, please, open an issue first
 
+## 😊 Thanks
+
+A lot of dotly concepts has been inspired by (denisidoro/dotfiles)[https://github.com/denisidoro/dotfiles]
+
 ## ⚖️ LICENSE
 
 MIT © [CodelyTV](https://codely.tv)
