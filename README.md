@@ -98,6 +98,40 @@ CODELY_THEME_STATUS_ICON_KO="▪" # The icon to show if the previous command fai
 ```
 
 ### 💾 Default scripts
+```bash
+├── 📁 dotfiles
+│  ├── create # Creates the dotfiles scructure
+│  └── import # Import an existing dotfiles
+├── 📁 git
+│  ├── amend           # Amend a commit
+│  ├── apply-gitignore # Exlude all commited files that are inside the project .gitignore
+│  ├── changed-files   # Show all changed files to master
+│  ├── commit          # Add all files and then commit
+│  ├── contributors    # List contributors with number of commits
+│  ├── find            # Find commits by commit message
+│  ├── pretty-diff     # Show a pretty git diff using fzf (and copy selected path to the clipboard)
+│  ├── pretty-log      # Git log filtering
+│  └── rm-file-history # Remove completely a file from the repo with its history
+├── 📁 mac
+│  ├── brew # Some brew utils
+│  └── defaults # Some defaults utils to view your changes, import and export
+├── 📁 package
+│  ├── add        # Install a package
+│  ├── dump       # Dump all installed packages
+│  ├── import     # Import previously dumped packages
+│  └── update_all # Update all packages
+├── 📁 self # Instead of `dot self` you can use direclty `dotly` in your terminal
+│  ├── debug           # Debug dotly
+│  ├── install         # Install dotly and setup dotfiles
+│  ├── lint            # Lint all dotly related bash files
+│  ├── static_analysis # Static analysis of all dotly related bash files
+│  └── update          # Update dotly to the latest stable release
+├── 📁 shell
+│  └── zsh # ZSH helpers
+└── 📁 symlinks # Apply all symlinks
+    └── apply
+    ```
+### 💽 Alias
 
 ## ⁉️ Troubleshooting
 
