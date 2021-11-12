@@ -143,13 +143,9 @@ You can see the default aliases [here](dotfiles_template/shell/aliases.sh). The 
 
 ## ⁉️ Troubleshooting
 
-TODO
+You can execute `dot self debug` in parallel with another command to see the errors output.
 
 ## 🤝 Contributing
-
-TODO
-
-### 🔦 Lint & Static analysis
 
 TODO
 
