@@ -48,6 +48,7 @@ git push origin main
 It's recommended to commit every time you add/modify a config or script.
 
 ### 🌚 The `dot` command
+
 `dot` is the core command of dotly. If you execute it, you'll see all your scripts.
 
 ```bash
@@ -60,6 +61,7 @@ Usage:
  ```
 
 ### 🌴 Understanding your dotfiles folder structure
+
 ```
 ├── 📁 bin                 -> External binaries/symlinks. This folder has preference in your $PATH
 ├── 📁 doc                 -> Documentation of your dotfiles
@@ -74,6 +76,13 @@ Usage:
 ```
 
 ### ⚙️ Versioning configs
+
+dotly facilites you to version your apps config files. Once you've found the config to version you should:
+
+1. Copy your config file inside your dotfiles so this will be the source of truth
+   E.g. `cp ~/Library/Application Support/Code/User/settings.json $DOTFILES_PATH/editors/code/settings.json`
+2. Symlink this file. To do this you should edit your `$DOTFILES_PATH/symlinks/conf.YOUR-OS.yaml` and add it.
+   E.g. `~/Library/Application Support/Code/User/settings.json: editors/code/settings.json`
 
 ### 🎨 Customization
 
