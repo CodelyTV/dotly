@@ -50,8 +50,8 @@ It's recommended to commit every time you add/modify a config or script.
 ### 🌚 The `dot` command
 `dot` is the core command of dotly. If you execute it, you'll see all your scripts.
 
-`dot -h`
 ```bash
+{▸} ~ dot -h
 Usage:
    dot
    dot <context>
