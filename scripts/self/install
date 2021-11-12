@@ -3,7 +3,7 @@
 source "$DOTLY_PATH/scripts/core/_main.sh"
 source "$DOTLY_PATH/scripts/self/utils/install.sh"
 
-export ZIM_HOME="$DOTLY_PATH/modules/zimfw"
+export ZIM_HOME="$DOTFILES_PATH/shell/zsh/.zim"
 export PATH="$HOME/.cargo/bin:$PATH"
 
 if platform::is_macos; then
@@ -32,8 +32,8 @@ if ! str::contains zsh "$SHELL"; then
   sudo chsh -s "$(command -v zsh)" | log::file "Setting zsh as default shell"
 fi
 
-output::answer "Installing zim"
-zsh "$ZIM_HOME/zimfw.zsh" install | log::file "Installing zim"
+output::answer "Installing Zim"
+curl -fsSL --create-dirs -o "$ZIM_HOME/zimfw.zsh" https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh 2>&1 | log::file "Downloading zimfw.zsh" && zsh "$ZIM_HOME/zimfw.zsh" install 2>&1 | log::file "Installing Zim"
 
 output::answer "Installing completions"
 "$DOTLY_PATH/bin/dot" shell zsh reload_completions
