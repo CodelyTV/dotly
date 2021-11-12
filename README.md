@@ -5,7 +5,7 @@
 </div>
 <div align="center">
   <h1>⚡️ Simple and fast dotfiles framework ⚡️</h1>
-  <strong>The path to increasing your productivity</strong>
+  <strong>The path to increasing your productivity on macOS, Linux and WLS</strong>
 </div>
 <br>
 <p align="center">
@@ -16,8 +16,6 @@
 
 dotly is a dotfiles framework built on top of [zim](https://github.com/zimfw/zimfw), one of the fastest zsh existing
 frameworks. It creates an opinionated dotfiles structure to handle all your configs and scripts.
-
-In works on macOS, Linux and WLS.
 
 ## 🚀 Installation
 
@@ -33,23 +31,27 @@ Or using curl:
 bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 ```
 
-## 🚶 First steps
+## 💻 Usage
 
-Once dotly is installed, the next step is to commit your dotfiles. Create your dotfiles repository in
-github ([example](https://github.com/rgomezcasas/dotfiles)) and copy the url. Then go to your
-dotfiles (`cd $DOTFILES_PATH`) and execute:
+### 🚶 First steps
+
+Once dotly is installed, the next step is to commit and push your dotfiles. Create your dotfiles repository in
+GitHub and then copy the url. Then go to your dotfiles (`cd "$DOTFILES_PATH"`) and execute:
 
 ```bash
-git remote add origin YOUR_DOTFILES_REPO_URL && git add -A && git commit -m "Initial commit" && git push origin main
+git remote add origin YOUR_DOTFILES_REPO_URL &&
+git add -A &&
+git commit -m "Initial commit" &&
+git push origin main
 ```
 
-you'll have your dotfiles in the `~/.dotfiles` directory (unless you have chosen another location).
-
-## 💻 Usage
+It's recommended to commit every time you add/modify a config or script.
 
 ### 🌚 The `dot` command
 
 ### 🌴 Understanding the folders structure
+
+### ⚙️ Versioning configs
 
 ### 🎨 Customization
 
