@@ -21,17 +21,29 @@ In works on macOS, Linux and WLS.
 
 ## 🚀 Installation
 
-<sub>Using wget:</sub>
+Using wget:
 
 ```bash
 bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 ```
 
-<sub>Using curl:</sub>
+Or using curl:
 
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 ```
+
+## 🚶 First steps
+
+Once dotly is installed, the next step is to commit your dotfiles. Create your dotfiles repository in
+github ([example](https://github.com/rgomezcasas/dotfiles)) and copy the url. Then go to your
+dotfiles (`cd $DOTFILES_PATH`) and execute:
+
+```bash
+git remote add origin YOUR_DOTFILES_REPO_URL && git add -A && git commit -m "Initial commit" && git push origin main
+```
+
+you'll have your dotfiles in the `~/.dotfiles` directory (unless you have chosen another location).
 
 ## 💻 Usage
 
