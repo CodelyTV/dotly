@@ -1,8 +1,8 @@
-<p align="center">
+<div align="center">
   <a href="https://codely.tv">
     <img src="https://user-images.githubusercontent.com/1331435/141520189-90349bbd-3e0f-4200-8b76-f4297be11898.png" />
   </a>
-</p>
+</div>
 <div align="center">
   <h1>⚡️ Simple and fast dotfiles framework ⚡️</h1>
   <strong>The path to increasing your productivity</strong>
@@ -14,7 +14,7 @@
     <a href="https://github.com/CodelyTV/dotly/actions"><img src="https://github.com/CodelyTV/dotly/workflows/CI/badge.svg" alt="CI pipeline status"/></a>
 </p>
 
-dotly is a dotfiles framework built on top of [zim](https://github.com/zimfw/zimfw), one of the fastest zsh existing frameworks. It creates an opinionated dotfiles structure to handle all your configs.
+dotly is a dotfiles framework built on top of [zim](https://github.com/zimfw/zimfw), one of the fastest zsh existing frameworks. It creates an opinionated dotfiles structure to handle all your configs and scripts.
 
 ## 🚀 Installation
 
@@ -27,6 +27,8 @@ Using curl
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 ```
+
+## 💻 Usage
 
 ## 🤝 Contributing
 
