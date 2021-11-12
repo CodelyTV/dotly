@@ -151,7 +151,7 @@ You can execute `dot self debug` in parallel with another command to see the err
 
 ## 😊 Thanks
 
-A lot of dotly concepts has been inspired by (denisidoro/dotfiles)[https://github.com/denisidoro/dotfiles]
+A lot of dotly concepts has been inspired by [denisidoro/dotfiles](https://github.com/denisidoro/dotfiles)
 
 ## ⚖️ LICENSE
 
