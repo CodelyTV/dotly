@@ -14,22 +14,30 @@
     <a href="https://github.com/CodelyTV/dotly/actions"><img src="https://github.com/CodelyTV/dotly/workflows/CI/badge.svg" alt="CI pipeline status"/></a>
 </p>
 
-dotly is a dotfiles framework built on top of [zim](https://github.com/zimfw/zimfw), one of the fastest zsh existing frameworks. It creates an opinionated dotfiles structure to handle all your configs and scripts.
+dotly is a dotfiles framework built on top of [zim](https://github.com/zimfw/zimfw), one of the fastest zsh existing
+frameworks. It creates an opinionated dotfiles structure to handle all your configs and scripts.
+
+In works on macOS, Linux and WLS.
 
 ## 🚀 Installation
 
-Using wget
+<small>Using wget</small>
+
 ```bash
 bash <(wget -qO- https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 ```
 
-Using curl
+<small>Or using curl</small>
+
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 ```
 
 ## 💻 Usage
+
 ### 🌚 The `dot` command
+
+### 🌴 Understanding the folders structure
 
 ### 🎨 Customization
 
@@ -40,8 +48,10 @@ bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 ## ⁉️ Troubleshooting
 
 ## 🤝 Contributing
+
 ### 🔦 Lint & Static analysis
 
 ## ⚖️ LICENSE
+
 MIT © [CodelyTV](https://codely.tv)
 
