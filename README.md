@@ -62,7 +62,7 @@ Usage:
 
 ### 🌴 Understanding your dotfiles folder structure
 
-``` bash
+```bash
 ├── 📁 bin                 # External binaries/symlinks. This folder has preference in your $PATH
 ├── 📁 doc                 # Documentation of your dotfiles
 ├── 📁 editors             # Settings of your editors (vscode, IDEA, …)
