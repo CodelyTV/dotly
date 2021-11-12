@@ -48,9 +48,18 @@ git push origin main
 It's recommended to commit every time you add/modify a config or script.
 
 ### 🌚 The `dot` command
-`dot` is the core command of dotly. If you execute it you'll see all your scripts.
+`dot` is the core command of dotly. If you execute it, you'll see all your scripts.
 
-### 🌴 Understanding the folders structure
+`dot -h`
+```bash
+Usage:
+   dot
+   dot <context>
+   dot <context> <script> [<args>...]
+   dot -h | --help
+ ```
+
+### 🌴 Understanding your dotfiles folder structure
 ```
 ├── 📁 bin                 -> External binaries/symlinks. This folder has preference in your $PATH
 ├── 📁 doc                 -> Documentation of your dotfiles
