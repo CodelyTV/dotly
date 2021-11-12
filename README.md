@@ -98,6 +98,7 @@ CODELY_THEME_STATUS_ICON_KO="▪" # The icon to show if the previous command fai
 ```
 
 ### 💾 Default scripts
+
 ```bash
 ├── 📁 dotfiles
 │  ├── create # Creates the dotfiles scructure
@@ -113,7 +114,7 @@ CODELY_THEME_STATUS_ICON_KO="▪" # The icon to show if the previous command fai
 │  ├── pretty-log      # Git log filtering
 │  └── rm-file-history # Remove completely a file from the repo with its history
 ├── 📁 mac
-│  ├── brew # Some brew utils
+│  ├── brew     # Some brew utils
 │  └── defaults # Some defaults utils to view your changes, import and export
 ├── 📁 package
 │  ├── add        # Install a package
@@ -128,16 +129,29 @@ CODELY_THEME_STATUS_ICON_KO="▪" # The icon to show if the previous command fai
 │  └── update          # Update dotly to the latest stable release
 ├── 📁 shell
 │  └── zsh # ZSH helpers
-└── 📁 symlinks # Apply all symlinks
-    └── apply
+└── 📁 symlinks
+    └── apply # Apply all symlinks
 ```
+
 ### 💽 Alias
+
+You can see the default aliases [here](dotfiles_template/shell/aliases.sh). The most commonly used are:
+
+* `..`: cd one directory up
+* `la`: ls all files/dirs with colors
+* `up`: Update all your package managers packages
 
 ## ⁉️ Troubleshooting
 
+TODO
+
 ## 🤝 Contributing
 
+TODO
+
 ### 🔦 Lint & Static analysis
+
+TODO
 
 ## ⚖️ LICENSE
 
