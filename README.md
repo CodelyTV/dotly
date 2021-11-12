@@ -15,7 +15,6 @@
 </p>
 
 dotly is a dotfiles framework built on top of [zim](https://github.com/zimfw/zimfw), one of the fastest zsh existing frameworks. It creates an opinionated dotfiles structure to handle all your configs and scripts.
-<img align="right" src="https://i.ibb.co/CJfW18H/ship.gif" width="200"/>
 
 ## 🚀 Installation
 
@@ -30,11 +29,19 @@ bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 ```
 
 ## 💻 Usage
+### 🌚 The `dot` command
 
-## 🤝 Contributing
+### 🎨 Customization
+
+### 💾 Default scripts
 
 ## 🧪 Test
 
-⚖️ LICENSE
-MIT © [Codely](https://codely.tv)
+## ⁉️ Troubleshooting
+
+## 🤝 Contributing
+### 🔦 Lint & Static analysis
+
+## ⚖️ LICENSE
+MIT © [CodelyTV](https://codely.tv)
 
