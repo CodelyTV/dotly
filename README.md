@@ -90,9 +90,9 @@ dotly includes am opinionated, minimal, very fast and powerful theme by default.
 following parameters in your `shell/exports.sh`:
 
 ```bash
-CODELY_THEME_MINIMAL=false|true  # If true the theme will only show the prompt status 
+CODELY_THEME_MINIMAL=false|true  # If true the theme will only show the prompt status
 CODELY_THEME_MODE="dark"|"light" # Use dark if you use dark colors, light if light
-CODELY_THEME_PROMPT_IN_NEW_LINE=false|true           # If true the prompt will be in a newline 
+CODELY_THEME_PROMPT_IN_NEW_LINE=false|true           # If true the prompt will be in a newline
 CODELY_THEME_PWD_MODE="short"|"full"|"home_relative" # short will show the first letter of each directory, full the full path and home_relative the full path relative to the $HOME dir
 CODELY_THEME_STATUS_ICON_KO="▪" # The icon to show if the previous command failed. Useful if you're color blind
 ```
@@ -106,7 +106,7 @@ CODELY_THEME_STATUS_ICON_KO="▪" # The icon to show if the previous command fai
 ├── 📁 git
 │  ├── amend           # Amend a commit
 │  ├── apply-gitignore # Exlude all commited files that are inside the project .gitignore
-│  ├── changed-files   # Show all changed files to master
+│  ├── changed-files   # Show all changed files to main
 │  ├── commit          # Add all files and then commit
 │  ├── contributors    # List contributors with number of commits
 │  ├── find            # Find commits by commit message

@@ -8,7 +8,7 @@ set -euo pipefail
 ##?    installer
 
 DOTLY_REPOSITORY=${DOTLY_REPOSITORY:-CodelyTV/dotly}
-DOTLY_BRANCH=${DOTLY_BRANCH:-master}
+DOTLY_BRANCH=${DOTLY_BRANCH:-main}
 DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
 export DOTLY_ENV=${DOTLY_ENV:-PROD}
 export DOTLY_INSTALLER=true
