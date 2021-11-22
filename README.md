@@ -31,6 +31,16 @@ Or using curl:
 bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 ```
 
+Or using docker:
+
+```bash
+docker run -e TERM -e COLORTERM -w /root -it --rm ubuntu sh -uec '
+  apt-get update
+  apt-get install -y curl git build-essential sudo   
+  su -c bash -c "$(curl -fsSL https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)"
+  su -c bash'
+```
+
 ## 💻 Usage
 
 ### 🚶 First steps
