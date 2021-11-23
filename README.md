@@ -5,7 +5,7 @@
 </div>
 <div align="center">
   <h1>⚡️ Simple and fast dotfiles framework ⚡️</h1>
-  <strong>The path to increasing your productivity on macOS, Linux and WLS</strong>
+  <strong>The path to increasing your productivity on macOS, Linux and WSL</strong>
 </div>
 <br>
 <p align="center">
