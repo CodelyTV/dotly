@@ -21,7 +21,7 @@ brew::update_apps() {
   outdated_apps=$(brew outdated 2>/dev/null)
 
   if [ -n "$outdated_apps" ]; then
-    while IFS= read -r outdated_app; do
+    for outdated_app in $outdated_apps; do
       outdated_app_info=$(brew info "$outdated_app")
 
       app_new_version=$(echo "$outdated_app_info" | head -1 | sed "s|$outdated_app: ||g")
@@ -36,7 +36,7 @@ brew::update_apps() {
       output::empty_line
 
       brew upgrade "$outdated_app" --quiet | log::file "Updating brew app: $outdated_app"
-    done < <(printf '%s\n' "$outdated_apps")
+    done
   else
     output::answer "Already up-to-date"
   fi
