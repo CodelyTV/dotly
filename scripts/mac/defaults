@@ -16,6 +16,7 @@ docs::parse "$@"
 
 case $1 in
 "view_changed")
+  script::depends_on git-delta
   current_defaults_path=$(mktemp)
   defaults read >"$current_defaults_path"
 
