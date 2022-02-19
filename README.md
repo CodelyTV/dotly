@@ -31,14 +31,28 @@ Or using curl:
 bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 ```
 
-Or using docker:
+## 🐳 Try it in Docker
+
+You can safely install additional software and make any changes to the file system. Once you exit zsh the image is
+deleted.
+
+Using Alpine Linux:
+
+```bash
+docker run -e TERM -e COLORTERM -e LC_ALL=C.UTF-8 -w /root -it --rm alpine sh -uec '
+  apk add curl sudo bash zsh git g++ python3
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)"
+  zsh'
+```
+
+Or using Ubuntu:
 
 ```bash
 docker run -e TERM -e COLORTERM -w /root -it --rm ubuntu sh -uec '
   apt-get update
-  apt-get install -y curl git build-essential sudo   
+  apt-get install -y curl build-essential sudo
   su -c bash -c "$(curl -fsSL https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)"
-  su -c bash'
+  su -c zsh'
 ```
 
 ## 💻 Usage
