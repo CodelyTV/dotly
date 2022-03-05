@@ -68,7 +68,7 @@ package::python_import() {
 package::npm_dump() {
   mkdir -p "$DOTFILES_PATH/langs/js"
 
-  ls -1 /usr/local/lib/node_modules | grep -v npm >"$NPM_DUMP_FILE_PATH"
+  ls -1 $HOMEBREW_PREFIX/lib/node_modules | grep -v npm >"$NPM_DUMP_FILE_PATH"
 }
 
 package::npm_import() {
