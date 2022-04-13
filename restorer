@@ -191,7 +191,7 @@ export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 # Backup if currently there are any dotfiles and prepare parent directory
 if [[ -d "$DOTFILES_PATH" ]] && ! ${continue:-}; then
   _q "🗂 Your DOTFILES_PATH is not empty. Do you want to do a backup first? [Y/n]" "PROMPT_REPLY"
-  [[ "${PROMPT_REPLY:-Y}" =~ ^[Yy] ]] && create_dotfiles_dir "$DOTFILES_PATH"
+  [[ "${PROMPT_REPLY:-Y}" =~ ^[Yy] ]] && backup_dotfiles_dir "$DOTFILES_PATH"
 fi
 
 if [[ ! -d "$DOTFILES_PATH" ]]; then
