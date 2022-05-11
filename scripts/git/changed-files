@@ -7,7 +7,7 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##? Show all changed files to main
 ##?
 ##? Usage:
-##?   changed-filed
+##?   changed-files
 docs::parse "$@"
 
 git diff --name-only main
