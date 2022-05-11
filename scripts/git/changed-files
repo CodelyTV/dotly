@@ -4,6 +4,9 @@ set -euo pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
+GREEN='\033[0;32m'
+NC='\033[0m' # No color
+
 ##? Show all changed files to <branch_name>
 ##?
 ##? Usage:
@@ -15,4 +18,9 @@ if [[ -z $branch_name ]]; then
   branch_name="main"
 fi
 
-git diff --name-only $branch_name
+if (! git::branch_exists $branch_name); then
+  git diff --name-only $branch_name
+else
+  echo -e "${NC}Branch ${GREEN}$branch_name${NC} does not exist${NC}!"
+  exit 1
+fi
