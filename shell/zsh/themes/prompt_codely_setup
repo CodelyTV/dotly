@@ -51,7 +51,7 @@ prompt_codely_precmd() {
 }
 
 prompt_codely_setup() {
-  local prompt_codely_status="%(?:%F{green}{%F{$status_icon_color}$status_icon_ok%F{green}}:%F{red}{%F{$status_icon_color}$status_icon_ko%F{red}})"
+  local prompt_codely_status="%(?:%F{green}<%F{$status_icon_color}$status_icon_ok%F{green}>:%F{red}<%F{$status_icon_color}$status_icon_ko%F{red}>)"
 
   autoload -Uz add-zsh-hook && add-zsh-hook precmd prompt_codely_precmd
 
