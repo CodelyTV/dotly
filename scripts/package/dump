@@ -30,5 +30,4 @@ fi
 
 platform::command_exists winget.exe && package::winget_dump && output::answer "Windows apps dumped on $WINGET_DUMP_FILE_PATH"
 
-
 output::solution 'All packages dumped'
