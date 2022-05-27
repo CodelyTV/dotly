@@ -95,3 +95,7 @@ package::winget_dump() {
 
   winget.exe export -o "$WINGET_DUMP_FILE_PATH" >/dev/null 2>&1
 }
+
+package::winget_import() {
+  winget.exe import -i "$WINGET_DUMP_FILE_PATH"
+}

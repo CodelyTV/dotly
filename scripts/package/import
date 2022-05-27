@@ -28,4 +28,6 @@ elif platform::command_exists npm; then
   output::header "Importing NPM apps from $NPM_DUMP_FILE_PATH" && package::npm_import
 fi
 
+platform::command_exists winget.exe && output::header "Importing Winget apps from $WINGET_DUMP_FILE_PATH" && package::winget_import
+
 output::solution 'All packages imported'
