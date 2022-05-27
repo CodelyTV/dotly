@@ -11,6 +11,7 @@ SNAP_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/snap/packages.txt"
 PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/requirements.txt"
 NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/global_modules.txt"
 VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta_dependencies.txt"
+WINGET_DUMP_FILE_PATH="$DOTFILES_PATH/os/windows/winget.output"
 
 package::brew_dump() {
   if platform::is_macos; then
@@ -87,4 +88,10 @@ package::volta_import() {
   if [ -f "$VOLTA_DUMP_FILE_PATH" ]; then
     xargs -I_ volta install "_" <"$VOLTA_DUMP_FILE_PATH"
   fi
+}
+
+package::winget_dump() {
+  mkdir -p "$DOTFILES_PATH/os/windows"
+
+  winget.exe export -o "$WINGET_DUMP_FILE_PATH" >/dev/null 2>&1
 }
