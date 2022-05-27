@@ -4,11 +4,11 @@ export DOTLY_THEME="codely"
 
 source "$DOTFILES_PATH/shell/init.sh"
 
-PATH=$(
+EXPORTED_PATH=$(
   IFS=":"
   echo "${path[*]}"
 )
-export PATH
+export PATH="$PATH:$EXPORTED_PATH"
 
 themes_paths=(
   "$DOTFILES_PATH/shell/bash/themes"
