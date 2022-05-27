@@ -16,8 +16,8 @@ codely_theme() {
   fi
 
   if [ -z "$CODELY_THEME_MINIMAL" ]; then
-    export PS1="\[\e[${STATUS_COLOR}m\]{\[\e[m\]${MIDDLE_CHARACTER}\[\e[${STATUS_COLOR}m\]}\[\e[m\] \[\e[33m\]${current_dir}\[\e[m\] "
+    export PS1="\[\e[${STATUS_COLOR}m\]<\[\e[m\]${MIDDLE_CHARACTER}\[\e[${STATUS_COLOR}m\]>\[\e[m\] \[\e[33m\]${current_dir}\[\e[m\] "
   else
-    export PS1="\[\e[${STATUS_COLOR}m\]{\[\e[m\]${MIDDLE_CHARACTER}\[\e[${STATUS_COLOR}m\]}\[\e[m\] "
+    export PS1="\[\e[${STATUS_COLOR}m\]<\[\e[m\]${MIDDLE_CHARACTER}\[\e[${STATUS_COLOR}m\]>\[\e[m\] "
   fi
 }

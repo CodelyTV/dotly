@@ -5,12 +5,11 @@ CODELY_THEME_MODE=${CODELY_THEME_MODE:-"dark"}
 CODELY_THEME_PROMPT_IN_NEW_LINE=${CODELY_THEME_PROMPT_IN_NEW_LINE:-false}
 CODELY_THEME_PWD_MODE=${CODELY_THEME_PWD_MODE:-"short"} # full, short, home_relative
 
+CODELY_THEME_STATUS_ICON_OK=${CODELY_THEME_STATUS_ICON_OK:-"▸"}
 CODELY_THEME_STATUS_ICON_KO=${CODELY_THEME_STATUS_ICON_KO:-"▪"}
 
  [[ $(echotc Co) -gt 100 ]] && support_color_tones=true || support_color_tones=false
 
-status_icon_ok="▸"
-status_icon_ko="$CODELY_THEME_STATUS_ICON_KO"
 git_no_changes_status="✓"
 git_dirty_status="✗"
 
@@ -20,7 +19,9 @@ if [ "$CODELY_THEME_MODE" = "dark" ]; then
   git_no_changes_status_color="white"
   git_on_branch_color="white"
   pwd_color="yellow"
-  status_icon_color="white"
+  diamond_color="white"
+  status_icon_color_ok="green"
+  status_icon_color_ko="red"
   [[ $support_color_tones = true ]] && ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8' || ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=magenta'
 else
   git_branch_color="black"
@@ -28,7 +29,9 @@ else
   git_no_changes_status_color="green"
   git_on_branch_color="green"
   pwd_color="black"
-  status_icon_color="black"
+  diamond_color="black"
+  status_icon_color_ok="black"
+  status_icon_color_ko="red"
   [[ $support_color_tones = true ]] && ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8' || ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=magenta'
 fi
 
@@ -51,7 +54,7 @@ prompt_codely_precmd() {
 }
 
 prompt_codely_setup() {
-  local prompt_codely_status="%(?:%F{green}{%F{$status_icon_color}$status_icon_ok%F{green}}:%F{red}{%F{$status_icon_color}$status_icon_ko%F{red}})"
+  local prompt_codely_status="%(?:%F{diamond_color}<%F{$status_icon_color_ok}$CODELY_THEME_STATUS_ICON_OK%F{diamond_color}>:%F{diamond_color}<%F{$status_icon_color_ko}$CODELY_THEME_STATUS_ICON_KO%F{diamond_color}>)"
 
   autoload -Uz add-zsh-hook && add-zsh-hook precmd prompt_codely_precmd
 
