@@ -1,16 +1,19 @@
 composer::update_all() {
   script::depends_on jq
 
-  outdated=$(composer global outdated --direct -f json --no-ansi)
-  total_outdated=$(echo "$outdated" | jq '.installed' | jq length)
+  if [ -f "$HOME/.composer/composer.json" ]; then
+    outdated=$(composer global outdated --direct -f json --no-ansi)
+    total_outdated=$(echo "$outdated" | jq '.installed' | jq length)
 
-  if [ 0 -ne "$total_outdated" ]; then
-    echo "$outdated" | jq -cr '.installed | .[]' | while IFS= read -r dependency; do
-      composer::update "$dependency"
-    done
-  else
-    output::answer "Already up-to-date"
+    if [ 0 -ne "$total_outdated" ]; then
+      echo "$outdated" | jq -cr '.installed | .[]' | while IFS= read -r dependency; do
+        composer::update "$dependency"
+      done
+    else
+      output::answer "Already up-to-date"
+    fi
   fi
+
 }
 
 composer::update() {
@@ -26,5 +29,5 @@ composer::update() {
   output::write "└ $url"
   output::empty_line
 
-  composer global require -W "$name" 2>&1 | log::file "Updating composer app: $name"
+  composer global require -W "$name"
 }
