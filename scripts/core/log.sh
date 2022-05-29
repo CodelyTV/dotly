@@ -55,8 +55,8 @@ _header() {
   local TOTAL_CHARS=60
   local total=$TOTAL_CHARS-2
   local size=${#1}
-  local left=$((($total - $size) / 2))
-  local right=$(($total - $size - $left))
+  local left=$(((total - size) / 2))
+  local right=$((total - size - left))
   printf "%${left}s" '' | tr ' ' =
   printf " $1 "
   printf "%${right}s" '' | tr ' ' =

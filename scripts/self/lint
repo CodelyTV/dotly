@@ -14,7 +14,7 @@ fi
 script::depends_on shfmt
 
 if [ "$1" = "--fix" ]; then
-  dotly::list_bash_files | xargs shfmt -w
+  dotly::list_bash_files | xargs shfmt -s -w
 else
-  dotly::list_bash_files | xargs shfmt -i 2 -d
+  dotly::list_bash_files | xargs shfmt -i 2 -d -s
 fi

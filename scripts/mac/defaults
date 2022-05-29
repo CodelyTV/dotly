@@ -24,7 +24,7 @@ case $1 in
   ;;
 "export")
   export_plist_path="${DOTLY_SETTINGS_PATH}"
-  [[ -d "$export_plist_path" ]] || mkdir -p "$export_plist_path"
+  [[ -d $export_plist_path ]] || mkdir -p "$export_plist_path"
   defaults domains | tr ", " "\n" | sed -r '/^\s*$/d' | xargs -I_ defaults export _ "$export_plist_path/_.plist"
   ;;
 "import")
@@ -33,7 +33,7 @@ case $1 in
   killall System\ Preferences
   sudo -v
 
-  if [[ -d "$import_plist_path" ]]; then
+  if [[ -d $import_plist_path ]]; then
     for plist in "${import_plist_path}"/*.plist; do
       defaults import "$(basename ${plist%.*})" "$plist"
     done

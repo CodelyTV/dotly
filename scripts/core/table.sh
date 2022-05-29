@@ -10,7 +10,7 @@ function repeatString() {
   local -r string="${1}"
   local -r numberToRepeat="${2}"
 
-  if [[ "${string}" != '' && "${numberToRepeat}" =~ ^[1-9][0-9]*$ ]]; then
+  if [[ ${string} != '' && ${numberToRepeat} =~ ^[1-9][0-9]*$ ]]; then
     local -r result="$(printf "%${numberToRepeat}s")"
     echo -e "${result// /${string}}"
   fi
@@ -38,10 +38,10 @@ function table::print() {
   echo $delimiter
   local -r data="$(removeEmptyLines "${2}")"
 
-  if [[ "${delimiter}" != '' && "$(isEmptyString "${data}")" == 'false' ]]; then
+  if [[ ${delimiter} != '' && "$(isEmptyString "${data}")" == 'false' ]]; then
     local -r numberOfLines="$(wc -l <<<"${data}")"
 
-    if [[ "${numberOfLines}" -gt '0' ]]; then
+    if [[ ${numberOfLines} -gt '0' ]]; then
       local table=''
       local i=1
 
@@ -54,7 +54,7 @@ function table::print() {
 
         # Add Line Delimiter
 
-        if [[ "${i}" -eq '1' ]]; then
+        if [[ ${i} -eq '1' ]]; then
           table="${table}$(printf '%s#+' "$(repeatString '#+' "${numberOfColumns}")")"
         fi
 
@@ -72,7 +72,7 @@ function table::print() {
 
         # Add Line Delimiter
 
-        if [[ "${i}" -eq '1' ]] || [[ "${numberOfLines}" -gt '1' && "${i}" -eq "${numberOfLines}" ]]; then
+        if [[ ${i} -eq '1' ]] || [[ ${numberOfLines} -gt '1' && ${i} -eq ${numberOfLines} ]]; then
           table="${table}$(printf '%s#+' "$(repeatString '#+' "${numberOfColumns}")")"
         fi
       done
