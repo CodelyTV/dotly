@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 os=$(uname)
-if [[ "$os" == "Linux" ]]; then
+if [[ $os == "Linux" ]]; then
   xclip -selection clipboard -o
-elif [[ "$os" == "Darwin" ]]; then
+elif [[ $os == "Darwin" ]]; then
   /usr/bin/pbpaste
 fi

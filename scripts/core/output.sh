@@ -34,7 +34,7 @@ output::question() {
 }
 
 output::answer_is_yes() {
-  if [[ "${1:-Y}" =~ ^[Yy] ]]; then
+  if [[ ${1:-Y} =~ ^[Yy] ]]; then
     return 0
   fi
 

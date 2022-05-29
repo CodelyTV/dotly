@@ -98,7 +98,7 @@ backup_dotfiles_dir() {
     _a "Ok! dotfiles will be located in: ${purple}$DOTFILES_PATH${normal}"
   fi
 
-  [[ -n "${1:-}" ]] && mkdir -p "$(dirname "${1:-}")"
+  [[ -n ${1:-} ]] && mkdir -p "$(dirname "${1:-}")"
 }
 
 command_exists() {
@@ -106,7 +106,7 @@ command_exists() {
 }
 
 install_brew_osx() {
-  if [[ "$OSTYPE" =~ ^[darwin] ]] && ! command_exists brew; then
+  if [[ $OSTYPE =~ ^[darwin] ]] && ! command_exists brew; then
     _w "Installing brew package manager for macOS 💾"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
@@ -150,7 +150,7 @@ _w
 # install CLT.
 
 _w "Checking if Git is installed"
-if [[ "$OSTYPE" =~ ^[darwin] ]] && ! ls /Library/Developer/CommandLineTools >/dev/null 2>&1; then
+if [[ $OSTYPE =~ ^[darwin] ]] && ! ls /Library/Developer/CommandLineTools >/dev/null 2>&1; then
   # In macOS if we do not have CLT then we do not have git. This could be wrong
   # but we will want brew later and if we do not have CLT we can not have brew
   #
@@ -189,12 +189,12 @@ dotly_inner_path="modules/dotly"
 export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 
 # Backup if currently there are any dotfiles and prepare parent directory
-if [[ -d "$DOTFILES_PATH" ]] && ! ${continue:-}; then
+if [[ -d $DOTFILES_PATH ]] && ! ${continue:-}; then
   _q "🗂 Your DOTFILES_PATH is not empty. Do you want to do a backup first? [Y/n]" "PROMPT_REPLY"
-  [[ "${PROMPT_REPLY:-Y}" =~ ^[Yy] ]] && create_dotfiles_dir "$DOTFILES_PATH"
+  [[ ${PROMPT_REPLY:-Y} =~ ^[Yy] ]] && create_dotfiles_dir "$DOTFILES_PATH"
 fi
 
-if [[ ! -d "$DOTFILES_PATH" ]]; then
+if [[ ! -d $DOTFILES_PATH ]]; then
   # Menu to select from where you want to restore your files
   PS3="From where you want to install your dotfiles: "
   options=("GitHub" "Keybase" "Other Git alternative" "Quit")
@@ -272,7 +272,7 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
   # This because maybe you do not have yet your ssh-keys because you did not download
   # your dotfiles. And SSH URL for repository would be the default method using a
   # repository that you can write.
-  if ! $is_cloned && [[ ! -d "$DOTFILES_PATH" ]] && [[ "$opt" == "GitHub" ]]; then
+  if ! $is_cloned && [[ ! -d $DOTFILES_PATH ]] && [[ $opt == "GitHub" ]]; then
     _a "Attemping: git clone ${GIT_URL_MIRROR} ${DOTFILES_PATH}"
     git clone "$GIT_URL_MIRROR" "$DOTFILES_PATH" 2>&1 | _log "Cloning from $GIT_URL_MIRROR" && is_cloned=true
 
@@ -282,7 +282,7 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
       _w "Your dotfiles could not be downloaded using ssh. Were downloaded using https."
       _w
       _q "Do you want to setup remote SSH origin url? [Y/n]" "SSH_REPLY"
-      [[ "${SSH_REPLY:-Y}" =~ ^[Yy] ]] &&
+      [[ ${SSH_REPLY:-Y} =~ ^[Yy] ]] &&
         cd "${DOTFILES_PATH}" &&
         git remote set-url origin "${GIT_URL}" 2>&1 &&
         _s "SSH Remote was set."
@@ -290,7 +290,7 @@ if [[ ! -d "$DOTFILES_PATH" ]]; then
       _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
       exit 1
     fi
-  elif ! $is_cloned || [[ ! -d "$DOTFILES_PATH" ]]; then
+  elif ! $is_cloned || [[ ! -d $DOTFILES_PATH ]]; then
     _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
     exit 1
   fi
@@ -326,7 +326,7 @@ _a "🎉 dotfiles restored! 🎉"
 
 # Installing packages
 _q "📦 Do you want to import previous installed packages? [Y/n]" "USER_IMPORT_PACKAGES"
-if [[ "${USER_IMPORT_PACKAGES:-Y}" =~ ^[Yy] ]]; then
+if [[ ${USER_IMPORT_PACKAGES:-Y} =~ ^[Yy] ]]; then
   _w "Importing your packages"
   _w "This can take a very long time, be patient...🙏"
   {
@@ -340,7 +340,7 @@ if [[ "${USER_IMPORT_PACKAGES:-Y}" =~ ^[Yy] ]]; then
 fi
 
 # Importing defaults on macOS
-if [[ "$OSTYPE" =~ ^[darwin] ]]; then
+if [[ $OSTYPE =~ ^[darwin] ]]; then
   _w
   _w "If you want to import your previous macOS settings, if would be done from the"
   _w "default directory $DOTFILES_PATH/os/mac/settings, if you want to restore it"
@@ -350,7 +350,7 @@ if [[ "$OSTYPE" =~ ^[darwin] ]]; then
   _w
   _q "⚙️ Do you want to import stored macOS configuration? [y/N]" "USER_OSX_SETTINGS"
   {
-    [[ "${USER_OSX_SETTINGS:-N}" =~ ^[Yy] ]] &&
+    [[ ${USER_OSX_SETTINGS:-N} =~ ^[Yy] ]] &&
       "$DOTLY_PATH/bin/dot" mac defaults import >/dev/null 2>&1 | _log "Importing macOS user defaults" &&
       _w "⚙️ Mac defaults imported 🤙" &&
       _w
