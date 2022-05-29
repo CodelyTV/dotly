@@ -7,9 +7,14 @@ source "$DOTLY_PATH/scripts/core/dotly.sh"
 ##?
 ##? Usage:
 ##?    lint
+##?    lint [--fix]
 if [ "$1" == "-h" ] || [ "$1" = "--help" ]; then
   docs::parse "$@"
 fi
 script::depends_on shfmt
 
-dotly::list_bash_files | xargs shfmt -i 2 -d
+if [ "$1" = "--fix" ]; then
+  dotly::list_bash_files | xargs shfmt -w
+else
+  dotly::list_bash_files | xargs shfmt -i 2 -d
+fi
