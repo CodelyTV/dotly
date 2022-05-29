@@ -38,7 +38,7 @@ log::ansi() {
 }
 
 if [ -z ${DOT_LOG_FILE+x} ]; then
-  readonly DOT_LOG_FILE="/tmp/$(basename "$0").log"
+  DOT_LOG_FILE="/tmp/$(basename "$0").log"
 fi
 
 _log() {
