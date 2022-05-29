@@ -28,7 +28,6 @@ platform::command_exists npm && output::h2 '🌈 npm' && npm::update_all
 platform::command_exists cargo && output::h2 '📦 cargo' && cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' | xargs -n1 cargo install
 
 platform::command_exists rustup && output::h2 '☢️ Rust compiler' && rustup update
-platform::command_exists deno && output::h2 '🦕 deno' && deno upgrade
 platform::command_exists tldr && output::h2 '📜 tldr database' && tldr --update
 
 output::h2 "👽 Zim Framework" && zsh "$ZIM_HOME/zimfw.zsh" upgrade 2>&1 | log::file "Upgrading Zim" && zsh "$ZIM_HOME/zimfw.zsh" update 2>&1 | log::file "Updating Zim"
