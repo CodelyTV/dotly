@@ -12,6 +12,8 @@ composer::update_all() {
     else
       output::answer "Already up-to-date"
     fi
+  else
+    output::answer "There is no composer global file, process skipped"
   fi
 
 }
