@@ -1,5 +1,5 @@
 npm::update_all() {
-  outdated=$(npm -g outdated | tail -n +2)
+  outdated=$(npm --location=global outdated | tail -n +2)
 
   if [ -n "$outdated" ]; then
     echo "$outdated" | while IFS= read -r outdated_app; do
@@ -17,7 +17,7 @@ npm::update_all() {
       output::write "└ $url"
       output::empty_line
 
-      sudo npm install -g "$package" 2>&1 | log::file "Updating npm app: $package"
+      sudo npm install --location=global "$package" 2>&1 | log::file "Updating npm app: $package"
     done
   else
     output::answer "Already up-to-date"
