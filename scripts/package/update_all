@@ -32,7 +32,7 @@ platform::command_exists tldr && output::h2 '📜 tldr database' && tldr --updat
 
 output::h2 "👽 Zim Framework" && zsh "$ZIM_HOME/zimfw.zsh" upgrade 2>&1 | log::file "Upgrading Zim" && zsh "$ZIM_HOME/zimfw.zsh" update 2>&1 | log::file "Updating Zim" && output::answer "Done"
 
-output::h2 "🌚 dotly completions" && dot shell zsh reload_completions >/dev/null 2>&1 && output::answer "Done"
+output::h2 "🌚 dotly" && dot self update >/dev/null 2>&1 && output::answer "Done"
 
 output::empty_line
 output::write '👌 All your packages have been successfully updated'
