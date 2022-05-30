@@ -9,6 +9,7 @@ source "$DOTLY_PATH/scripts/package/src/dump.sh"
 ##?  * Snap
 ##?  * Python
 ##?  * Volta.sh or NPM
+##?  * Winget
 ##?
 ##? Usage:
 ##?   dump
@@ -30,4 +31,4 @@ fi
 
 platform::command_exists winget.exe && package::winget_dump && output::answer "Windows apps dumped on $WINGET_DUMP_FILE_PATH"
 
-output::solution 'All packages dumped'
+output::write 'All packages dumped'
