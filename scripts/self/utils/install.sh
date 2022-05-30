@@ -36,3 +36,18 @@ install_macos_custom() {
 install_linux_custom() {
   echo
 }
+
+backup_files() {
+  backup_dir="$HOME/.pre_dotly_backup"
+  mkdir -p "$backup_dir"
+
+  for file_path in "$@"; do
+    if [ -f "$file_path" ]; then
+      filename="$(basename -- $file_path)"
+
+      cp "$file_path" "$backup_dir/$filename"
+
+      log::append "$backup_dir/$filename backed up"
+    fi
+  done
+}
