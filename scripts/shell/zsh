@@ -22,14 +22,19 @@ case $1 in
   "$DOTLY_PATH/bin/dot" shell zsh reload_completions
   ;;
 "test_performance")
+  if [[ $(uname -m) == 'arm64' ]]; then
+    ZSH_BIN_PATH='/opt/homebrew/bin/zsh'
+  else
+    ZSH_BIN_PATH='/usr/local/bin/zsh'
+  fi
   script::depends_on hyperfine
 
-  hyperfine '/bin/zsh -i -c exit' '/opt/homebrew/bin/zsh -i -c exit' --warmup 1
+  hyperfine '/bin/zsh -i -c exit' "${ZSH_BIN_PATH} -i -c exit" --warmup 1
 
   echo ""
   echo "ZSH INFO:"
   echo "  🍎 macOS ZSH 📂 /bin/zsh              - $(/bin/zsh --version)"
-  echo "  🍺 Brew ZSH  📂 /opt/homebrew/bin/zsh - $(/opt/homebrew/bin/zsh --version)"
+  echo "  🍺 Brew ZSH  📂 ${ZSH_BIN_PATH} - $(${ZSH_BIN_PATH} --version)"
 
   echo ""
   echo "✨ Currently using $(command -v zsh) ✨"
