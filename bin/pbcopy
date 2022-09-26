@@ -2,7 +2,7 @@
 
 os=$(uname)
 if [[ $os == "Linux" ]]; then
-  xclip -selection clipboard
+	xclip -selection clipboard
 elif [[ $os == "Darwin" ]]; then
-  /usr/bin/pbcopy
+	/usr/bin/pbcopy
 fi

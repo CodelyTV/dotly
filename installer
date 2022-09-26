@@ -19,8 +19,8 @@ purple='\033[0;35m'
 normal='\033[0m'
 
 _w() {
-  local -r text="${1:-}"
-  echo -e "$text"
+	local -r text="${1:-}"
+	echo -e "$text"
 }
 _a() { _w " > $1"; }
 _e() { _a "${red}$1${normal}"; }
@@ -28,38 +28,38 @@ _s() { _a "${green}$1${normal}"; }
 _q() { read -rp "🤔 $1: " "$2"; }
 
 _log() {
-  log_name="$1"
-  current_date=$(date "+%Y-%m-%d %H:%M:%S")
+	log_name="$1"
+	current_date=$(date "+%Y-%m-%d %H:%M:%S")
 
-  touch "$DOTLY_LOG_FILE"
-  echo "----- $current_date - $log_name -----" >>"$DOTLY_LOG_FILE"
+	touch "$DOTLY_LOG_FILE"
+	echo "----- $current_date - $log_name -----" >>"$DOTLY_LOG_FILE"
 
-  while IFS= read -r log_message; do
-    echo "$log_message" >>"$DOTLY_LOG_FILE"
-  done
+	while IFS= read -r log_message; do
+		echo "$log_message" >>"$DOTLY_LOG_FILE"
+	done
 
-  echo "" >>"$DOTLY_LOG_FILE"
+	echo "" >>"$DOTLY_LOG_FILE"
 }
 
 current_timestamp() { date +%s; }
 
 create_dotfiles_dir() {
-  if [ -d "$1" ]; then
-    local -r backup_path="$1.$(current_timestamp).back"
+	if [ -d "$1" ]; then
+		local -r backup_path="$1.$(current_timestamp).back"
 
-    _e "The path '$1' already exist"
-    _s "Creating a backup in '$backup_path'"
+		_e "The path '$1' already exist"
+		_s "Creating a backup in '$backup_path'"
 
-    mv "$1" "$backup_path"
-  else
-    _a "Ok! dotfiles will be located in: ${purple}$DOTFILES_PATH${normal}"
-  fi
+		mv "$1" "$backup_path"
+	else
+		_a "Ok! dotfiles will be located in: ${purple}$DOTFILES_PATH${normal}"
+	fi
 
-  mkdir -p "$1"
+	mkdir -p "$1"
 }
 
 command_exists() {
-  type "$1" >/dev/null 2>&1
+	type "$1" >/dev/null 2>&1
 }
 
 _w "  ┌────────────────────────────────────┐"
@@ -78,65 +78,65 @@ create_dotfiles_dir "$DOTFILES_PATH"
 cd "$DOTFILES_PATH"
 
 if ! command_exists git; then
-  _e "git not installed, trying to install"
+	_e "git not installed, trying to install"
 
-  if command_exists apt; then
-    _a "Installing using apt"
-    sudo apt -y install git 2>&1 | _log "Installing git"
-  elif command_exists dnf; then
-    _a "Installing using dnf"
-    sudo dnf -y install git 2>&1 | _log "Installing git"
-  elif command_exists yum; then
-    _a "Installing using yum"
-    yes | sudo yum install git 2>&1 | _log "Installing git"
-  elif command_exists brew; then
-    _a "Installing using brew"
-    yes | brew install git 2>&1 | _log "Installing git"
-  elif command_exists pacman; then
-    _a "Installing using pacman"
-    sudo pacman -S --noconfirm git 2>&1 | _log "Installing git"
-  else
-    case "$OSTYPE" in
-    darwin*)
-      _a "Checking if Command Line Tools are installed 🕵️‍♂️"
+	if command_exists apt; then
+		_a "Installing using apt"
+		sudo apt -y install git 2>&1 | _log "Installing git"
+	elif command_exists dnf; then
+		_a "Installing using dnf"
+		sudo dnf -y install git 2>&1 | _log "Installing git"
+	elif command_exists yum; then
+		_a "Installing using yum"
+		yes | sudo yum install git 2>&1 | _log "Installing git"
+	elif command_exists brew; then
+		_a "Installing using brew"
+		yes | brew install git 2>&1 | _log "Installing git"
+	elif command_exists pacman; then
+		_a "Installing using pacman"
+		sudo pacman -S --noconfirm git 2>&1 | _log "Installing git"
+	else
+		case "$OSTYPE" in
+		darwin*)
+			_a "Checking if Command Line Tools are installed 🕵️‍♂️"
 
-      xcode-select --install 2>&1 | grep installed >/dev/null
-      if [[ $? ]]; then
-        _a "Installing Command Line Tools 📺"
-        xcode-select --install
-        _q "Press a key after command line tools has finished to continue...👇" "CLT_INSTALLED"
-      fi
-      ;;
-    *)
-      _e "Could not install git, no package provider found"
-      exit 1
-      ;;
-    esac
-  fi
+			xcode-select --install 2>&1 | grep installed >/dev/null
+			if [[ $? ]]; then
+				_a "Installing Command Line Tools 📺"
+				xcode-select --install
+				_q "Press a key after command line tools has finished to continue...👇" "CLT_INSTALLED"
+			fi
+			;;
+		*)
+			_e "Could not install git, no package provider found"
+			exit 1
+			;;
+		esac
+	fi
 fi
 
 if ! command_exists curl; then
-  _e "curl not installed, trying to install"
+	_e "curl not installed, trying to install"
 
-  if command_exists apt; then
-    _a "Installing using apt"
-    sudo apt -y install curl 2>&1 | _log "Installing curl"
-  elif command_exists dnf; then
-    _a "Installing using dnf"
-    sudo dnf -y install curl 2>&1 | _log "Installing curl"
-  elif command_exists yum; then
-    _a "Installing using yum"
-    yes | sudo yum install curl 2>&1 | _log "Installing curl"
-  elif command_exists brew; then
-    _a "Installing using brew"
-    yes | brew install curl 2>&1 | _log "Installing curl"
-  elif command_exists pacman; then
-    _a "Installing using pacman"
-    sudo pacman -S --noconfirm curl 2>&1 | _log "Installing curl"
-  else
-    _e "Could not install curl, no package provider found"
-    exit 1
-  fi
+	if command_exists apt; then
+		_a "Installing using apt"
+		sudo apt -y install curl 2>&1 | _log "Installing curl"
+	elif command_exists dnf; then
+		_a "Installing using dnf"
+		sudo dnf -y install curl 2>&1 | _log "Installing curl"
+	elif command_exists yum; then
+		_a "Installing using yum"
+		yes | sudo yum install curl 2>&1 | _log "Installing curl"
+	elif command_exists brew; then
+		_a "Installing using brew"
+		yes | brew install curl 2>&1 | _log "Installing curl"
+	elif command_exists pacman; then
+		_a "Installing using pacman"
+		sudo pacman -S --noconfirm curl 2>&1 | _log "Installing curl"
+	else
+		_e "Could not install curl, no package provider found"
+		exit 1
+	fi
 fi
 
 _a "Initializing your dotfiles git repository"

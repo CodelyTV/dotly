@@ -1,3 +1,3 @@
 cargo::install() {
-  cargo install "$@"
+	cargo install "$@"
 }
