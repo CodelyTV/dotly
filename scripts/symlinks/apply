@@ -5,12 +5,12 @@ set -euo pipefail
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 symlinks::apply() {
-  local -r CONFIG="$DOTFILES_PATH/symlinks/$1"
-  shift
+	local -r CONFIG="$DOTFILES_PATH/symlinks/$1"
+	shift
 
-  echo
-  "$DOTLY_PATH/modules/dotbot/bin/dotbot" -d "$DOTFILES_PATH" -c "$CONFIG" "$@"
-  echo
+	echo
+	"$DOTLY_PATH/modules/dotbot/bin/dotbot" -d "$DOTFILES_PATH" -c "$CONFIG" "$@"
+	echo
 }
 
 ##? Apply all symlinks
@@ -23,13 +23,13 @@ docs::parse "$@"
 symlinks::apply "conf.yaml"
 
 if platform::is_macos; then
-  if platform::is_macos_arm; then
-    symlinks::apply "conf.macos.yaml"
-  else
-    symlinks::apply "conf.macos-intel.yaml"
-  fi
+	if platform::is_macos_arm; then
+		symlinks::apply "conf.macos.yaml"
+	else
+		symlinks::apply "conf.macos-intel.yaml"
+	fi
 else
-  symlinks::apply "conf.linux.yaml"
+	symlinks::apply "conf.linux.yaml"
 fi
 
 log::success "Done!"

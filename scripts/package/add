@@ -9,27 +9,27 @@ source "$DOTLY_PATH/scripts/package/recipes/_registry.sh"
 ##?    add <package_name> [--skip-recipe]
 ##?
 if ! ${DOTLY_INSTALLER:-false}; then
-  docs::parse "$@"
+	docs::parse "$@"
 fi
 
 export PATH="$HOME/.cargo/bin:$PATH"
 
 package::install() {
-  local -r package_manager="$1"
-  local -r package_to_install="$2"
+	local -r package_manager="$1"
+	local -r package_to_install="$2"
 
-  platform::command_exists "$package_manager" || exit 3
+	platform::command_exists "$package_manager" || exit 3
 
-  local -r file="$DOTLY_PATH/scripts/package/package_managers/$package_manager.sh"
+	local -r file="$DOTLY_PATH/scripts/package/package_managers/$package_manager.sh"
 
-  # unsupported package manager
-  [ ! -f "$file" ] && exit 4
+	# unsupported package manager
+	[ ! -f "$file" ] && exit 4
 
-  source "$file"
+	source "$file"
 
-  local -r install_command="${package_manager}::install"
+	local -r install_command="${package_manager}::install"
 
-  "$install_command" "$package_to_install"
+	"$install_command" "$package_to_install"
 }
 
 package_name="$1"
@@ -38,35 +38,35 @@ skip_recipe="$2"
 platform::command_exists "$package_name" || registry::is_installed "$package_name" && log::success "$package_name already installed" && exit 0
 
 if [ -z "$skip_recipe" ] && registry::install "$package_name"; then
-  output::write "✅ \`$package_name\` installed"
+	output::write "✅ \`$package_name\` installed"
 
-  exit 0
+	exit 0
 else
-  if platform::is_macos; then
-    for package_manager in brew mas ports cargo; do
-      package::install $package_manager "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager" || true
+	if platform::is_macos; then
+		for package_manager in brew mas ports cargo; do
+			package::install $package_manager "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager" || true
 
-      if platform::command_exists "$package_name"; then
-        output::write "✅ \`$package_name\` installed"
+			if platform::command_exists "$package_name"; then
+				output::write "✅ \`$package_name\` installed"
 
-        exit 0
-      fi
-    done
-  else
-    for package_manager in apt dnf yum brew pacman cargo; do
-      package::install $package_manager "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager"
+				exit 0
+			fi
+		done
+	else
+		for package_manager in apt dnf yum brew pacman cargo; do
+			package::install $package_manager "$package_name" 2>&1 | log::file "Trying to install $package_name using $package_manager"
 
-      if platform::command_exists "$package_name"; then
-        output::write "✅ \`$package_name\` installed"
+			if platform::command_exists "$package_name"; then
+				output::write "✅ \`$package_name\` installed"
 
-        exit 0
-      fi
-    done
-  fi
+				exit 0
+			fi
+		done
+	fi
 fi
 
 if ! platform::command_exists "$package_name" && ! registry::is_installed "$package_name"; then
-  output::write "❌ \`$package_name\` could not be installed"
+	output::write "❌ \`$package_name\` could not be installed"
 
-  exit 1
+	exit 1
 fi

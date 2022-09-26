@@ -14,23 +14,23 @@ docs::parse "$@"
 
 case $1 in
 "list_installed")
-  brew leaves
-  ;;
+	brew leaves
+	;;
 "cleanup")
-  HOMEBREW_DUMP_FILE_PATH=${optional_path_brewfile:-"$DOTFILES_PATH/os/mac/brew/Brewfile"}
-  cleanup_cmd="$(which brew) bundle --file=\"${HOMEBREW_DUMP_FILE_PATH}\" --force cleanup"
-  output::write "This will execute the command... "
-  output::write "    $cleanup_cmd"
-  if [[ -f $HOMEBREW_DUMP_FILE_PATH ]]; then
-    output::question "Still want to perform the action?" confirm_action
-    $(which brew) bundle --file="${HOMEBREW_DUMP_FILE_PATH}" --force cleanup
-    output::question "Do you want to execute additional 'brew cleanup'" brew_cleanup
-    [[ -n $brew_cleanup ]] && $(which brew) cleanup
-  else
-    output::error "No Brewfile found"
-  fi
-  ;;
+	HOMEBREW_DUMP_FILE_PATH=${optional_path_brewfile:-"$DOTFILES_PATH/os/mac/brew/Brewfile"}
+	cleanup_cmd="$(which brew) bundle --file=\"${HOMEBREW_DUMP_FILE_PATH}\" --force cleanup"
+	output::write "This will execute the command... "
+	output::write "    $cleanup_cmd"
+	if [[ -f $HOMEBREW_DUMP_FILE_PATH ]]; then
+		output::question "Still want to perform the action?" confirm_action
+		$(which brew) bundle --file="${HOMEBREW_DUMP_FILE_PATH}" --force cleanup
+		output::question "Do you want to execute additional 'brew cleanup'" brew_cleanup
+		[[ -n $brew_cleanup ]] && $(which brew) cleanup
+	else
+		output::error "No Brewfile found"
+	fi
+	;;
 *)
-  exit 1
-  ;;
+	exit 1
+	;;
 esac

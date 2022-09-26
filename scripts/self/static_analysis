@@ -10,14 +10,14 @@ source "$DOTLY_PATH/scripts/core/dotfiles.sh"
 ##?    static_analysis
 ##?    static_analysis [--dotfiles]
 if [ "$1" == "-h" ] || [ "$1" = "--help" ] || [ "$1" = "--dotfiles" ]; then
-  docs::parse "$@"
+	docs::parse "$@"
 fi
 script::depends_on shellcheck
 
 if [ $dotfiles ] && [ $dotfiles != "false" ]; then
-  files=$(dotfiles::list_bash_files)
+	files=$(dotfiles::list_bash_files)
 else
-  files=$(dotly::list_bash_files)
+	files=$(dotly::list_bash_files)
 fi
 
 echo $files | xargs shellcheck -s bash -S warning -e SC1090 -e SC2010 -e SC2154
