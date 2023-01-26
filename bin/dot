@@ -10,48 +10,48 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?    dot <context> <script> [<args>...]
 ##?    dot -h | --help
 if [ "$1" == "-h" ] || [ "$1" = "--help" ]; then
-  docs::parse "$@"
+	docs::parse "$@"
 fi
 
 fzf_prompt() {
-  local paths="$1"
+	local paths="$1"
 
-  script="$(
-    echo "$paths" |
-      xargs -I % sh -c 'echo "$(basename $(dirname %)) $(basename %)"' |
-      fzf \
-        --height 100% \
-        --preview '"$DOTLY_PATH/bin/dot" $(echo {} | cut -d" " -f 1) $(echo {} | cut -d" " -f 2) -h'
-  )"
+	script="$(
+		echo "$paths" |
+			xargs -I % sh -c 'echo "$(basename $(dirname %)) $(basename %)"' |
+			fzf \
+				--height 100% \
+				--preview '"$DOTLY_PATH/bin/dot" $(echo {} | cut -d" " -f 1) $(echo {} | cut -d" " -f 2) -h'
+	)"
 
-  printf "%s" "$script"
-  read -r args
+	printf "%s" "$script"
+	read -r args
 
-  "$DOTLY_PATH/bin/dot" $script $args
+	"$DOTLY_PATH/bin/dot" $script $args
 }
 
 script_exist() {
-  [[ -x "${1}/scripts/${2}/${3}" ]]
+	[[ -x "${1}/scripts/${2}/${3}" ]]
 }
 
 if args::has_no_args "$@"; then
-  fzf_prompt "$(dot::list_scripts_path)"
+	fzf_prompt "$(dot::list_scripts_path)"
 elif args::total_is 1 "$@"; then
-  fzf_prompt "$(dot::list_scripts_path | grep "/$1/")"
+	fzf_prompt "$(dot::list_scripts_path | grep "/$1/")"
 else
-  context="$1"
-  script="$2"
+	context="$1"
+	script="$2"
 
-  shift 2
+	shift 2
 
-  script_path=""
-  script_exist "$DOTFILES_PATH" "$context" "$script" && script_path="$DOTFILES_PATH"
-  script_exist "$DOTLY_PATH" "$context" "$script" && script_path="$DOTLY_PATH"
+	script_path=""
+	script_exist "$DOTFILES_PATH" "$context" "$script" && script_path="$DOTFILES_PATH"
+	script_exist "$DOTLY_PATH" "$context" "$script" && script_path="$DOTLY_PATH"
 
-  if [ -z "$script_path" ]; then
-    output::error "The script <$context / $script> doesn't exist"
-    exit 1
-  fi
+	if [ -z "$script_path" ]; then
+		output::error "The script <$context / $script> doesn't exist"
+		exit 1
+	fi
 
-  "${script_path}/scripts/${context}/${script}" "$@"
+	"${script_path}/scripts/${context}/${script}" "$@"
 fi

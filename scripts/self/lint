@@ -2,14 +2,26 @@
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 source "$DOTLY_PATH/scripts/core/dotly.sh"
+source "$DOTLY_PATH/scripts/core/dotfiles.sh"
 
 ##? Lint all dotly related bash files
 ##?
 ##? Usage:
 ##?    lint
-if [ "$1" == "-h" ] || [ "$1" = "--help" ]; then
-  docs::parse "$@"
+##?    lint [--fix] [--dotfiles]
+if [ "$1" == "-h" ] || [ "$1" = "--help" ] || [ "$1" = "--fix" ] || [ "$1" = "--dotfiles" ]; then
+	docs::parse "$@"
 fi
 script::depends_on shfmt
 
-dotly::list_bash_files | xargs shfmt -i 2 -d
+if [ $dotfiles ] && [ $dotfiles != "false" ]; then
+	files=$(dotfiles::list_bash_files)
+else
+	files=$(dotly::list_bash_files)
+fi
+
+if [ $fix ] && [ $fix != "false" ]; then
+	echo $files | xargs shfmt -i 0 -s -w
+else
+	echo $files | xargs shfmt -i 0 -s -d
+fi

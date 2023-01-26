@@ -1,9 +1,9 @@
 mas::update_all() {
-  outdated=$(mas outdated)
+	outdated=$(mas outdated)
 
-  if [ -z "$outdated" ]; then
-    output::answer "Already up-to-date"
-  else
-    mas upgrade
-  fi
+	if [ -z "$outdated" ]; then
+		output::answer "Already up-to-date"
+	else
+		mas upgrade
+	fi
 }

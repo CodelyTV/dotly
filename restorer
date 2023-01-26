@@ -23,9 +23,9 @@ continue=false
 
 # Arguments
 while [[ $# -gt 0 ]]; do
-  case "$1" in
-  --help | -h)
-    cat <<EOF
+	case "$1" in
+	--help | -h)
+		cat <<EOF
 Usage:
    install [-c | --continue]
 
@@ -36,19 +36,19 @@ Options:
                   dotfiles if they exists. Useful if previous restore fails.
 
 EOF
-    exit 0
-    ;;
-  --version | -v)
-    echo "$SCRIPT_NAME $SCRIPT_VERSION"
-    echo
-    exit 0
-    ;;
-  --continue | -c)
-    continue=true
-    ;;
-  *) ;;
+		exit 0
+		;;
+	--version | -v)
+		echo "$SCRIPT_NAME $SCRIPT_VERSION"
+		echo
+		exit 0
+		;;
+	--continue | -c)
+		continue=true
+		;;
+	*) ;;
 
-  esac
+	esac
 done
 
 DOTLY_LOG_FILE=${DOTLY_LOG_FILE:-$HOME/dotly.log}
@@ -61,8 +61,8 @@ purple='\033[0;35m'
 normal='\033[0m'
 
 _w() {
-  local -r text="${1:-}"
-  echo -e "$text"
+	local -r text="${1-}"
+	echo -e "$text"
 }
 _a() { _w " > $1"; }
 _e() { _a "${red}$1${normal}"; }
@@ -71,72 +71,72 @@ _q() { read -rp "🤔 $1 : " "$2"; }
 _pk() { read -rp "Press a key to ${1}... 👇" "REPLY"; }
 
 _log() {
-  log_name="$1"
-  current_date=$(date "+%Y-%m-%d %H:%M:%S")
+	log_name="$1"
+	current_date=$(date "+%Y-%m-%d %H:%M:%S")
 
-  touch "$DOTLY_LOG_FILE"
-  echo "----- $current_date - $log_name -----" >>"$DOTLY_LOG_FILE"
+	touch "$DOTLY_LOG_FILE"
+	echo "----- $current_date - $log_name -----" >>"$DOTLY_LOG_FILE"
 
-  while IFS= read -r log_message; do
-    echo "$log_message" >>"$DOTLY_LOG_FILE"
-  done
+	while IFS= read -r log_message; do
+		echo "$log_message" >>"$DOTLY_LOG_FILE"
+	done
 
-  echo "" >>"$DOTLY_LOG_FILE"
+	echo "" >>"$DOTLY_LOG_FILE"
 }
 
 current_timestamp() { date +%s; }
 
 backup_dotfiles_dir() {
-  if [ -d "${1:-}" ]; then
-    local -r backup_path="$1.$(current_timestamp).back"
+	if [ -d "${1-}" ]; then
+		local -r backup_path="$1.$(current_timestamp).back"
 
-    _e "The path '$1' already exist"
-    _s "Creating a backup in '$backup_path'"
+		_e "The path '$1' already exist"
+		_s "Creating a backup in '$backup_path'"
 
-    mv "$1" "$backup_path"
-  else
-    _a "Ok! dotfiles will be located in: ${purple}$DOTFILES_PATH${normal}"
-  fi
+		mv "$1" "$backup_path"
+	else
+		_a "Ok! dotfiles will be located in: ${purple}$DOTFILES_PATH${normal}"
+	fi
 
-  [[ -n "${1:-}" ]] && mkdir -p "$(dirname "${1:-}")"
+	[[ -n ${1-} ]] && mkdir -p "$(dirname "${1-}")"
 }
 
 command_exists() {
-  type "$1" >/dev/null 2>&1
+	type "$1" >/dev/null 2>&1
 }
 
 install_brew_osx() {
-  if [[ "$OSTYPE" =~ ^[darwin] ]] && ! command_exists brew; then
-    _w "Installing brew package manager for macOS 💾"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  fi
+	if [[ $OSTYPE =~ ^[darwin] ]] && ! command_exists brew; then
+		_w "Installing brew package manager for macOS 💾"
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	fi
 }
 
 package_install() {
-  install_brew_osx #Without this it will try to use apt
-  # Because apt that is not package manager exists on macOS
+	install_brew_osx #Without this it will try to use apt
+	# Because apt that is not package manager exists on macOS
 
-  if command_exists dnf; then
-    _a "Installing '${*}' using dnf"
-    sudo dnf -y install "${*}" >/dev/null 2>&1 | _log "Installing '${*}' using dnf"
-  elif command_exists yum; then
-    _a "Installing '${*}' using yum"
-    yes | sudo yum install "${*}" >/dev/null 2>&1 | _log "Installing '${*}' using yum"
-  elif command_exists brew; then
-    _a "Installing '${*}' using brew"
-    yes | brew install "${*}" 2>&1 | _log "Installign '${*}' using brew"
-  elif command_exists pacman; then
-    _a "Installing '${*}' using pacman"
-    sudo pacman -S --noconfirm "${*}" >/dev/null 2>&1 | _log "Installign '${*}' using pacman"
-  elif command_exists apt; then
-    _a "Installing '${*}' using apt"
-    sudo apt -y install "${*}" >/dev/null 2>&1 | _log "Installign '${*}' using apt"
-  else
-    _e "Could not install '${*}', no package provider found"
-    return 1
-  fi
+	if command_exists dnf; then
+		_a "Installing '${*}' using dnf"
+		sudo dnf -y install "${*}" >/dev/null 2>&1 | _log "Installing '${*}' using dnf"
+	elif command_exists yum; then
+		_a "Installing '${*}' using yum"
+		yes | sudo yum install "${*}" >/dev/null 2>&1 | _log "Installing '${*}' using yum"
+	elif command_exists brew; then
+		_a "Installing '${*}' using brew"
+		yes | brew install "${*}" 2>&1 | _log "Installign '${*}' using brew"
+	elif command_exists pacman; then
+		_a "Installing '${*}' using pacman"
+		sudo pacman -S --noconfirm "${*}" >/dev/null 2>&1 | _log "Installign '${*}' using pacman"
+	elif command_exists apt; then
+		_a "Installing '${*}' using apt"
+		sudo apt -y install "${*}" >/dev/null 2>&1 | _log "Installign '${*}' using apt"
+	else
+		_e "Could not install '${*}', no package provider found"
+		return 1
+	fi
 
-  return 0
+	return 0
 }
 
 _w "  ┌────────────────────────────────────┐"
@@ -150,33 +150,33 @@ _w
 # install CLT.
 
 _w "Checking if Git is installed"
-if [[ "$OSTYPE" =~ ^[darwin] ]] && ! ls /Library/Developer/CommandLineTools >/dev/null 2>&1; then
-  # In macOS if we do not have CLT then we do not have git. This could be wrong
-  # but we will want brew later and if we do not have CLT we can not have brew
-  #
-  # Brew manages the installation of brew so we will intall Brew
-  _w "Command Line Tools could not be detected"
-  install_brew_osx
-  _w
+if [[ $OSTYPE =~ ^[darwin] ]] && ! ls /Library/Developer/CommandLineTools >/dev/null 2>&1; then
+	# In macOS if we do not have CLT then we do not have git. This could be wrong
+	# but we will want brew later and if we do not have CLT we can not have brew
+	#
+	# Brew manages the installation of brew so we will intall Brew
+	_w "Command Line Tools could not be detected"
+	install_brew_osx
+	_w
 fi
 
 if ! command_exists git; then
-  # Other OS checking if git exists...
-  if ! package_install git; then
-    _e "Could not continue without git"
-    exit 1
-  fi
+	# Other OS checking if git exists...
+	if ! package_install git; then
+		_e "Could not continue without git"
+		exit 1
+	fi
 fi
 _s "Git command exists on this system"
 _w
 
 # Check if curl command exists and try to install it if not
 if ! command_exists curl; then
-  # Other OS checking if git exists...
-  if ! package_install curl; then
-    _e "Could not continue without git"
-    exit 1
-  fi
+	# Other OS checking if git exists...
+	if ! package_install curl; then
+		_e "Could not continue without git"
+		exit 1
+	fi
 fi
 _s "Curl command exists on this system"
 
@@ -189,114 +189,114 @@ dotly_inner_path="modules/dotly"
 export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 
 # Backup if currently there are any dotfiles and prepare parent directory
-if [[ -d "$DOTFILES_PATH" ]] && ! ${continue:-}; then
-  _q "🗂 Your DOTFILES_PATH is not empty. Do you want to do a backup first? [Y/n]" "PROMPT_REPLY"
-  [[ "${PROMPT_REPLY:-Y}" =~ ^[Yy] ]] && create_dotfiles_dir "$DOTFILES_PATH"
+if [[ -d $DOTFILES_PATH ]] && ! ${continue-}; then
+	_q "🗂 Your DOTFILES_PATH is not empty. Do you want to do a backup first? [Y/n]" "PROMPT_REPLY"
+	[[ ${PROMPT_REPLY:-Y} =~ ^[Yy] ]] && create_dotfiles_dir "$DOTFILES_PATH"
 fi
 
-if [[ ! -d "$DOTFILES_PATH" ]]; then
-  # Menu to select from where you want to restore your files
-  PS3="From where you want to install your dotfiles: "
-  options=("GitHub" "Keybase" "Other Git alternative" "Quit")
-  GIT_URL=""
-  select opt in "${options[@]}"; do
-    case $opt in
-    "GitHub")
-      _q "👤 Which is your github user? [$USER]" "GITHUB_USER"
-      GITHUB_USER="${GITHUB_USER:-$USER}"
+if [[ ! -d $DOTFILES_PATH ]]; then
+	# Menu to select from where you want to restore your files
+	PS3="From where you want to install your dotfiles: "
+	options=("GitHub" "Keybase" "Other Git alternative" "Quit")
+	GIT_URL=""
+	select opt in "${options[@]}"; do
+		case $opt in
+		"GitHub")
+			_q "👤 Which is your github user? [$USER]" "GITHUB_USER"
+			GITHUB_USER="${GITHUB_USER:-$USER}"
 
-      _q "📦 Which is your github repository? [dotfiles]" "GITHUB_REPOSITORY_NAME"
-      GITHUB_REPOSITORY_NAME="${GITHUB_REPOSITORY_NAME:-dotfiles}"
+			_q "📦 Which is your github repository? [dotfiles]" "GITHUB_REPOSITORY_NAME"
+			GITHUB_REPOSITORY_NAME="${GITHUB_REPOSITORY_NAME:-dotfiles}"
 
-      GIT_URL="git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
-      GIT_URL_MIRROR="https://github.com/$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
-      _w "  Remember that if your dotfiles repository is private you"
-      _w "need to generate or restore the ssh key and added to your"
-      _w "github account in:"
-      _w "  - Github > Settings > SSH and GPG Keys > Add new SSH key"
-      _w
-      _pk "continue when ready"
-      break
-      ;;
-    "Keybase")
-      _w "Checking if keybase is installed"
+			GIT_URL="git@github.com:$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
+			GIT_URL_MIRROR="https://github.com/$GITHUB_USER/$GITHUB_REPOSITORY_NAME.git"
+			_w "  Remember that if your dotfiles repository is private you"
+			_w "need to generate or restore the ssh key and added to your"
+			_w "github account in:"
+			_w "  - Github > Settings > SSH and GPG Keys > Add new SSH key"
+			_w
+			_pk "continue when ready"
+			break
+			;;
+		"Keybase")
+			_w "Checking if keybase is installed"
 
-      if ! ls /Applications/Keybase.app >/dev/null 2>&1; then
-        _w "Keybase has not been detected. We will try to install it with the package manager."
-        _w "If the installation finish the script re run it to finish the install"
+			if ! ls /Applications/Keybase.app >/dev/null 2>&1; then
+				_w "Keybase has not been detected. We will try to install it with the package manager."
+				_w "If the installation finish the script re run it to finish the install"
 
-        package_install keybase || { _e "Keybase could not be installed, try by yourself, do a login and re run this script." && exit 1; }
-        _s "Keybase is installed"
-        _pk "continue"
-      fi
+				package_install keybase || { _e "Keybase could not be installed, try by yourself, do a login and re run this script." && exit 1; }
+				_s "Keybase is installed"
+				_pk "continue"
+			fi
 
-      _q "👤 Which is your Keybase user? [$USER]" "KEYBASE_USER"
-      KEYBASE_USER="${KEYBASE_USER:-$USER}"
+			_q "👤 Which is your Keybase user? [$USER]" "KEYBASE_USER"
+			KEYBASE_USER="${KEYBASE_USER:-$USER}"
 
-      KEYBASE_REPOSITORY_NAME=""
-      _q "📦 Which is your Keybase repository name? [dotfiles]" "KEYBASE_REPOSITORY_NAME"
-      KEYBASE_REPOSITORY_NAME="${KEYBASE_REPOSITORY_NAME:-"dotfiles"}"
+			KEYBASE_REPOSITORY_NAME=""
+			_q "📦 Which is your Keybase repository name? [dotfiles]" "KEYBASE_REPOSITORY_NAME"
+			KEYBASE_REPOSITORY_NAME="${KEYBASE_REPOSITORY_NAME:-"dotfiles"}"
 
-      GIT_URL="keybase://private/${KEYBASE_USER}/${KEYBASE_REPOSITORY_NAME}"
-      _w
-      _w "  Remember that you need to start Keybase for the first time and login."
-      _w "  If you don't do this firstly, the installation will fail"
-      _w
-      _pk "continue when ready"
-      _w
+			GIT_URL="keybase://private/${KEYBASE_USER}/${KEYBASE_REPOSITORY_NAME}"
+			_w
+			_w "  Remember that you need to start Keybase for the first time and login."
+			_w "  If you don't do this firstly, the installation will fail"
+			_w
+			_pk "continue when ready"
+			_w
 
-      break
-      ;;
-    "Other Git alternative")
-      while [ -z "$GIT_URL" ]; do
-        _q "👤 Which is your git repo url?" "GIT_URL"
-      done
-      break
-      ;;
-    "Quit")
-      _w "Bye!"
-      exit 0
-      ;;
-    *)
-      echo "invalid option $REPLY"
-      ;;
-    esac
-  done
+			break
+			;;
+		"Other Git alternative")
+			while [ -z "$GIT_URL" ]; do
+				_q "👤 Which is your git repo url?" "GIT_URL"
+			done
+			break
+			;;
+		"Quit")
+			_w "Bye!"
+			exit 0
+			;;
+		*)
+			echo "invalid option $REPLY"
+			;;
+		esac
+	done
 
-  # Recovering your files
-  _w "Installing your dotfiles from $opt"
-  _a "Attemping: git clone ${GIT_URL} ${DOTFILES_PATH}"
-  is_cloned=false
-  git clone "${GIT_URL}" "${DOTFILES_PATH}" 2>&1 | _log "Cloning from $GIT_URL" && is_cloned=true
+	# Recovering your files
+	_w "Installing your dotfiles from $opt"
+	_a "Attemping: git clone ${GIT_URL} ${DOTFILES_PATH}"
+	is_cloned=false
+	git clone "${GIT_URL}" "${DOTFILES_PATH}" 2>&1 | _log "Cloning from $GIT_URL" && is_cloned=true
 
-  # This because maybe you do not have yet your ssh-keys because you did not download
-  # your dotfiles. And SSH URL for repository would be the default method using a
-  # repository that you can write.
-  if ! $is_cloned && [[ ! -d "$DOTFILES_PATH" ]] && [[ "$opt" == "GitHub" ]]; then
-    _a "Attemping: git clone ${GIT_URL_MIRROR} ${DOTFILES_PATH}"
-    git clone "$GIT_URL_MIRROR" "$DOTFILES_PATH" 2>&1 | _log "Cloning from $GIT_URL_MIRROR" && is_cloned=true
+	# This because maybe you do not have yet your ssh-keys because you did not download
+	# your dotfiles. And SSH URL for repository would be the default method using a
+	# repository that you can write.
+	if ! $is_cloned && [[ ! -d $DOTFILES_PATH ]] && [[ $opt == "GitHub" ]]; then
+		_a "Attemping: git clone ${GIT_URL_MIRROR} ${DOTFILES_PATH}"
+		git clone "$GIT_URL_MIRROR" "$DOTFILES_PATH" 2>&1 | _log "Cloning from $GIT_URL_MIRROR" && is_cloned=true
 
-    if $is_cloned; then
-      _s "Dotfiles restored."
-      _w
-      _w "Your dotfiles could not be downloaded using ssh. Were downloaded using https."
-      _w
-      _q "Do you want to setup remote SSH origin url? [Y/n]" "SSH_REPLY"
-      [[ "${SSH_REPLY:-Y}" =~ ^[Yy] ]] &&
-        cd "${DOTFILES_PATH}" &&
-        git remote set-url origin "${GIT_URL}" 2>&1 &&
-        _s "SSH Remote was set."
-    else
-      _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
-      exit 1
-    fi
-  elif ! $is_cloned || [[ ! -d "$DOTFILES_PATH" ]]; then
-    _e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
-    exit 1
-  fi
+		if $is_cloned; then
+			_s "Dotfiles restored."
+			_w
+			_w "Your dotfiles could not be downloaded using ssh. Were downloaded using https."
+			_w
+			_q "Do you want to setup remote SSH origin url? [Y/n]" "SSH_REPLY"
+			[[ ${SSH_REPLY:-Y} =~ ^[Yy] ]] &&
+				cd "${DOTFILES_PATH}" &&
+				git remote set-url origin "${GIT_URL}" 2>&1 &&
+				_s "SSH Remote was set."
+		else
+			_e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
+			exit 1
+		fi
+	elif ! $is_cloned || [[ ! -d $DOTFILES_PATH ]]; then
+		_e "Dotfiles could not be cloned. See more details: \`tail -f $HOME/dotly.log\`"
+		exit 1
+	fi
 
-  _s "Dotfiles cloned successfully."
-  _w
+	_s "Dotfiles cloned successfully."
+	_w
 fi
 
 # Update DOTLY submodule
@@ -305,10 +305,10 @@ cd "${DOTFILES_PATH}"
 # user has added any other submodules that are privated and maybe the user
 # needs to configure something to access those repositories
 git submodule update --init --recursive modules/dotly 2>&1 | _log "Downloading dotly and submodules" || {
-  _e "Downloading dotly failed. See for more details:"
-  _e "  tail -f $HOME/dotly.log"
-  _w
-  exit 1
+	_e "Downloading dotly failed. See for more details:"
+	_e "  tail -f $HOME/dotly.log"
+	_w
+	exit 1
 }
 
 _w "Installing dotly default tools"
@@ -317,47 +317,47 @@ _w "Please be patient this could take some time...🙏"
 PATH="$PATH:/usr/local/bin:$HOME/.cargo/bin"
 sudo -v
 "$DOTLY_PATH/bin/dot" self install || {
-  _e "Dotly Could not be installed but your dotfiles are restored. Use:"
-  _e "  tail -f $HOME/dotly.log"
-  _e "To know what happened and where is the point of failure"
-  _w
+	_e "Dotly Could not be installed but your dotfiles are restored. Use:"
+	_e "  tail -f $HOME/dotly.log"
+	_e "To know what happened and where is the point of failure"
+	_w
 }
 _a "🎉 dotfiles restored! 🎉"
 
 # Installing packages
 _q "📦 Do you want to import previous installed packages? [Y/n]" "USER_IMPORT_PACKAGES"
-if [[ "${USER_IMPORT_PACKAGES:-Y}" =~ ^[Yy] ]]; then
-  _w "Importing your packages"
-  _w "This can take a very long time, be patient...🙏"
-  {
-    "$DOTLY_PATH/bin/dot" package import >/dev/null 2>&1 | _log "Importing user packages" &&
-      _a "Packages imported 👏" &&
-      _w
-  } || {
-    _e "📦 Packages import fail"
-    _w
-  }
+if [[ ${USER_IMPORT_PACKAGES:-Y} =~ ^[Yy] ]]; then
+	_w "Importing your packages"
+	_w "This can take a very long time, be patient...🙏"
+	{
+		"$DOTLY_PATH/bin/dot" package import >/dev/null 2>&1 | _log "Importing user packages" &&
+			_a "Packages imported 👏" &&
+			_w
+	} || {
+		_e "📦 Packages import fail"
+		_w
+	}
 fi
 
 # Importing defaults on macOS
-if [[ "$OSTYPE" =~ ^[darwin] ]]; then
-  _w
-  _w "If you want to import your previous macOS settings, if would be done from the"
-  _w "default directory $DOTFILES_PATH/os/mac/settings, if you want to restore it"
-  _w "from another path, do it manually executing 'dot mac defaults import /path/to'"
-  _w
-  _w "IMPORTANT! This overwrite all your current configuration if you answer with 'y'"
-  _w
-  _q "⚙️ Do you want to import stored macOS configuration? [y/N]" "USER_OSX_SETTINGS"
-  {
-    [[ "${USER_OSX_SETTINGS:-N}" =~ ^[Yy] ]] &&
-      "$DOTLY_PATH/bin/dot" mac defaults import >/dev/null 2>&1 | _log "Importing macOS user defaults" &&
-      _w "⚙️ Mac defaults imported 🤙" &&
-      _w
-  } || {
-    _e "⚙️ Mac defaults could not be imported"
-    _w
-  }
+if [[ $OSTYPE =~ ^[darwin] ]]; then
+	_w
+	_w "If you want to import your previous macOS settings, if would be done from the"
+	_w "default directory $DOTFILES_PATH/os/mac/settings, if you want to restore it"
+	_w "from another path, do it manually executing 'dot mac defaults import /path/to'"
+	_w
+	_w "IMPORTANT! This overwrite all your current configuration if you answer with 'y'"
+	_w
+	_q "⚙️ Do you want to import stored macOS configuration? [y/N]" "USER_OSX_SETTINGS"
+	{
+		[[ ${USER_OSX_SETTINGS:-N} =~ ^[Yy] ]] &&
+			"$DOTLY_PATH/bin/dot" mac defaults import >/dev/null 2>&1 | _log "Importing macOS user defaults" &&
+			_w "⚙️ Mac defaults imported 🤙" &&
+			_w
+	} || {
+		_e "⚙️ Mac defaults could not be imported"
+		_w
+	}
 fi
 
 _a "🎉 dotfiles restored! 🎉"

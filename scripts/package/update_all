@@ -4,6 +4,7 @@ set -uo pipefail
 
 source "$DOTLY_PATH/scripts/core/_main.sh"
 source "$DOTLY_PATH/scripts/package/src/package_managers/brew.sh"
+source "$DOTLY_PATH/scripts/package/src/package_managers/cargo.sh"
 source "$DOTLY_PATH/scripts/package/src/package_managers/composer.sh"
 source "$DOTLY_PATH/scripts/package/src/package_managers/gem.sh"
 source "$DOTLY_PATH/scripts/package/src/package_managers/mas.sh"
@@ -25,13 +26,13 @@ platform::command_exists pip3 && output::h2 '🐍 pip' && pip::update_all
 platform::command_exists composer && output::h2 '🐘 Composer' && composer::update_all
 platform::command_exists gem && output::h2 '♦️  gem' && gem::update_all
 platform::command_exists npm && output::h2 '🌈 npm' && npm::update_all
-platform::command_exists cargo && output::h2 '📦 cargo' && cargo install --list | grep -E '^[a-z0-9_-]+ v[0-9.]+:$' | cut -f1 -d' ' | xargs -n1 cargo install
+platform::command_exists cargo && output::h2 '📦 cargo' && cargo::update_all
 
-platform::command_exists rustup && output::h2 '☢️ Rust compiler' && rustup update
-platform::command_exists deno && output::h2 '🦕 deno' && deno upgrade
-platform::command_exists tldr && output::h2 '📜 tldr database' && tldr --update
+platform::command_exists tldr && output::h2 '📜 tldr database' && tldr --update >/dev/null 2>&1 && output::answer "Database updated"
 
-output::h2 "👽 Zim Framework" && zsh "$ZIM_HOME/zimfw.zsh" upgrade 2>&1 | log::file "Upgrading Zim" && zsh "$ZIM_HOME/zimfw.zsh" update 2>&1 | log::file "Updating Zim"
+output::h2 "👽 Zim Framework" && zsh "$ZIM_HOME/zimfw.zsh" upgrade 2>&1 | log::file "Upgrading Zim" && zsh "$ZIM_HOME/zimfw.zsh" update 2>&1 | log::file "Updating Zim" && output::answer "Done"
+
+output::h2 "🌚 dotly" && dot self update >/dev/null 2>&1 && output::answer "Done"
 
 output::empty_line
-output::solution '👌 All your packages have been successfully updated'
+output::write '👌 All your packages have been successfully updated'

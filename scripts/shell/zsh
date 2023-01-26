@@ -13,37 +13,37 @@ docs::parse "$@"
 
 case $1 in
 "optimize")
-  asl_conf=$(sed 's/notice] store/critical] store/g' /etc/asl.conf)
-  sudo sh -c "echo '$asl_conf' > /etc/asl.conf"
-  echo "ASL only storing critical files!"
+	asl_conf=$(sed 's/notice] store/critical] store/g' /etc/asl.conf)
+	sudo sh -c "echo '$asl_conf' > /etc/asl.conf"
+	echo "ASL only storing critical files!"
 
-  zsh "$ZIM_HOME/zimfw.zsh" clean-compiled && zsh "$ZIM_HOME/zimfw.zsh" compile
+	zsh "$ZIM_HOME/zimfw.zsh" clean-compiled && zsh "$ZIM_HOME/zimfw.zsh" compile
 
-  "$DOTLY_PATH/bin/dot" shell zsh reload_completions
-  ;;
+	"$DOTLY_PATH/bin/dot" shell zsh reload_completions
+	;;
 "test_performance")
-  script::depends_on hyperfine
+	script::depends_on hyperfine
 
-  hyperfine '/bin/zsh -i -c exit' '/opt/homebrew/bin/zsh -i -c exit' --warmup 1
+	hyperfine '/bin/zsh -i -c exit' '/opt/homebrew/bin/zsh -i -c exit' --warmup 1
 
-  echo ""
-  echo "ZSH INFO:"
-  echo "  🍎 macOS ZSH 📂 /bin/zsh              - $(/bin/zsh --version)"
-  echo "  🍺 Brew ZSH  📂 /opt/homebrew/bin/zsh - $(/opt/homebrew/bin/zsh --version)"
+	echo ""
+	echo "ZSH INFO:"
+	echo "  🍎 macOS ZSH 📂 /bin/zsh              - $(/bin/zsh --version)"
+	echo "  🍺 Brew ZSH  📂 /opt/homebrew/bin/zsh - $(/opt/homebrew/bin/zsh --version)"
 
-  echo ""
-  echo "✨ Currently using $(command -v zsh) ✨"
-  ;;
+	echo ""
+	echo "✨ Currently using $(command -v zsh) ✨"
+	;;
 "clean_cache")
-  find "$HOME" -name '*.zwc' -delete
-  ;;
+	find "$HOME" -name '*.zwc' -delete
+	;;
 "reload_completions")
-  zsh -i -c "autoload -U compaudit && autoload -Uz compinit && compinit"
+	zsh -i -c "autoload -U compaudit && autoload -Uz compinit && compinit"
 
-  output::empty_line
-  output::answer 'Now restart your terminal'
-  ;;
+	output::empty_line
+	output::answer 'Now restart your terminal'
+	;;
 *)
-  exit 1
-  ;;
+	exit 1
+	;;
 esac
