@@ -12,6 +12,7 @@ PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/requirements.txt"
 NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/global_modules.txt"
 VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta_dependencies.txt"
 WINGET_DUMP_FILE_PATH="$DOTFILES_PATH/os/windows/winget.output"
+PACMAN_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/pacman/packages.txt"
 
 package::brew_dump() {
 	if platform::is_macos; then
@@ -98,4 +99,15 @@ package::winget_dump() {
 
 package::winget_import() {
 	winget.exe import -i "$WINGET_DUMP_FILE_PATH"
+}
+package::pacman_dump() {
+	mkdir -p "$DOTFILES_PATH/os/linux/pacman"
+
+	pacman -Qm | awk '{print $1}' >"$PACMAN_DUMP_FILE_PATH"
+}
+
+package::pacman_import() {
+	if [ -f "$PACMAN_DUMP_FILE_PATH" ]; then
+		yay -s "$(cat $PACMAN_DUMP_FILE_PATH)"
+	fi
 }
