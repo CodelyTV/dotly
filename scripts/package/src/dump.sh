@@ -103,12 +103,11 @@ package::winget_import() {
 package::pacman_dump() {
 	mkdir -p "$DOTFILES_PATH/os/linux/pacman"
 
-	pacman -Qm | awk '{print $1}' > "$PACMAN_DUMP_FILE_PATH"
+	pacman -Qm | awk '{print $1}' >"$PACMAN_DUMP_FILE_PATH"
 }
 
 package::pacman_import() {
-	if [ -f "$PACMAN_DUMP_FILE_PATH"]; then
-		yay -s $(cat $PACMAN_DUMP_FILE_PATH)
+	if [ -f "$PACMAN_DUMP_FILE_PATH" ]; then
+		yay -s "$(cat $PACMAN_DUMP_FILE_PATH)"
 	fi
 }
-
