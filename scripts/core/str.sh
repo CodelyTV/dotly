@@ -1,10 +1,10 @@
 str::split() {
-  local -r text=$1
-  local -r splitter=$2
+	local -r text=$1
+	local -r splitter=$2
 
-  echo "$text" | tr "$splitter" "\n"
+	echo "$text" | tr "$splitter" "\n"
 }
 
 str::contains() {
-  [[ $2 == *$1* ]]
+	[[ $2 == *$1* ]]
 }

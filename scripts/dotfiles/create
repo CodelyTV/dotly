@@ -12,17 +12,17 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 docs::parse "$@"
 
 dotfiles::apply_templating() {
-  sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/bin/sdot"
-  sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/bash/.bashrc"
-  sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/zsh/.zshenv"
+	sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/bin/sdot"
+	sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/bash/.bashrc"
+	sed -i -e "s|XXX_DOTFILES_PATH_XXX|$DOTFILES_PATH|g" "$DOTFILES_PATH/shell/zsh/.zshenv"
 }
 
 if [ ! -d "$DOTFILES_PATH/shell" ]; then
-  cp -r "$DOTLY_PATH/dotfiles_template/"* "$DOTFILES_PATH/"
+	cp -r "$DOTLY_PATH/dotfiles_template/"* "$DOTFILES_PATH/"
 
-  dotfiles::apply_templating
+	dotfiles::apply_templating
 
-  log::success "Done!"
+	log::success "Done!"
 else
-  log::note "dotfiles already created, ignoring"
+	log::note "dotfiles already created, ignoring"
 fi

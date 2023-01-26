@@ -11,9 +11,9 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 docs::parse "$@"
 
 cd "$DOTLY_PATH"
-git discard >/dev/null 2>&1
-git checkout main >/dev/null 2>&1
 git pull >/dev/null 2>&1
 git submodule update --init --recursive >/dev/null 2>&1
+
+dot shell zsh reload_completions
 
 output::answer '✅ dotly updated to the latest version'

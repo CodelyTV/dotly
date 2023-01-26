@@ -1,3 +1,3 @@
 dnf::install() {
-  sudo dnf -y install "$@"
+	sudo dnf -y install "$@"
 }

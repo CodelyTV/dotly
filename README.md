@@ -110,7 +110,7 @@ dotly facilites you to version your apps config files. Once you've found the con
 
 ### 🎨 Customization
 
-dotly includes am opinionated, minimal, very fast and powerful theme by default. You can configure it using the
+dotly includes an opinionated, minimal, very fast and powerful theme by default. You can configure it using the
 following parameters in your `shell/exports.sh`:
 
 ```bash

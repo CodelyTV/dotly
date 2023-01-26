@@ -1,3 +1,3 @@
 apt::install() {
-  sudo apt-get -y install "$@"
+	sudo apt-get -y install "$@"
 }
