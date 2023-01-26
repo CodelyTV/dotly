@@ -4,7 +4,7 @@ bold_blue='\033[1m\033[34m'
 normal='\033[0m'
 
 _output::parse_code() {
-	local -r text="${1:-}"
+	local -r text="${1-}"
 
 	with_code_parsed=$(echo "$text" | awk "{ORS=(NR+1)%2==0?\"${green}\":RS}1" RS="\`" | awk "{ORS=NR%1==0?\"${normal}\":RS}1" RS="\`" | tr -d '\n')
 
@@ -12,7 +12,7 @@ _output::parse_code() {
 }
 
 output::write() {
-	local -r text="${1:-}"
+	local -r text="${1-}"
 
 	with_code_parsed=$(_output::parse_code "$text")
 

@@ -61,7 +61,7 @@ purple='\033[0;35m'
 normal='\033[0m'
 
 _w() {
-	local -r text="${1:-}"
+	local -r text="${1-}"
 	echo -e "$text"
 }
 _a() { _w " > $1"; }
@@ -87,7 +87,7 @@ _log() {
 current_timestamp() { date +%s; }
 
 backup_dotfiles_dir() {
-	if [ -d "${1:-}" ]; then
+	if [ -d "${1-}" ]; then
 		local -r backup_path="$1.$(current_timestamp).back"
 
 		_e "The path '$1' already exist"
@@ -98,7 +98,7 @@ backup_dotfiles_dir() {
 		_a "Ok! dotfiles will be located in: ${purple}$DOTFILES_PATH${normal}"
 	fi
 
-	[[ -n ${1:-} ]] && mkdir -p "$(dirname "${1:-}")"
+	[[ -n ${1-} ]] && mkdir -p "$(dirname "${1-}")"
 }
 
 command_exists() {
@@ -189,7 +189,7 @@ dotly_inner_path="modules/dotly"
 export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 
 # Backup if currently there are any dotfiles and prepare parent directory
-if [[ -d $DOTFILES_PATH ]] && ! ${continue:-}; then
+if [[ -d $DOTFILES_PATH ]] && ! ${continue-}; then
 	_q "🗂 Your DOTFILES_PATH is not empty. Do you want to do a backup first? [Y/n]" "PROMPT_REPLY"
 	[[ ${PROMPT_REPLY:-Y} =~ ^[Yy] ]] && create_dotfiles_dir "$DOTFILES_PATH"
 fi

@@ -19,7 +19,7 @@ purple='\033[0;35m'
 normal='\033[0m'
 
 _w() {
-	local -r text="${1:-}"
+	local -r text="${1-}"
 	echo -e "$text"
 }
 _a() { _w " > $1"; }
