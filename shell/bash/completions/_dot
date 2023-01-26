@@ -3,15 +3,15 @@
 source "$DOTLY_PATH/scripts/core/_main.sh"
 
 _dot() {
-  local suggestions=""
+	local suggestions=""
 
-  case "${#COMP_WORDS[@]}" in
-  2) suggestions=$(compgen -W "$(dot::list_contexts | tr '\n' ' ')") ;;
-  3) suggestions="$(dot::list_context_scripts ${COMP_WORDS[1]})" ;;
-  *) suggestions="" ;;
-  esac
+	case "${#COMP_WORDS[@]}" in
+	2) suggestions=$(compgen -W "$(dot::list_contexts | tr '\n' ' ')") ;;
+	3) suggestions="$(dot::list_context_scripts ${COMP_WORDS[1]})" ;;
+	*) suggestions="" ;;
+	esac
 
-  mapfile -t COMPREPLY < <(compgen -W "$suggestions" "${COMP_WORDS[$COMP_CWORD]}")
+	mapfile -t COMPREPLY < <(compgen -W "$suggestions" "${COMP_WORDS[$COMP_CWORD]}")
 }
 
 complete -F _dot dot

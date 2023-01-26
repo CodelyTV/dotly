@@ -15,12 +15,12 @@ NC='\033[0m' # No color
 docs::parse "$@"
 
 if [[ -z $branch_name ]]; then
-  branch_name="main"
+	branch_name="main"
 fi
 
 if (! git::branch_exists $branch_name); then
-  git diff --name-only $branch_name
+	git diff --name-only $branch_name
 else
-  echo -e "${NC}Branch ${GREEN}$branch_name${NC} does not exist${NC}!"
-  exit 1
+	echo -e "${NC}Branch ${GREEN}$branch_name${NC} does not exist${NC}!"
+	exit 1
 fi

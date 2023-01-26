@@ -16,30 +16,30 @@ docs::parse "$@"
 
 case $1 in
 "view_changed")
-  script::depends_on git-delta
-  current_defaults_path=$(mktemp)
-  defaults read >"$current_defaults_path"
+	script::depends_on git-delta
+	current_defaults_path=$(mktemp)
+	defaults read >"$current_defaults_path"
 
-  git diff -w --no-index "$DOTLY_PATH/scripts/mac/utils/macos-11.0-defaults" "$current_defaults_path" | delta --side-by-side
-  ;;
+	git diff -w --no-index "$DOTLY_PATH/scripts/mac/utils/macos-11.0-defaults" "$current_defaults_path" | delta --side-by-side
+	;;
 "export")
-  export_plist_path="${DOTLY_SETTINGS_PATH}"
-  [[ -d $export_plist_path ]] || mkdir -p "$export_plist_path"
-  defaults domains | tr ", " "\n" | sed -r '/^\s*$/d' | xargs -I_ defaults export _ "$export_plist_path/_.plist"
-  ;;
+	export_plist_path="${DOTLY_SETTINGS_PATH}"
+	[[ -d $export_plist_path ]] || mkdir -p "$export_plist_path"
+	defaults domains | tr ", " "\n" | sed -r '/^\s*$/d' | xargs -I_ defaults export _ "$export_plist_path/_.plist"
+	;;
 "import")
-  import_plist_path="${DOTLY_SETTINGS_PATH}"
+	import_plist_path="${DOTLY_SETTINGS_PATH}"
 
-  killall System\ Preferences
-  sudo -v
+	killall System\ Preferences
+	sudo -v
 
-  if [[ -d $import_plist_path ]]; then
-    for plist in "${import_plist_path}"/*.plist; do
-      defaults import "$(basename ${plist%.*})" "$plist"
-    done
-  fi
-  ;;
+	if [[ -d $import_plist_path ]]; then
+		for plist in "${import_plist_path}"/*.plist; do
+			defaults import "$(basename ${plist%.*})" "$plist"
+		done
+	fi
+	;;
 *)
-  exit 1
-  ;;
+	exit 1
+	;;
 esac

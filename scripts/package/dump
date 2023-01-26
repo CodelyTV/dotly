@@ -24,9 +24,9 @@ platform::command_exists snap && package::snap_dump && output::answer "Snap apps
 platform::command_exists pip3 && package::python_dump && output::answer "Python apps dumped on $PYTHON_DUMP_FILE_PATH"
 
 if platform::command_exists volta; then
-  package::volta_dump && output::answer "Volta apps dumped on $VOLTA_DUMP_FILE_PATH"
+	package::volta_dump && output::answer "Volta apps dumped on $VOLTA_DUMP_FILE_PATH"
 elif platform::command_exists npm; then
-  package::npm_dump && output::answer "NPM apps dumped on $NPM_DUMP_FILE_PATH"
+	package::npm_dump && output::answer "NPM apps dumped on $NPM_DUMP_FILE_PATH"
 fi
 
 platform::command_exists winget.exe && package::winget_dump && output::answer "Windows apps dumped on $WINGET_DUMP_FILE_PATH"

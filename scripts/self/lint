@@ -10,18 +10,18 @@ source "$DOTLY_PATH/scripts/core/dotfiles.sh"
 ##?    lint
 ##?    lint [--fix] [--dotfiles]
 if [ "$1" == "-h" ] || [ "$1" = "--help" ] || [ "$1" = "--fix" ] || [ "$1" = "--dotfiles" ]; then
-  docs::parse "$@"
+	docs::parse "$@"
 fi
 script::depends_on shfmt
 
 if [ $dotfiles ] && [ $dotfiles != "false" ]; then
-  files=$(dotfiles::list_bash_files)
+	files=$(dotfiles::list_bash_files)
 else
-  files=$(dotly::list_bash_files)
+	files=$(dotly::list_bash_files)
 fi
 
 if [ $fix ] && [ $fix != "false" ]; then
-  echo $files | xargs shfmt -i 2 -s -w
+	echo $files | xargs shfmt -i 0 -s -w
 else
-  echo $files | xargs shfmt -i 2 -s -d
+	echo $files | xargs shfmt -i 0 -s -d
 fi
