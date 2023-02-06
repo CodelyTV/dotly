@@ -28,7 +28,7 @@ if platform::command_exists volta; then
 elif platform::command_exists npm; then
 	package::npm_dump && output::answer "NPM apps dumped on $NPM_DUMP_FILE_PATH"
 fi
-
+platform::command_exists pacman && package::pacman_dump && output::answer "Pacman apps dumped on $PACMAN_DUMP_FILE_PATH"
 platform::command_exists winget.exe && package::winget_dump && output::answer "Windows apps dumped on $WINGET_DUMP_FILE_PATH"
 
 output::write 'All packages dumped'
