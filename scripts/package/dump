@@ -6,6 +6,7 @@ source "$DOTLY_PATH/scripts/package/src/dump.sh"
 ##? Dump all installed packages from:
 ##?  * Brew
 ##?  * Apt
+##?  * VSCode
 ##?  * Snap
 ##?  * Python
 ##?  * Volta.sh or NPM
@@ -22,6 +23,8 @@ platform::command_exists apt-mark && package::apt_dump && output::answer "Apt ap
 platform::command_exists snap && package::snap_dump && output::answer "Snap apps dumped on $SNAP_DUMP_FILE_PATH"
 
 platform::command_exists pip3 && package::python_dump && output::answer "Python apps dumped on $PYTHON_DUMP_FILE_PATH"
+
+platform::command_exists code && package::code_dump && output::answer "VSCode extensions dumped on $CODE_DUMP_FILE_PATH"
 
 if platform::command_exists volta; then
 	package::volta_dump && output::answer "Volta apps dumped on $VOLTA_DUMP_FILE_PATH"

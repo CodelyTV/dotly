@@ -7,12 +7,13 @@ elif platform::is_linux; then
 fi
 
 APT_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/apt/packages.txt"
-SNAP_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/snap/packages.txt"
-PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/requirements.txt"
+CODE_DUMP_FILE_PATH="$DOTFILES_PATH/editors/code/extensions.txt"
 NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/global_modules.txt"
+PACMAN_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/pacman/packages.txt"
+PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/requirements.txt"
+SNAP_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/snap/packages.txt"
 VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta_dependencies.txt"
 WINGET_DUMP_FILE_PATH="$DOTFILES_PATH/os/windows/winget.output"
-PACMAN_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/pacman/packages.txt"
 
 package::brew_dump() {
 	if platform::is_macos; then
@@ -41,6 +42,18 @@ package::apt_import() {
 	if [ -f "$APT_DUMP_FILE_PATH" ]; then
 		xargs sudo apt-get install -y <"$APT_DUMP_FILE_PATH"
 	fi
+}
+
+package::code_dump() {
+	mkdir -p "$DOTFILES_PATH/editors/code"
+
+	code --list-extensions >"$CODE_DUMP_FILE_PATH"
+}
+
+package::code_import() {
+	mkdir -p "$DOTFILES_PATH/editors/code"
+
+	xargs -I_ code --install-extension _ --force <"$CODE_DUMP_FILE_PATH"
 }
 
 package::snap_dump() {

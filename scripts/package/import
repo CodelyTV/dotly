@@ -22,6 +22,8 @@ platform::command_exists snap && output::header "Importing Snap apps from $SNAP_
 
 platform::command_exists pip3 && output::header "Importing Python apps from $PYTHON_DUMP_FILE_PATH" && package::python_import
 
+platform::command_exists code && output::header "Importing VSCode extensions from $CODE_DUMP_FILE_PATH" && package::code_import
+
 if platform::command_exists volta; then
 	output::header "Importing Volta apps from $VOLTA_DUMP_FILE_PATH" && package::volta_import
 elif platform::command_exists npm; then
