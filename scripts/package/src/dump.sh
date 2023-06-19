@@ -14,6 +14,7 @@ PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/requirements.txt"
 SNAP_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/snap/packages.txt"
 VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta_dependencies.txt"
 WINGET_DUMP_FILE_PATH="$DOTFILES_PATH/os/windows/winget.output"
+ASDF_DUMP_FILE_PATH="$DOTFILES_PATH/langs/sdk/asdf.txt"
 
 package::brew_dump() {
 	if platform::is_macos; then
@@ -123,4 +124,38 @@ package::pacman_import() {
 	if [ -f "$PACMAN_DUMP_FILE_PATH" ]; then
 		yay -s "$(cat $PACMAN_DUMP_FILE_PATH)"
 	fi
+}
+
+package::asdf_dump() {
+  mkdir -p "$DOTFILES_PATH/langs/sdk"
+  echo -n >$ASDF_DUMP_FILE_PATH
+
+  for plug in $(asdf plugin-list); do
+    for ver in $(asdf list $plug | awk '{print $1; }'); do
+      if [ -z "$ver" ]; then
+        echo "No versions installed for $plug"
+      else
+        echo "$plug $ver" >>$ASDF_DUMP_FILE_PATH
+      fi
+    done
+  done
+}
+
+package::asdf_import() {
+  if [ -f "$ASDF_DUMP_FILE_PATH" ]; then
+    for plug in $(cat $ASDF_DUMP_FILE_PATH | awk '{ print $1 }' | uniq); do
+      echo "asdf plugin-add $plug"
+    done
+    while read -r line; do
+      plug=$(echo $line | awk '{print $1; }')
+      ver=$(echo $line | awk '{print $2; }')
+      if [[ $ver == \** ]]; then
+        ver=${ver:1}
+        echo "asdf install $plug $ver"
+        echo "asdf global $plug $ver"
+      else
+        echo "asdf install $plug $ver"
+      fi
+    done <$ASDF_DUMP_FILE_PATH
+  fi
 }
