@@ -17,7 +17,7 @@ pip::update_all() {
 			output::write "└ $url"
 			output::empty_line
 
-			pip install -U "$package" 2>&1 | log::file "Updating pip app: $package"
+			pip3 install -U "$package" 2>&1 | log::file "Updating pip app: $package"
 		done
 	else
 		output::answer "Already up-to-date"
