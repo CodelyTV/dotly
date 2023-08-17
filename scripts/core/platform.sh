@@ -23,8 +23,8 @@ platform::wsl_home_path() {
 }
 
 platform::is_default_macos_ruby() {
-  current_ruby_path=$(command -v ruby)
-  default_ruby_path="/usr/bin/ruby"
+	current_ruby_path=$(command -v ruby)
+	default_ruby_path="/usr/bin/ruby"
 
-  [[ "$current_ruby_path" = "$default_ruby_path" ]]
+	[[ $current_ruby_path == "$default_ruby_path" ]]
 }
