@@ -21,3 +21,10 @@ platform::is_wsl() {
 platform::wsl_home_path() {
 	wslpath "$(wslvar USERPROFILE 2>/dev/null)"
 }
+
+platform::is_default_macos_ruby() {
+  current_ruby_path=$(command -v ruby)
+  default_ruby_path="/usr/bin/ruby"
+
+  [[ "$current_ruby_path" = "$default_ruby_path" ]]
+}
