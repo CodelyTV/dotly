@@ -127,10 +127,13 @@ package_install() {
 		yes | brew install "${*}" 2>&1 | _log "Installign '${*}' using brew"
 	elif command_exists pacman; then
 		_a "Installing '${*}' using pacman"
-		sudo pacman -S --noconfirm "${*}" >/dev/null 2>&1 | _log "Installign '${*}' using pacman"
+		sudo pacman -S --noconfirm "${*}" >/dev/null 2>&1 | _log "Installing '${*}' using pacman"
 	elif command_exists apt; then
 		_a "Installing '${*}' using apt"
-		sudo apt -y install "${*}" >/dev/null 2>&1 | _log "Installign '${*}' using apt"
+		sudo apt -y install "${*}" >/dev/null 2>&1 | _log "Installing '${*}' using apt"
+	elif command_exists zypper; then
+		_a "Installing '${*}' using zypper"
+		sudo zypper install --no-confirm "${*}" 2>&1 | _log "Installing '${*}' using zypper"
 	else
 		_e "Could not install '${*}', no package provider found"
 		return 1
