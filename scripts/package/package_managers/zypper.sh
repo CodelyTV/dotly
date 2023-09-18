@@ -1,3 +1,3 @@
 zypper::install() {
-	sudo zypper -y install "$@"
+	sudo zypper install --no-confirm "$@"
 }
