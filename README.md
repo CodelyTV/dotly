@@ -36,7 +36,8 @@ bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)
 You can safely install additional software and make any changes to the file system. Once you exit zsh the image is
 deleted.
 
-Using Alpine:
+<details>
+<summary>Using Alpine:</summary>
 
 ```bash
 docker run -e TERM -e COLORTERM -e LC_ALL=C.UTF-8 -w /root -it --rm alpine sh -uec '
@@ -44,8 +45,10 @@ docker run -e TERM -e COLORTERM -e LC_ALL=C.UTF-8 -w /root -it --rm alpine sh -u
   bash -c "$(curl -fsSL https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)"
   zsh'
 ```
+</details>
 
-Or using Ubuntu:
+<details>
+<summary>Or using Ubuntu:</summary>
 
 ```bash
 docker run -e TERM -e COLORTERM -w /root -it --rm ubuntu sh -uec '
@@ -54,6 +57,7 @@ docker run -e TERM -e COLORTERM -w /root -it --rm ubuntu sh -uec '
   su -c bash -c "$(curl -fsSL https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)"
   su -c zsh'
 ```
+</details>
 
 ## Restore your Dotfiles manually
 
@@ -77,7 +81,7 @@ Using curl
 bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/restorer)
 ```
 
-You need to know your GitHub username, repository and install ssh key if your repository is private.
+🔒 You need to know your GitHub username, repository and install ssh key if your repository is private.
 
 It also supports other git repos, but you need to know your git repository url.
 
@@ -95,7 +99,7 @@ git commit -m "Initial commit" &&
 git push origin main
 ```
 
-It's recommended to commit every time you add/modify a config or script.
+⚠️ It's recommended to commit every time you add/modify a config or script.
 
 ### 🌚 The `dot` command
 
@@ -127,7 +131,7 @@ Usage:
 
 ### ⚙️ Versioning configs
 
-dotly facilites you to version your apps config files. Once you've found the config to version you should:
+dotly allows you to version your apps' config files. Once you've found the config to version you should:
 
 1. Copy your config file inside your dotfiles so this will be the source of truth.
    E.g. `cp ~/Library/Application Support/Code/User/settings.json $DOTFILES_PATH/editors/code/settings.json`
@@ -190,6 +194,12 @@ You can see the default aliases [here](dotfiles_template/shell/aliases.sh). The 
 * `..`: cd one directory up
 * `la`: ls all files/dirs with colors
 * `up`: Update all your package managers packages
+
+## 📽️ Feature showcase (Spanish)
+
+For an in-depth look at the features offered by dotly, you can take a look at [this video](https://www.youtube.com/watch?v=kCBvPb8qAAE):
+
+[![Watch the video](https://img.youtube.com/vi/kCBvPb8qAAE/maxresdefault.jpg)](https://youtu.be/kCBvPb8qAAE)
 
 ## ⁉️ Troubleshooting
 
