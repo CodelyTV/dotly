@@ -32,4 +32,6 @@ fi
 
 platform::command_exists winget.exe && output::header "Importing Winget apps from $WINGET_DUMP_FILE_PATH" && package::winget_import
 
+platform::command_exists asdf && output::header "Importing Asdf apps from $ASDF_DUMP_FILE_PATH" && package::asdf_import
+
 output::solution 'All packages imported'
