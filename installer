@@ -71,6 +71,8 @@ DOTFILES_PATH="${DOTFILES_PATH:-$HOME/.dotfiles}"
 DOTFILES_PATH="$(eval echo "$DOTFILES_PATH")"
 export DOTFILES_PATH="$DOTFILES_PATH"
 
+DOTFILES_BRANCH=${DOTFILES_BRANCH:-main}
+
 dotly_inner_path="modules/dotly"
 export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
 
@@ -140,7 +142,7 @@ if ! command_exists curl; then
 fi
 
 _a "Initializing your dotfiles git repository"
-git init 2>&1 | _log "Initializing repository"
+git init --initial-branch="$DOTFILES_BRANCH" 2>&1 | _log "Initializing repository"
 
 _a "Cloning dotly"
 git submodule add -b "$DOTLY_BRANCH" "https://github.com/$DOTLY_REPOSITORY.git" "$dotly_inner_path" 2>&1 | _log "Adding dotly submodule"
