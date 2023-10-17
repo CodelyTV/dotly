@@ -95,6 +95,9 @@ if ! command_exists git; then
 	elif command_exists pacman; then
 		_a "Installing using pacman"
 		sudo pacman -S --noconfirm git 2>&1 | _log "Installing git"
+	elif command_exists zypper; then
+		_a "Installing using zypper"
+		sudo zypper install --no-confirm git 2>&1 | _log "Installing git"
 	else
 		case "$OSTYPE" in
 		darwin*)
@@ -133,6 +136,9 @@ if ! command_exists curl; then
 	elif command_exists pacman; then
 		_a "Installing using pacman"
 		sudo pacman -S --noconfirm curl 2>&1 | _log "Installing curl"
+	elif command_exists zypper; then
+		_a "Installing using zypper"
+		sudo zypper install --no-confirm curl 2>&1 | _log "Installing curl"
 	else
 		_e "Could not install curl, no package provider found"
 		exit 1
