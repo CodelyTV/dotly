@@ -45,6 +45,7 @@ EOF
 		;;
 	--continue | -c)
 		continue=true
+		break
 		;;
 	*) ;;
 
