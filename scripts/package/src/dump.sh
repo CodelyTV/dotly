@@ -134,7 +134,7 @@ package::dart_dump() {
 
 package::dart_import() {
 	if [ -f "$DART_DUMP_FILE_PATH" ]; then
-		< $DART_DUMP_FILE_PATH tr "\n" "\0" | xargs -0 -I_ dart pub global activate _
+		< $DART_DUMP_FILE_PATH | xargs -n 2 -0 | xargs -I{} sh -c 'V="{}"; dart pub global activate ${V% *} ${V#* }'
 	fi
 }
 
