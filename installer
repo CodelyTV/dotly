@@ -95,6 +95,10 @@ if ! command_exists git; then
 	elif command_exists pacman; then
 		_a "Installing using pacman"
 		sudo pacman -S --noconfirm git 2>&1 | _log "Installing git"
+  elif command_exists brew; then
+		_a "Installing dart using brew"
+		brew tap dart-lang/dart 2>&1
+    brew install dart 2>&1 | _log "Installing dart"
 	else
 		case "$OSTYPE" in
 		darwin*)
