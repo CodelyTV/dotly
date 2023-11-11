@@ -14,6 +14,7 @@ PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/requirements.txt"
 SNAP_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/snap/packages.txt"
 VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta_dependencies.txt"
 WINGET_DUMP_FILE_PATH="$DOTFILES_PATH/os/windows/winget.output"
+DART_DUMP_FILE_PATH="$DOTFILES_PATH/langs/dart/packages.txt"
 
 package::brew_dump() {
 	if platform::is_macos; then
@@ -124,3 +125,18 @@ package::pacman_import() {
 		yay -s "$(cat $PACMAN_DUMP_FILE_PATH)"
 	fi
 }
+
+package::dart_dump() {
+	mkdir -p "$DOTFILES_PATH/langs/dart"
+
+	dart pub global list > "$DART_DUMP_FILE_PATH"
+}
+
+package::dart_import() {
+	if [ -f "$DART_DUMP_FILE_PATH" ]; then
+		< $DART_DUMP_FILE_PATH tr "\n" "\0" | xargs -0 -I_ dart pub global activate _
+	fi
+}
+
+
+ 
