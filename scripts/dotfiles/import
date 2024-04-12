@@ -10,8 +10,3 @@ source "$DOTLY_PATH/scripts/core/_main.sh"
 ##?    import [dotfiles_path]
 ##?
 docs::parse "$@"
-
-## .zshrc
-## .bash
-## .gitconfig
-## .gitignore_global

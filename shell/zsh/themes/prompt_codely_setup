@@ -73,7 +73,7 @@ prompt_codely_setup() {
   fi
 
   if [ "$CODELY_THEME_PROMPT_IN_NEW_LINE" = true ]; then
-    PS1="┌$PS1"$'\n└➤ '
+    PS1="╭$PS1"$'\n%F{white}╰ '
   fi
 
   RPS1=''
