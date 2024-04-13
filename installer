@@ -67,9 +67,10 @@ _w "~ │ 🚀 Welcome to the ${green}dotly${normal} installer! │ ~"
 _w "  └────────────────────────────────────┘"
 _w
 _q "Where do you want your dotfiles to be located? (default ~/.dotfiles)" "DOTFILES_PATH"
-DOTFILES_PATH="${DOTFILES_PATH:-$HOME/.dotfiles}"
-DOTFILES_PATH="$(eval echo "$DOTFILES_PATH")"
+UNEXPANDED_DOTFILES_PATH="${DOTFILES_PATH:-\$HOME/.dotfiles}"
+DOTFILES_PATH="$(eval echo "$UNEXPANDED_DOTFILES_PATH")"
 export DOTFILES_PATH="$DOTFILES_PATH"
+export UNEXPANDED_DOTFILES_PATH="$UNEXPANDED_DOTFILES_PATH"
 
 dotly_inner_path="modules/dotly"
 export DOTLY_PATH="$DOTFILES_PATH/$dotly_inner_path"
