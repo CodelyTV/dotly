@@ -27,3 +27,17 @@ bash <(curl -s https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/restorer)
 You need to know your GitHub username, repository and install ssh key if your repository is private.
 
 It also supports other git repos, but you need to know your git repository url.
+
+## Restore your Dotfiles  on Docker
+<details>
+<summary>Using Debian:</summary>
+
+```bash
+docker run -e TERM -e COLORTERM -w /root -it --rm debian sh -uec '
+  apt-get update
+  export USER="__GITHUB_USER__"
+  apt-get install -y curl build-essential sudo python3 git g++
+  su -c bash -c "$(curl -fsSL https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/restorer)"
+  su -c zsh'
+```
+</details>
