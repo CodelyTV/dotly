@@ -59,6 +59,18 @@ docker run -e TERM -e COLORTERM -w /root -it --rm ubuntu sh -uec '
 ```
 </details>
 
+
+<details>
+<summary>Arch Linux:</summary>
+
+```bash
+docker run -e TERM -e COLORTERM -w /root -it --rm archlinux sh -uec '
+  pacman -Sy curl base-devel sudo python3 git
+  su -c bash -c "$(curl -fsSL https://raw.githubusercontent.com/CodelyTV/dotly/HEAD/installer)"
+  su -c zsh'
+```
+</details>
+
 ## Restore your Dotfiles manually
 
 * Install git
