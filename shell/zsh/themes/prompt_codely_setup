@@ -8,7 +8,7 @@ CODELY_THEME_PWD_MODE=${CODELY_THEME_PWD_MODE:-"short"} # full, short, home_rela
 CODELY_THEME_STATUS_ICON_OK=${CODELY_THEME_STATUS_ICON_OK:-"▸"}
 CODELY_THEME_STATUS_ICON_KO=${CODELY_THEME_STATUS_ICON_KO:-"▪"}
 
- [[ $(echotc Co) -gt 100 ]] && support_color_tones=true || support_color_tones=false
+[[ $(echotc Co) -gt 100 ]] && support_color_tones=true || support_color_tones=false
 
 git_no_changes_status="✓"
 git_dirty_status="✗"
@@ -45,12 +45,23 @@ prompt_codely_pwd() {
   print -n "%F{$pwd_color}${prompt_dir}"
 }
 
+is_lfs_directory() {
+  [[ -f ".gitattributes" ]] && grep -q "filter=lfs" .gitattributes
+}
+
 prompt_codely_git() {
-  [[ -n ${git_info} ]] && print -n "%F{$git_on_branch_color} on${(e)git_info[prompt]}"
+  if is_lfs_directory; then
+    git_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    [[ -n $git_branch ]] && print -n "%F{$git_on_branch_color}  %F{$git_branch_color}${git_branch}"
+  else
+    [[ -n ${git_info} ]] && print -n "%F{$git_on_branch_color} ${(e)git_info[prompt]}"
+  fi
 }
 
 prompt_codely_precmd() {
-  (( ${+functions[git-info]} )) && git-info
+  if ! is_lfs_directory; then
+    (( ${+functions[git-info]} )) && git-info
+  fi
 }
 
 prompt_codely_setup() {
