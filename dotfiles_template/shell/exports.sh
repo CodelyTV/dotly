@@ -44,7 +44,7 @@ path=(
 	"/usr/bin"
 	"/usr/sbin"
 	"/sbin"
-	"$path"
+	$path
 )
 
 export path
