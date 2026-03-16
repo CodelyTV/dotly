@@ -84,7 +84,12 @@ package::python_import() {
 package::npm_dump() {
 	mkdir -p "$DOTFILES_PATH/langs/js"
 
-	ls -1 $HOMEBREW_PREFIX/lib/node_modules | grep -v npm >"$NPM_DUMP_FILE_PATH"
+	{
+		ls -1 "$HOMEBREW_PREFIX/lib/node_modules" | grep -v npm | grep -v '^@'
+		for scope in "$HOMEBREW_PREFIX/lib/node_modules/@"*/; do
+			[ -d "$scope" ] && ls -1 "$scope" | sed "s|^|$(basename "$scope")/|"
+		done
+	} >"$NPM_DUMP_FILE_PATH"
 }
 
 package::npm_import() {
