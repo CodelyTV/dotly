@@ -40,14 +40,26 @@ curl -fsSL --create-dirs -o "$ZIM_HOME/zimfw.zsh" https://github.com/zimfw/zimfw
 output::answer "Installing completions"
 "$DOTLY_PATH/bin/dot" shell zsh reload_completions
 
+
 output::answer "Executing custom restoration scripts"
 install_scripts_path="$DOTFILES_PATH/restoration_scripts"
+
 if [ -d "$install_scripts_path" ]; then
-	find "$install_scripts_path" -mindepth 1 -maxdepth 1 -type l,f -name '*.sh' |
-		sort |
-		while read -r install_script; do
-			{ [[ -x $install_script ]] && . "$install_script" | log::file "Executing afterinstall: $(basename "$install_script")"; } || {
+	while IFS= read -r install_script; do
+		if [[ -x "$install_script" ]]; then
+			output::answer "Executing: $(basename "$install_script")"
+			if ! "$install_script" 2>&1 | log::file; then
 				output::error "Install script error in $(basename "$install_script")"
-			}
-		done
+				exit 1
+			fi
+		else
+			output::error "Script not executable: $(basename "$install_script")"
+		fi
+	done < <(
+		find "$install_scripts_path" \
+			-mindepth 1 -maxdepth 1 \
+			\( -type f -o -type l \) \
+			-name '*.sh' | sort
+	)
 fi
+

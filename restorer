@@ -312,6 +312,8 @@ git submodule update --init --recursive modules/dotly 2>&1 | _log "Downloading d
 	exit 1
 }
 
+sudo pacman -S base-devel
+
 _w "Installing dotly default tools"
 _w "Please be patient this could take some time...🙏"
 # Installing default dotly tools

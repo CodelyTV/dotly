@@ -20,6 +20,10 @@ platform::command_exists brew && package::brew_dump && output::answer "Brew apps
 
 platform::command_exists apt-mark && package::apt_dump && output::answer "Apt apps dumped on $APT_DUMP_FILE_PATH"
 
+platform::command_exists pacman && package::pacman_dump && output::answer "Pacman apps dumped on $PACMAN_DUMP_FILE_PATH"
+
+platform::command_exists yay && package::aur_dump && output::answer "AUR apps dumped on $AUR_DUMP_FILE_PATH"
+
 platform::command_exists snap && package::snap_dump && output::answer "Snap apps dumped on $SNAP_DUMP_FILE_PATH"
 
 platform::command_exists pip3 && package::python_dump && output::answer "Python apps dumped on $PYTHON_DUMP_FILE_PATH"

@@ -10,6 +10,7 @@ APT_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/apt/packages.txt"
 CODE_DUMP_FILE_PATH="$DOTFILES_PATH/editors/code/extensions.txt"
 NPM_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/global_modules.txt"
 PACMAN_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/pacman/packages.txt"
+AUR_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/aur/packages.txt"
 PYTHON_DUMP_FILE_PATH="$DOTFILES_PATH/langs/python/requirements.txt"
 SNAP_DUMP_FILE_PATH="$DOTFILES_PATH/os/linux/snap/packages.txt"
 VOLTA_DUMP_FILE_PATH="$DOTFILES_PATH/langs/js/volta_dependencies.txt"
@@ -113,14 +114,25 @@ package::winget_dump() {
 package::winget_import() {
 	winget.exe import -i "$WINGET_DUMP_FILE_PATH"
 }
+
 package::pacman_dump() {
 	mkdir -p "$DOTFILES_PATH/os/linux/pacman"
-
-	pacman -Qm | awk '{print $1}' >"$PACMAN_DUMP_FILE_PATH"
+	pacman -Qqe > "$PACMAN_DUMP_FILE_PATH"
 }
 
 package::pacman_import() {
 	if [ -f "$PACMAN_DUMP_FILE_PATH" ]; then
-		yay -s "$(cat $PACMAN_DUMP_FILE_PATH)"
+		sudo pacman -S --needed - < "$PACMAN_DUMP_FILE_PATH"
+	fi
+}
+
+package::aur_dump() {
+	mkdir -p "$DOTFILES_PATH/os/linux/aur"
+	pacman -Qqm > "$AUR_DUMP_FILE_PATH"
+}
+
+package::aur_import() {
+	if [ -f "$AUR_DUMP_FILE_PATH" ]; then
+		yay -S --needed - < "$AUR_DUMP_FILE_PATH"
 	fi
 }

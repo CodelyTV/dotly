@@ -18,6 +18,10 @@ platform::command_exists brew && output::header "Importing Brew apps from $HOMEB
 
 platform::command_exists apt-mark && output::header "Importing Apt apps from $APT_DUMP_FILE_PATH" && package::apt_import
 
+platform::command_exists pacman && output::header "Importing Pacman apps from $PACMAN_DUMP_FILE_PATH" && package::pacman_import
+
+platform::command_exists yay && output::header "Importing AUR apps from $AUR_DUMP_FILE_PATH" && package::aur_import
+
 platform::command_exists snap && output::header "Importing Snap apps from $SNAP_DUMP_FILE_PATH" && package::snap_import
 
 platform::command_exists pip3 && output::header "Importing Python apps from $PYTHON_DUMP_FILE_PATH" && package::python_import
