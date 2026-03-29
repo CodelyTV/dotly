@@ -22,6 +22,7 @@ if [ "$CODELY_THEME_MODE" = "dark" ]; then
   diamond_color="white"
   status_icon_color_ok="green"
   status_icon_color_ko="red"
+  node_color="cyan
   [[ $support_color_tones = true ]] && ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8' || ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=magenta'
 else
   git_branch_color="black"
@@ -32,6 +33,7 @@ else
   diamond_color="black"
   status_icon_color_ok="black"
   status_icon_color_ko="red"
+  node_color="cyan
   [[ $support_color_tones = true ]] && ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8' || ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=magenta'
 fi
 
@@ -64,6 +66,40 @@ prompt_codely_precmd() {
   fi
 }
 
+prompt_codely_is_node_project() {
+  local dir=$PWD
+  local limit=${HOME:A}
+  local git_root
+
+  git_root=$(git rev-parse --show-toplevel 2>/dev/null) || git_root=''
+  [[ -n $git_root ]] && limit=${git_root:A}
+
+  while :; do
+    [[ -f "$dir/package.json" ]] && return 0
+    [[ -f "$dir/.nvmrc" ]] && return 0
+    [[ -f "$dir/.node-version" ]] && return 0
+    [[ -f "$dir/pnpm-lock.yaml" ]] && return 0
+    [[ -f "$dir/package-lock.json" ]] && return 0
+    [[ -f "$dir/yarn.lock" ]] && return 0
+
+    [[ ${dir:A} == ${limit:A} ]] && break
+    [[ $dir == / ]] && break
+    dir=${dir:h}
+  done
+
+  return 1
+}
+
+prompt_codely_node() {
+  (( $+commands[node] )) || return 0
+  prompt_codely_is_node_project || return 0
+
+  local node_version
+  node_version=$(command node --version 2>/dev/null) || return 0
+  print -n " %F{$node_color}node ${node_version}"
+}
+
+
 prompt_codely_setup() {
   local prompt_codely_status="%(?:%F{diamond_color}<%F{$status_icon_color_ok}$CODELY_THEME_STATUS_ICON_OK%F{diamond_color}>:%F{diamond_color}<%F{$status_icon_color_ko}$CODELY_THEME_STATUS_ICON_KO%F{diamond_color}>)"
 
@@ -80,7 +116,7 @@ prompt_codely_setup() {
   if [ "$CODELY_THEME_MINIMAL" = true ]; then
     PS1="${prompt_codely_status} \$(prompt_codely_pwd) "
   else
-    PS1="${prompt_codely_status} \$(prompt_codely_pwd)\$(prompt_codely_git)%f "
+    PS1="${prompt_codely_status} \$(prompt_codely_pwd)\$(prompt_codely_git)\$(prompt_codely_node)%f "
   fi
 
   if [ "$CODELY_THEME_PROMPT_IN_NEW_LINE" = true ]; then
