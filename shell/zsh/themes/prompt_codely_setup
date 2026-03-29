@@ -22,7 +22,7 @@ if [ "$CODELY_THEME_MODE" = "dark" ]; then
   diamond_color="white"
   status_icon_color_ok="green"
   status_icon_color_ko="red"
-  node_color="cyan
+  node_color="cyan"
   [[ $support_color_tones = true ]] && ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8' || ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=magenta'
 else
   git_branch_color="black"
@@ -33,7 +33,7 @@ else
   diamond_color="black"
   status_icon_color_ok="black"
   status_icon_color_ko="red"
-  node_color="cyan
+  node_color="cyan"
   [[ $support_color_tones = true ]] && ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8' || ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=magenta'
 fi
 
