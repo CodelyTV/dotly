@@ -268,6 +268,8 @@ skills::_parse_yaml_document() {
     if [[ $indent -eq 0 ]]; then
       if [[ "$stripped" == "providers:"* ]]; then
         in_providers=true
+      elif [[ "$stripped" == "format:"* || "$stripped" == "version:"* || "$stripped" == "description:"* ]]; then
+        continue
       elif $in_providers; then
         _emit_import_skill "$provider_name" "$skill_name" "$cmd" "$agents"
         break

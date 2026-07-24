@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Mock bunx for skills import happy-path tests.
+#
+# Simulates successful skill installation:
+#   - Creates $SKILLS_DIR/<skill-name>/
+#   - Writes .skill-lock.json into that directory
+#
+# Skill name is derived from the last path component of the provider argument
+# (e.g. "owner/repo" -> "repo").
+#
+# Expected invocation: skills add <provider> [--agent <agent>] [<branch>]
+
+main() {
+    local provider="" agent="default"
+
+    if [[ $# -lt 3 ]]; then
+        exit 1
+    fi
+
+    shift
+    shift
+    provider="$1"
+    shift
+
+    if [[ "${1:-}" == "--agent" && -n "${2:-}" ]]; then
+        agent="$2"
+    fi
+
+    local skill_name="${provider##*/}"
+
+    mkdir -p "${SKILLS_DIR}/${skill_name}"
+
+    cat > "${SKILLS_DIR}/${skill_name}/.skill-lock.json" <<-EOF
+{
+  "provider": "${provider}",
+  "installed_at": "$(date +%s)",
+  "agents": ["${agent}"],
+  "command": "bunx skills add"
+}
+EOF
+}
+
+main "$@"

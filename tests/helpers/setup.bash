@@ -13,8 +13,9 @@ else
 fi
 export DOTLY_PATH="${SLOTH_PATH}"
 
-# Add mocks directory to PATH (before real commands)
+# Add mocks and bins directories to PATH (before real commands)
 export PATH="${SLOTH_PATH}/tests/helpers/mocks:${PATH}"
+export PATH="${SLOTH_PATH}/tests/helpers/bins:${PATH}"
 
 # Source core libraries for testing
 #shellcheck disable=SC1091
