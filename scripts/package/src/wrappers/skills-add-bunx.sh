@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# shellcheck disable=SC2012
 
 SKILLS_DIR="${HOME}/.agents/skills"
 
@@ -81,6 +80,7 @@ before=$(mktemp)
 after=$(mktemp)
 trap 'rm -f "$before" "$after"' EXIT
 
+# shellcheck disable=SC2012
 ls -1 "$SKILLS_DIR" 2> /dev/null | sort > "$before" || true
 
 if ! bunx skills add "${extra_args[@]}"; then
@@ -88,6 +88,7 @@ if ! bunx skills add "${extra_args[@]}"; then
   exit 1
 fi
 
+# shellcheck disable=SC2012
 ls -1 "$SKILLS_DIR" 2> /dev/null | sort > "$after" || true
 
 skill_name=""
@@ -100,6 +101,7 @@ done < <(comm -13 "$before" "$after" 2> /dev/null)
 
 if [[ -z "$skill_name" ]]; then
   echo "Warning: could not detect new skill directory via directory diff" >&2
+  # shellcheck disable=SC2012
   newest_dir=$(ls -1t "$SKILLS_DIR" 2> /dev/null | head -1)
   if [[ -n "$newest_dir" ]]; then
     skill_name="$newest_dir"
