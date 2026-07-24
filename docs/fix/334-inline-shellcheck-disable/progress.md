@@ -6,3 +6,6 @@
 - Gotchas: Issue created as #336 instead of planned #334 (GitHub sequential numbering); SPEC and fix-index updated to reference #336
 - Files: `scripts/package/src/wrappers/skills-add-bunx.sh`, `scripts/package/src/wrappers/skills-add-npx.sh`, `docs/fix/334-inline-shellcheck-disable/SPEC.md`, `docs/fix/README.md`
 - Next: P2 — Hardening & PR
+
+## P2 — 2026-07-24
+- Done: PR #337 created, review passed (no fix-now findings), CI green (all 8 checks), merged to main
