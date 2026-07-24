@@ -242,13 +242,12 @@ providers:
         agents:
           - claude
 EOF
-    run bash -c "
-        export PATH='${SLOTH_PATH}/tests/helpers/mocks:${PATH}'
-        source '${SLOTH_PATH}/scripts/package/src/package_managers/skills.sh'
-        SKILLS_DUMP_FILE_PATH='${SKILLS_DUMP_FILE_PATH}'
-        SKILLS_DIR='${SKILLS_DIR}'
-        skills::import
-    "
+    # Save test's temp dir before sourcing (skills.sh line 5 overwrites SKILLS_DIR)
+    local _saved_skills_dir="$SKILLS_DIR"
+    source "${SLOTH_PATH}/scripts/package/src/package_managers/skills.sh"
+    SKILLS_DIR="$_saved_skills_dir"
+    export SKILLS_DIR
+    run skills::import
     [ "$status" -eq 0 ]
     [[ -d "${SKILLS_DIR}/test-skill" ]]
     [[ -f "${SKILLS_DIR}/test-skill/.skill-lock.json" ]]
