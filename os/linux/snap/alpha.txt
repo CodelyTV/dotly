@@ -1,0 +1,3 @@
+core18
+oracle-cloud-agent
+snapd

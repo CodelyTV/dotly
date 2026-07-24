@@ -1,0 +1,4 @@
+corepack
+shfmt
+bats
+make
