@@ -8,7 +8,7 @@ Shellcheck reports SC2012 ("Use find instead of ls -1", or similar lint warning 
 
 ## Issue
 
-`#334` — tracked issue. Required. The PR must close it.
+`#336` — tracked issue. Required. The PR must close it.
 
 ## Branch
 
@@ -109,12 +109,12 @@ No open PRs in the repository. No blocking or blocked relationships.
 
 > Execution ledger: one phase per invocation of `execute-phase --fix`. Each phase independently checkable without judgment, zero open design decisions, one layer/concern, gate runnable locally.
 
-- [ ] **P1 — Add inline shellcheck disables, remove dead file-level disables**
-  - [ ] `skills-add-bunx.sh`: add inline `# shellcheck disable=SC2012` before each `ls -1 "$SKILLS_DIR"` line (lines 84, 91, 103)
-  - [ ] `skills-add-bunx.sh`: remove file-level `# shellcheck disable=SC2012` at line 3
-  - [ ] `skills-add-npx.sh`: add inline `# shellcheck disable=SC2012` before each `ls -1 "$SKILLS_DIR"` line (lines 84, 91, 103)
-  - [ ] `skills-add-npx.sh`: remove file-level `# shellcheck disable=SC2012` at line 3
-  - [ ] Gate: `./scripts/core/lint && ./scripts/core/static_analysis` passes green
+- [x] **P1 — Add inline shellcheck disables, remove dead file-level disables**
+  - [x] `skills-add-bunx.sh`: add inline `# shellcheck disable=SC2012` before each `ls -1 "$SKILLS_DIR"` line (lines 84, 91, 103)
+  - [x] `skills-add-bunx.sh`: remove file-level `# shellcheck disable=SC2012` at line 3
+  - [x] `skills-add-npx.sh`: add inline `# shellcheck disable=SC2012` before each `ls -1 "$SKILLS_DIR"` line (lines 84, 91, 103)
+  - [x] `skills-add-npx.sh`: remove file-level `# shellcheck disable=SC2012` at line 3
+  - [x] Gate: `./scripts/core/lint && ./scripts/core/static_analysis` passes green
   - **Gate:** `static_analysis` exit 0, lint exit 0, no SC2012 in output
 
 - [ ] **P2 — Hardening & PR**
