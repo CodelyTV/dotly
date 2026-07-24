@@ -70,6 +70,11 @@ npm::dump() {
   NPM_DUMP_FILE_PATH="${1:-$NPM_DUMP_FILE_PATH}"
 
   if package::common_dump_check npm "$NPM_DUMP_FILE_PATH"; then
+    if [[ ! -d "$node_modules" ]]; then
+      printf '[npm::dump] [warn] npm root directory %q does not exist\n' "$node_modules" >&2
+      : > "$NPM_DUMP_FILE_PATH"
+      return 0
+    fi
     find "$node_modules" -maxdepth 1 -mindepth 1 -type d -print0 | xargs -0 -I _ basename _ | grep -v npm | tee "$NPM_DUMP_FILE_PATH" | log::file "Exporting ${npm_title} packages"
 
     return 0

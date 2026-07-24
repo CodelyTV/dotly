@@ -22,6 +22,13 @@ dump::file_path() {
         echo "${DOTFILES_PATH}/langs/js/npm/${dump_file_name}.txt"
       fi
       ;;
+    skills)
+      if ${SLOTH_PACKAGES_DUMP_ARCH:-false}; then
+        echo "${DOTFILES_PATH}/agents/$(platform::get_arch)/skill-lock.yaml"
+      else
+        echo "${DOTFILES_PATH}/agents/skill-lock.yaml"
+      fi
+      ;;
     volta)
       if [[ -r "${DOTFILES_PATH}/langs/js/volta_dependencies.txt" ]]; then
         echo "${DOTFILES_PATH}/langs/js/volta_dependencies.txt"

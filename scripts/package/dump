@@ -44,7 +44,8 @@ for package_manager in $(package::get_available_package_managers); do
     continue
   fi
 
-  if ! package::command_exists "$package_manager" "dump" 2> /dev/null; then
+  if ! package::command_exists "$package_manager" "dump" 2> /dev/null ||
+     ! package::command_exists "$package_manager" "import" 2> /dev/null; then
     continue
   fi
 
