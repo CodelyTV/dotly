@@ -34,6 +34,7 @@ The single source of truth for what every agentic-workflow skill does first and 
 - **Track, don't inline:** deferred work becomes a tracked issue / known-issue, never silently implemented.
 - **Shell compatibility:** all scripts must be POSIX-compatible bash. Never use bashisms that break on macOS default bash (3.2) unless explicitly guarded. Test with `bash --posix` where feasible.
 - **`set -euo pipefail`:** all new scripts must use this header. Existing scripts that lack it should be migrated when touched.
+- **NO MERGE WITHOUT EXPLICIT PERMISSION:** You are STRICTLY PROHIBITED from merging any PR unless the human user explicitly says "merge" or gives unambiguous merge permission. Do NOT merge when asked to "review," "approve," "check," "audit," or any other non-merge instruction. The only actions you may take on a PR without explicit permission are: review, comment, request changes, run checks, and report status. Merging is the ONE action that requires explicit approval — treat it as such.
 
 **Question protocol (when a skill must ask the user to decide).** Only ask when the answer materially changes the artifact — make routine choices silently and record them. Each question states: what is being decided; its scope (files, behavior, consumers affected); its criticality (critical / high / medium / low); and each option with pros and cons separately, recommendation flagged.
 
@@ -115,11 +116,14 @@ Never work on `main` directly. Create a worktree first (`feat/<NN>-<slug>` or `f
 
 Never stack PRs. A PR's base is always `main`. If a feature is too large, split it into independently shippable slices — never by internal phases.
 
-**Merge gate (AI only).** Before assisting with a merge of any unit PR:
+**Merge gate (AI only).** BEFORE assisting with ANY merge of any unit PR:
 1. Run `make format`, `make lint`, and `make test` locally — all must pass
 2. Verify CI checks are green on the PR
-3. Ask the human user explicitly before merging — never auto-merge
-4. Only when both local checks and CI are green, proceed with the merge (after user confirmation)
+3. **NEVER merge a PR without explicit, unambiguous instruction from the human user.** The only conditions under which you may merge are:
+   - The human explicitly says "merge" or "go ahead and merge" (or equivalent unambiguous permission), OR
+   - You run `/audit-pr` and the human explicitly says "merge after audit" (or equivalent unambiguous permission)
+4. Merging is NOT a default action. You do NOT merge unless told to. If the human says "approve this," "review this," "check this," or any other non-merge instruction — DO NOT merge.
+5. When the local checks and CI are both green AND the human has given explicit merge permission, proceed with the merge (ask which merge strategy: `--merge`, `--squash`, or `--rebase`).
 
 ## Commit format
 
