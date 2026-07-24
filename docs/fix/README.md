@@ -18,7 +18,7 @@ history lives in git log + closed issues.
 | `300-audit-set-euo-pipefail` | audit standalone scripts for missing set -euo pipefail | pending | — | #300 |
 | `329-bun-dump-readonly-error` | fix `dot package dump` crash with custom manager files lacking dump function | done · [#331](https://github.com/gtrabanco/dotSloth/pull/331) | — | #329 |
 | `333-happy-path-import-test` | add happy-path integration test for skills::import | done · [#335](https://github.com/gtrabanco/dotSloth/pull/335) | — | #333 |
-| `334-inline-shellcheck-disable` | add inline shellcheck disable for SC2012 in wrappers | pending | — | #336 |
+| `334-inline-shellcheck-disable` | add inline shellcheck disable for SC2012 in wrappers | done · [#337](https://github.com/gtrabanco/dotSloth/pull/337) | — | #336 |
 
 ## Conventions
 
