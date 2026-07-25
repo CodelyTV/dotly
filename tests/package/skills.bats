@@ -132,30 +132,33 @@ EOF
     run bash -c "
         source '$SLOTH_PATH/scripts/package/src/package_managers/skills.sh'
         source '$SLOTH_PATH/scripts/package/src/lib/yaml.sh'
+        HOME='$(mktemp -d)'
         SKILLS_DIR='${SKILLS_DIR}'
         SKILLS_DUMP_FILE_PATH='${SKILLS_DUMP_FILE_PATH}'
         skills::dump
     "
     [ "$status" -eq 0 ]
     grep -q "format: skill-lock-v1" "${SKILLS_DUMP_FILE_PATH}"
-    grep -q "providers: \[\]" "${SKILLS_DUMP_FILE_PATH}"
+    grep -q "skills: \[\]" "${SKILLS_DUMP_FILE_PATH}"
 }
 
 @test "dump: produces YAML with provider and skill data" {
-    mkdir -p "${SKILLS_DIR}/my-skill"
-    cat > "${SKILLS_DIR}/my-skill/.skill-lock.json" << 'EOF'
+    local _agents_home="$(mktemp -d)"
+    mkdir -p "${_agents_home}/.agents"
+    cat > "${_agents_home}/.agents/.skill-lock.json" << 'EOF'
 {
-  "provider": "owner/repo",
-  "branch": "main",
-  "agents": ["claude"],
-  "command": "bunx skills add",
-  "installed_at": "2025-01-01T00:00:00Z"
+  "skills": {
+    "my-skill": {
+      "source": "owner/repo",
+      "skillPath": "skills/my-skill"
+    }
+  }
 }
 EOF
     run bash -c "
         source '$SLOTH_PATH/scripts/package/src/package_managers/skills.sh'
         source '$SLOTH_PATH/scripts/package/src/lib/yaml.sh'
-        SKILLS_DIR='${SKILLS_DIR}'
+        HOME='${_agents_home}'
         SKILLS_DUMP_FILE_PATH='${SKILLS_DUMP_FILE_PATH}'
         skills::dump
     "
@@ -163,29 +166,25 @@ EOF
     grep -q "format: skill-lock-v1" "${SKILLS_DUMP_FILE_PATH}"
     grep -q "owner/repo" "${SKILLS_DUMP_FILE_PATH}"
     grep -q "my-skill" "${SKILLS_DUMP_FILE_PATH}"
-    grep -q "bunx skills add" "${SKILLS_DUMP_FILE_PATH}"
-    grep -q "claude" "${SKILLS_DUMP_FILE_PATH}"
 }
 
 @test "dump: handles fallback via package.json" {
-    mkdir -p "${SKILLS_DIR}/fallback-skill"
-    cat > "${SKILLS_DIR}/fallback-skill/package.json" << 'EOF'
-{"name": "owner/fallback-repo"}
-EOF
-    mkdir -p "${SKILLS_DIR}/lockfile-skill"
-    cat > "${SKILLS_DIR}/lockfile-skill/.skill-lock.json" << 'EOF'
+    local _agents_home="$(mktemp -d)"
+    mkdir -p "${_agents_home}/.agents"
+    cat > "${_agents_home}/.agents/.skill-lock.json" << 'EOF'
 {
-  "provider": "owner/lockfile",
-  "branch": "",
-  "agents": ["claude"],
-  "command": "bunx skills add",
-  "installed_at": "2025-01-01T00:00:00Z"
+  "skills": {
+    "lockfile-skill": {
+      "source": "owner/lockfile",
+      "skillPath": "skills/lockfile-skill"
+    }
+  }
 }
 EOF
     run bash -c "
         source '$SLOTH_PATH/scripts/package/src/package_managers/skills.sh'
         source '$SLOTH_PATH/scripts/package/src/lib/yaml.sh'
-        SKILLS_DIR='${SKILLS_DIR}'
+        HOME='${_agents_home}'
         SKILLS_DUMP_FILE_PATH='${SKILLS_DUMP_FILE_PATH}'
         skills::dump 2>&1
     "
@@ -221,7 +220,7 @@ EOF
 @test "import: returns 0 when YAML has no entries" {
     cat > "${SKILLS_DUMP_FILE_PATH}" << 'EOF'
 format: skill-lock-v1
-providers: []
+skills: []
 EOF
     run bash -c "
         source '$SLOTH_PATH/scripts/package/src/package_managers/skills.sh'
@@ -234,16 +233,28 @@ EOF
 @test "import: installs skills from valid YAML lockfile" {
     cat > "${SKILLS_DUMP_FILE_PATH}" << 'EOF'
 format: skill-lock-v1
-providers:
-  - name: test-owner/test-skill
-    skills:
-      - name: test-skill
-        command: bunx skills add
-        agents:
-          - claude
+skills:
+  - name: test-skill
+    provider: owner/repo
+    path: skills/test-skill
 EOF
     # Save test's temp dir before sourcing (skills.sh line 5 overwrites SKILLS_DIR)
     local _saved_skills_dir="$SKILLS_DIR"
+    # Mock bunx (preferred) / npx: creates skill dir + .skill-lock.json instead of actually installing
+    local _mock_dir="$(mktemp -d)"
+    for _cmd in bunx npx; do
+      cat > "${_mock_dir}/${_cmd}" << MOCKCMD
+#!/usr/bin/env bash
+provider_path="\$4"
+path="\${provider_path##*#}"
+name="\${path##*/}"
+mkdir -p "\${SKILLS_DIR}/\${name}" 2>/dev/null
+echo "{\"provider\":\"owner/repo\",\"skillPath\":\"\${path}\"}" > "\${SKILLS_DIR}/\${name}/.skill-lock.json"
+exit 0
+MOCKCMD
+      chmod +x "${_mock_dir}/${_cmd}"
+    done
+    PATH="${_mock_dir}:$PATH"
     source "${SLOTH_PATH}/scripts/package/src/package_managers/skills.sh"
     SKILLS_DIR="$_saved_skills_dir"
     export SKILLS_DIR
@@ -284,7 +295,7 @@ EOF
     run bash -c "
         source '$SLOTH_PATH/scripts/package/src/package_managers/skills.sh'
         SKILLS_DIR='${SKILLS_DIR}'
-        skills::_execute_single_install 'bunx skills add' 'owner/repo' '' 'claude' 'already-installed' 2>&1
+        skills::_execute_single_install 'owner/repo' 'skills/already-installed' '' 'already-installed' 2>&1
     "
     [ "$status" -eq 0 ]
     echo "$output" | grep -qi "already installed"
@@ -295,14 +306,10 @@ EOF
 @test "_parse_yaml_document: parses valid skill-lock YAML" {
     cat > "${SKILLS_DUMP_FILE_PATH}" << 'EOF'
 format: skill-lock-v1
-providers:
-  - name: owner/repo
-    skills:
-      - name: my-skill
-        command: bunx skills add
-        agents:
-          - claude
-          - codex
+skills:
+  - name: my-skill
+    provider: owner/repo
+    path: skills/my-skill
 EOF
     run bash -c "
         source '$SLOTH_PATH/scripts/package/src/package_managers/skills.sh'
@@ -310,25 +317,19 @@ EOF
         skills::_parse_yaml_document '${SKILLS_DUMP_FILE_PATH}'
     "
     [ "$status" -eq 0 ]
-    echo "$output" | grep -F "owner/repo||my-skill|bunx skills add|claude,codex"
+    echo "$output" | grep -F "my-skill|owner/repo|skills/my-skill|"
 }
 
 @test "_parse_yaml_document: parses multi-provider YAML" {
     cat > "${SKILLS_DUMP_FILE_PATH}" << 'EOF'
 format: skill-lock-v1
-providers:
-  - name: owner/repo-a
-    skills:
-      - name: skill-a
-        command: bunx skills add
-        agents:
-          - claude
-  - name: owner/repo-b
-    skills:
-      - name: skill-b
-        command: npx skills add
-        agents:
-          - codex
+skills:
+  - name: skill-a
+    provider: owner/repo-a
+    path: skills/skill-a
+  - name: skill-b
+    provider: owner/repo-b
+    path: skills/skill-b
 EOF
     run bash -c "
         source '$SLOTH_PATH/scripts/package/src/package_managers/skills.sh'
@@ -343,18 +344,17 @@ EOF
 @test "_parse_yaml_document: reports line numbers on malformed entries" {
     cat > "${SKILLS_DUMP_FILE_PATH}" << 'EOF'
 format: skill-lock-v1
-providers:
-  - name: owner/repo
-    skills:
-      - name: my-skill
-        badfield: unexpected
-        command: bunx skills add
+skills:
+  - name: my-skill
+    provider: owner/repo
+    badfield: unexpected
+    path: skills/my-skill
 EOF
     run bash -c "
         source '$SLOTH_PATH/scripts/package/src/package_managers/skills.sh'
         SKILLS_DUMP_FILE_PATH='${SKILLS_DUMP_FILE_PATH}'
         skills::_parse_yaml_document '${SKILLS_DUMP_FILE_PATH}' 2>&1
     "
-    echo "$output" | grep -qi "line 6"
+    echo "$output" | grep -qi "line 5"
     echo "$output" | grep -qi "badfield"
 }
