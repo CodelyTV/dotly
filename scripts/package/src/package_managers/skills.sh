@@ -339,9 +339,9 @@ skills::_execute_single_install() {
     cmd="bunx"
   fi
   if [[ -n "$agent" ]]; then
-    $cmd -y skills add "${provider}#${path}" --agent "$agent"
+    "$cmd" -y skills add "${provider}#${path}" --agent "$agent"
   else
-    $cmd -y skills add "${provider}#${path}"
+    "$cmd" -y skills add "${provider}#${path}"
   fi
   return $?
 }
