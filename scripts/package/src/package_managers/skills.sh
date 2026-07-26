@@ -335,7 +335,7 @@ skills::_execute_single_install() {
   fi
 
   local cmd="npx"
-  if command -v bunx &> /dev/null; then
+  if command -v bunx > /dev/null 2>&1; then
     cmd="bunx"
   fi
   if [[ -n "$agent" ]]; then
