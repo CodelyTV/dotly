@@ -8,4 +8,8 @@ Ledger for fix-now findings from `review-change` against `origin/main`.
 | F2 | skills.sh:338 | compatibility | low | fix-now | fix | yes |
 | F3 | skills.sh:153 | naming | low | fix-now | fix | yes |
 | F4 | skills.sh:188-192 | documentation | low | fix-now | fix | yes |
-| F5 | commit message | workflow | low | fix-now | fix | no |
+| F5 | commit message | workflow | low | fix-now | fix | yes |
+| F6 | skills.sh:188 | spec-drift (false positive) | low | ignore | confirmed callers exist | no |
+| F7 | PR #339 body | Traceability | high | fix-now | execute-phase | no |
+| F8 | docs/fix/README.md | Docs | high | fix-now | execute-phase | no |
+| F9 | CI rollup | Verification gate / CI | high | fix-now | execute-phase | no |
