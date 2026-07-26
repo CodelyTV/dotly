@@ -185,7 +185,7 @@ _import_log() {
   printf '[skills::import] [%s] %s\n' "$level" "$msg" >&2
 }
 
-# Emit a completed skill entry: provider|branch|skill_name|command|agents_csv
+# Emit a completed skill entry: skill_name|provider|path|agents_csv
 _emit_import_skill() {
   local p_name="$1" s_name="$2" s_cmd="$3" s_agents="$4"
   local skill_provider="$5" skill_path="$6"
