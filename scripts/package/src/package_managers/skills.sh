@@ -154,7 +154,7 @@ skills::dump() {
   skills_yaml="$(jq -r '
     .skills // {} | to_entries | sort_by(.key) | .[] |
     "  - name: \(.key)\n    provider: \(.value.source // .value.provider // "unknown")\n    path: \(if .value.skillPath then .value.skillPath else "" end)"
-  ' "$input_file" 2>/dev/null)" || {
+  ' "$input_file" 2> /dev/null)" || {
     _dump_log "error" "Failed to parse .skill-lock.json — writing empty lockfile."
     {
       yaml::write_value "format" "skill-lock-v1"

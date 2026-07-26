@@ -12,4 +12,4 @@ Ledger for fix-now findings from `review-change` against `origin/main`.
 | F6 | skills.sh:188 | spec-drift (false positive) | low | ignore | confirmed callers exist | no |
 | F7 | PR #339 body | Traceability | high | fix-now | execute-phase | yes |
 | F8 | docs/fix/README.md | Docs | high | fix-now | execute-phase | yes |
-| F9 | CI rollup | Verification gate / CI | high | fix-now | execute-phase | no |
+| F9 | CI rollup | Verification gate / CI | high | fix-now | execute-phase | yes |
