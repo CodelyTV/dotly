@@ -57,7 +57,17 @@ loader:
 .PHONY: uninstall
 uninstall:
 	@echo "Uninstalling .Sloth"
-	rm -rf ~/.bashrc ~/.bash_profile ~/.zshrc ~/.zshenv ~/.zimrc ~/.zlogin ~/.inputrc
+	@echo "The following files will be deleted:"
+	@for f in ~/.bashrc ~/.bash_profile ~/.zshrc ~/.zshenv ~/.zimrc ~/.zlogin ~/.inputrc; do \
+		[ -e "$$f" ] && echo "  - $$f" || true; \
+	done
+	@printf 'Type "yes" to confirm: '; \
+	read -r answer; \
+	if [ "$$answer" != "yes" ]; then echo "Aborted."; exit 1; fi
+	@for f in ~/.bashrc ~/.bash_profile ~/.zshrc ~/.zshenv ~/.zimrc ~/.zlogin ~/.inputrc; do \
+		[ -e "$$f" ] && rm -r "$$f"; \
+	done
+	@echo "Uninstall complete."
 
 .PHONY: format
 format:
