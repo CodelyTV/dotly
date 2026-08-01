@@ -26,7 +26,7 @@ jobs:
           - ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set current repository for pull requests
         run: |
@@ -83,8 +83,8 @@ jobs:
           - macos-latest
           - ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: '^1.16.1'
 
@@ -104,7 +104,7 @@ jobs:
     runs-on: ubuntu-latest
     name: 💿 Static analysis
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set needed environment variables
         run: |
@@ -118,9 +118,9 @@ jobs:
     runs-on: ubuntu-latest
     name: 💅 Lint
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 # Thanks to @borjapazr in https://github.com/CodelyTV/dotly/pull/191
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v5
         with:
           go-version: '^1.16.1'
 
