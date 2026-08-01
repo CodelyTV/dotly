@@ -26,7 +26,7 @@ files::check_if_path_is_older() {
 #"
 files::backup_move_if_path_exists() {
   local file_path bk_suffix bk_file_path
-  file_path="$(eval realpath -q -m "${1:-}")"
+  file_path="$(realpath -q -m "${1/#\~/$HOME}")"
   bk_suffix="${2:-$(date +%s)}"
   bk_file_path="$file_path.${bk_suffix}"
 

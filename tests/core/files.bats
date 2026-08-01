@@ -17,6 +17,39 @@ load "../helpers/setup"
     [ $? -eq 0 ]
 }
 
+@test "files::backup_move_if_path_exists moves file and appends suffix" {
+    local tmpfile
+    tmpfile=$(mktemp)
+    local backup
+    backup="$(files::backup_move_if_path_exists "$tmpfile" "bak")"
+    [ "$backup" = "$tmpfile.bak" ]
+    [ -f "$tmpfile.bak" ]
+    [ ! -e "$tmpfile" ]
+    rm -f "$tmpfile.bak"
+}
+
+@test "files::backup_move_if_path_exists handles paths with spaces" {
+    local tmpdir tmpfile backup
+    tmpdir=$(mktemp -d)
+    tmpfile="$tmpdir/file with spaces"
+    touch "$tmpfile"
+    backup="$(files::backup_move_if_path_exists "$tmpfile" "bak")"
+    [ "$backup" = "$tmpfile.bak" ]
+    [ -f "$tmpfile.bak" ]
+    [ ! -e "$tmpfile" ]
+    rm -rf "$tmpdir"
+}
+
+@test "files::backup_move_if_path_exists handles leading tilde" {
+    local home backup
+    home=$(mktemp -d)
+    touch "$home/.bashrc"
+    backup="$(HOME="$home" files::backup_move_if_path_exists "~/.bashrc" "bak")"
+    [ "$backup" = "$home/.bashrc.bak" ]
+    [ -f "$home/.bashrc.bak" ]
+    rm -rf "$home"
+}
+
 # ── check_if_path_is_older ─────────────────────────────────────────────────
 
 @test "files::check_if_path_is_older returns 0 for old file" {
