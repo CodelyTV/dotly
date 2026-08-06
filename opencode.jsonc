@@ -11,19 +11,6 @@
       ],
       "enabled": true
     },
-    "fetch": {
-      "type": "local",
-      "command": ["uvx", "mcp-server-fetch"],
-      "enabled": true
-    },
-    "github": {
-      "enabled": true
-    },
-    "gitmcp-docs": {
-      "type": "remote",
-      "url": "https://gitmcp.io/docs",
-      "enabled": true
-    },
     "serena": {
       "type": "local",
       "command": [
